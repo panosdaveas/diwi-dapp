@@ -5,7 +5,7 @@ import Image from "next/image";
 import Web3 from "web3";
 import { useState } from "react";
 import { DrawerWithNavigation } from "./Components/Drawer";
-import { CryproModal } from "./Components/Crypto-modal"
+// import connectMetamaskHandler from "./Functions/connect-metamask-wallet";
 
 const digitalWill = () => {
   const [error, setError] = useState("");
@@ -91,7 +91,7 @@ const digitalWill = () => {
             Learn how to use DiWi in an interactive course!
           </p>
         </a>
-
+        {/* <CryptoModal/> */}
         <a
           //href="#"
           onClick={connectWalletHandler}
