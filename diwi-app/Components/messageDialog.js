@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
@@ -11,20 +11,49 @@ import {
 } from "@material-tailwind/react";
 import DateTimePicker from "./dateTimePicker"; 
 
+// Assume this is the external script function we want to call
+// import { sendMessage } from "./externalScript";
+
 export function MessageDialog() {
-  const [open, setOpen] = React.useState(false);
- 
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    dateTime: "",
+    message: ""
+  });
+
   const handleOpen = () => setOpen(!open);
- 
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleDateTimeChange = (dateTime) => {
+    setFormData(prevData => ({
+      ...prevData,
+      dateTime
+    }));
+  };
+
+  const handleSubmit = () => {
+    // Call the external script function with form data
+    // sendMessage(formData);
+    console.log(formData);
+    handleOpen(); // Close the dialog after submission
+  };
+
   return (
     <>
       <Button onClick={handleOpen}>Message</Button>
-    <Dialog open={open} size="xs" handler={handleOpen}>
+      <Dialog open={open} size="xs" handler={handleOpen}>
         <div className="flex items-center justify-between">
           <DialogHeader className="flex flex-col items-start">
-            {" "}
             <Typography className="mb-1" variant="h4">
-              New message to @{" "}
+              New message to @{formData.username}
             </Typography>
           </DialogHeader>
           <svg
@@ -49,20 +78,30 @@ export function MessageDialog() {
             <Typography className="-mb-1" color="blue-gray" variant="h6">
               Username
             </Typography>
-            <Input label="address" />
-            <DateTimePicker />
-            <Textarea label="Message" />
+            <Input
+              label="Username"
+              name="username"
+              value={formData.username}
+              onChange={handleInputChange}
+            />
+            <DateTimePicker onChange={handleDateTimeChange} />
+            <Textarea
+              label="Message"
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
+            />
           </div>
         </DialogBody>
         <DialogFooter className="space-x-2">
           <Button variant="text" color="gray" onClick={handleOpen}>
-            cancel
+            Cancel
           </Button>
-          <Button variant="gradient" color="gray" onClick={handleOpen}>
-            send message
+          <Button variant="gradient" color="gray" onClick={handleSubmit}>
+            Send message
           </Button>
         </DialogFooter>
       </Dialog>
-      </>
+    </>
   );
 }

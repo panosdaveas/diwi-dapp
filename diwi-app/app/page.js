@@ -26,6 +26,7 @@ const digitalWill = () => {
         const balanceinEth = web3.utils.fromWei(balance, 'ether');
         console.log('Connected account:', account);
         console.log('Balance:', balanceinEth);
+        console.log('Balance:', balance);
       } catch (err) {
         console.log(err.message);
       }
