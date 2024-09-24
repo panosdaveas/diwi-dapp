@@ -1,18 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Card,
-    CardHeader,
     CardBody,
     CardFooter,
     Button,
     Input,
     Textarea,
-    Typography
+    IconButton,
 } from "@material-tailwind/react";
 import DateTimePicker from "./dateTimePicker";
 import encrypt from "../scripts/timeLockEncrypt";
+import { CustomContext } from "@/app/Context/context";
 
-export function messageCardLeft() {
+export function MessageCardLeft() {
+
+    const { data, setData } = useContext(CustomContext);
     const [open, setOpen] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -41,9 +43,8 @@ export function messageCardLeft() {
     const handleSubmit = async () => {
         try {
             const result = await encrypt(formData);
-            console.log("Plaintext:", result.plaintext);
-            console.log("Decryption Time:", result.decryptionTime);
-            console.log("Ciphertext:", result.ciphertext);
+            setData([result.ciphertext, result.plaintext, result.client, result.decryptionTime]);
+            // console.log(data);
         } catch (error) {
             console.error("Error during encryption:", error);
         }
@@ -53,30 +54,8 @@ export function messageCardLeft() {
         <>
             <Card className="mt-6 w-96">
                 <div className="flex items-center justify-between">
-                    <CardHeader className="flex flex-col items-start">
-                        <Typography className="mb-1" variant="h4">
-                            New Message
-                            {/* New message to @{formData.username} */}
-                        </Typography>
-                    </CardHeader>
-                    {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="mr-3 h-5 w-5"
-            onClick={handleOpen}
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-              clipRule="evenodd"
-            />
-          </svg> */}
                 </div>
                 <CardBody>
-                    {/* <Typography className="mb-10 -mt-7" color="gray" variant="lead">
-            Write the message and then click button.
-          </Typography> */}
                     <div className="grid gap-6">
                         <Input
                             label="Address"
@@ -84,14 +63,10 @@ export function messageCardLeft() {
                             value={formData.username}
                             onChange={handleInputChange}
                         />
-                        {/* <DateTimePicker onChange={handleDateTimeChange} /> */}
-                        {/* <DateTimePicker onChange={handleDateTimeChange} /> */}
-
                         <DateTimePicker
                             selectedDate={formData.dateTime}
                             onChange={handleDateTimeChange}
                         />
-
                         <Textarea
                             label="Message"
                             name="message"
@@ -100,13 +75,31 @@ export function messageCardLeft() {
                         />
                     </div>
                 </CardBody>
-                <CardFooter className="space-x-2">
-                    <Button variant="text" color="gray" onClick={handleOpen}>
-                        Cancel
-                    </Button>
-                    <Button variant="gradient" color="gray" onClick={handleSubmit}>
-                        Send message
-                    </Button>
+                <CardFooter className="flex w-full justify-between py-1.5">
+                    <IconButton variant="text" color="blue-gray" size="sm">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            className="h-4 w-4"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                            />
+                        </svg>
+                    </IconButton>
+                    <div className="flex gap-2">
+                        <Button variant="text" color="gray" onClick={handleOpen}>
+                            Cancel
+                        </Button>
+                        <Button variant="gradient" color="gray" onClick={handleSubmit}>
+                            Encrypt
+                        </Button>
+                    </div>
                 </CardFooter>
             </Card>
         </>

@@ -2,12 +2,12 @@
 
 import "./globals.css";
 import Image from "next/image";
-import { DrawerWithNavigation } from "../Components/Drawer";
 import Web3 from "web3";
 import { SidebarWithContentSeparator } from "@/Components/sidebar";
 import { MessageDialog } from "@/Components/messageDialog";
-import { DialogColumn } from "@/Components/Textarea";
-import { CardDefault } from "@/Components/Card";
+import { MessageCardLeft } from "@/Components/cardLeft";
+import { MessageCardRight } from "@/Components/cardRight";
+import { CustomContext } from "./Context/context";
 
 const digitalWill = () => {
 
@@ -55,7 +55,8 @@ const digitalWill = () => {
        </p>
      </div> */}
      <div className="mb-32 grid gap-6 text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-2 lg:text-left">
-    
+     <MessageCardLeft/>
+     <MessageCardRight/>
      </div>
 
 
