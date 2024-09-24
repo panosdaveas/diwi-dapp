@@ -12,7 +12,7 @@ import {
 import DateTimePicker from "./dateTimePicker"; 
 import encrypt from "../scripts/timeLockEncrypt";
 
-export function MessageDialog() {
+export function DialogColumn() {
   const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ export function MessageDialog() {
     message: ""
   });
 
-  const handleOpen = () => setOpen(!open);
+  const handleOpen = () => setOpen(open);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,7 +51,7 @@ export function MessageDialog() {
 
   return (
     <>
-      <Button onClick={handleOpen}>Message</Button>
+      {/* <Button onClick={handleOpen}>Message</Button> */}
       <Dialog open={open} size="sm" handler={handleOpen}>
         <div className="flex items-center justify-between">
           <DialogHeader className="flex flex-col items-start">
