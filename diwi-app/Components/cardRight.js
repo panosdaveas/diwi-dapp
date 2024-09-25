@@ -32,7 +32,7 @@ export function MessageCardRight() {
 
     const handleSubmit = async() => {
         try {
-            const result = decrypt(data[2], data[0], data[3]);
+            const result = await decrypt(data[0]);
             // console.log(result);
             // console.log("Plaintext:", result.plaintext);
             // console.log("Decryption Time:", result.decryptionTime);
