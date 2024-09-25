@@ -3,7 +3,8 @@ const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
 const encrypt = async (formData) => {
   const plaintext = formData.message;
-  const decryptionTime = formData.dateTime;
+  // const decryptionTime = formData.dateTime;
+  const decryptionTime = Date.now() + 10000;
   let client;
   try {
     client = await quicknetClient();

@@ -47,6 +47,7 @@ export function MessageCardLeft() {
     try {
       const result = await encrypt(formData);
       setData({
+        message: result.ciphertext,
         ciphertext: result.ciphertext,
         plaintext: result.plaintext,
         client: result.client,

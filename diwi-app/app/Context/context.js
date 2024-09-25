@@ -3,6 +3,7 @@
 import { createContext, useState } from "react";
 
 export const CustomContext = createContext({
+  message: "",
   ciphertext: "",
   plaintext: "",
   client: null,
