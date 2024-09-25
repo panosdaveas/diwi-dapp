@@ -22,7 +22,7 @@ export function MessageCardLeft() {
     message: "",
   });
 
-  const handleOpen = () => setOpen(!open);
+  // const handleOpen = () => setOpen(!open);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +33,7 @@ export function MessageCardLeft() {
   };
 
   const handleCancelInput = () => {
-    setFormData((prevData) => ({ ...prevData, message: "", address: ""}));
+    setFormData((prevData) => ({ ...prevData, message: "", address: "" }));
   };
 
   const handleDateTimeChange = (dateTime) => {
@@ -43,16 +43,15 @@ export function MessageCardLeft() {
     }));
   };
 
-  const handleSubmit = async () => {
+  const handleEncrypt = async () => {
     try {
       const result = await encrypt(formData);
-      setData([
-        result.ciphertext,
-        result.plaintext,
-        result.client,
-        result.decryptionTime,
-      ]);
-      // console.log(data);
+      setData({
+        ciphertext: result.ciphertext,
+        plaintext: result.plaintext,
+        client: result.client,
+        decryptionTime: result.decryptionTime,
+      });
     } catch (error) {
       console.error("Error during encryption:", error);
     }
@@ -103,7 +102,7 @@ export function MessageCardLeft() {
             <Button variant="text" color="gray" onClick={handleCancelInput}>
               Cancel
             </Button>
-            <Button variant="gradient" color="gray" onClick={handleSubmit}>
+            <Button variant="gradient" color="gray" onClick={handleEncrypt}>
               Encrypt
             </Button>
           </div>

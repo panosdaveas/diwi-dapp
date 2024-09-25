@@ -30,16 +30,16 @@ export function MessageCardRight() {
         }));
     };
 
-    const handleSubmit = async() => {
-        try {
-            const result = await decrypt(data[0]);
-            // console.log(result);
-            // console.log("Plaintext:", result.plaintext);
-            // console.log("Decryption Time:", result.decryptionTime);
-            // console.log("Ciphertext:", result.ciphertext);
-        } catch (error) {
-            console.error("Error during decryption:", error);
-        }
+    const handleDecrypt = async () => {
+      try {
+        const response = await fetch("./api/decrypt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } catch (error) {
+        console.error("Decryption error:", error);
+      }
     };
 
     return (
@@ -52,16 +52,16 @@ export function MessageCardRight() {
                     <h1></h1>
                     </CustomContext.Provider> */}
                     <div className="grid gap-6">
-                        <CustomContext.Provider value={data[0]}>
+                        {/* <CustomContext.Provider value={data.ciphertext}> */}
                             <Textarea
                                 label="Message"
                                 name="message"
-                                value={data[0]}
+                                value={data.ciphertext}
                                 // value={ciphertext}
                                 onChange={handleInputChange}
                                 rows={10}
                             />
-                        </CustomContext.Provider>
+                        {/* </CustomContext.Provider> */}
                     </div>
                 </CardBody>
                 <CardFooter className="flex w-full justify-between py-1.5">
@@ -85,7 +85,7 @@ export function MessageCardRight() {
                         <Button variant="text" color="gray" onClick={handleOpen}>
                             Cancel
                         </Button>
-                        <Button variant="gradient" color="gray" onClick={handleSubmit}>
+                        <Button variant="gradient" color="gray" onClick={handleDecrypt}>
                             Decrypt
                         </Button>
                     </div>

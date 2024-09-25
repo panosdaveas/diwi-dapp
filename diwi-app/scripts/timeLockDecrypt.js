@@ -1,18 +1,12 @@
 const { timelockDecrypt } = require("tlock-js");
-const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
-const decrypt = async (ciphertext) => {
-  const client = await testnetQuicknetClient();
-  console.log(client);
-  let plaintext = "";
-  try {
-    plaintext = await timelockDecrypt(ciphertext, client);
-    console.log(plaintext);
-  } catch (error) {
-    console.error("An error occurred during decryption:", error);
-  }
+const decrypt = async (client, ciphertext, decryptionTime) => {
+  // console.log(client, ciphertext, decryptionTime);
+  const plaintext = await timelockDecrypt(ciphertext, client);
+  // console.log(plaintext);
   return {
-    plaintext,
+    plaintext: plaintext.toString(),
+    decryptionTime,
     ciphertext,
   };
 };

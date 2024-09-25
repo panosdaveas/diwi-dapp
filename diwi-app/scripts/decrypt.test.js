@@ -3,6 +3,7 @@ const {
   timelockDecrypt,
   roundAt,
 } = require("tlock-js");
+
 const {
   ChainClient, quicknetClient,
   testnetQuicknetClient,
@@ -45,14 +46,13 @@ async function decrypt(client, ciphertext, decryptionTime) {
 
 async function main() {
   try {
-    const client = new quicknetClient(); // Assuming this function exists
+    const client = new quicknetClient();
     const result = await encrypt(
       client,
       encryptionForm.plaintext,
       encryptionForm.decryptionTime
     );
     console.log(result.ciphertext);
-    await setTimeout(5000);
     const decrypted = await decrypt(result.client, result.ciphertext);
     console.log(decrypted.plaintext);
   } catch (error) {

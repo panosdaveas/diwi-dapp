@@ -1,14 +1,12 @@
-const { timelockEncrypt, roundAt } = require("tlock-js");
+const { timelockEncrypt, roundAt, timelockDecrypt } = require("tlock-js");
 const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
 const encrypt = async (formData) => {
   const plaintext = formData.message;
-  // const decryptionTime = formData.dateTime;
-  const decryptionTime = Date.now() + 10000;
+  const decryptionTime = formData.dateTime;
   let client;
   try {
-    client = await testnetQuicknetClient();
-    console.log(client);
+    client = await quicknetClient();
   } catch (error) {
     console.error("An error occurred:", error);
   }
