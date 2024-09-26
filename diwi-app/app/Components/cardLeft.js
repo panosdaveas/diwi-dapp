@@ -33,7 +33,10 @@ export function MessageCardLeft() {
   };
 
   const handleCancelInput = () => {
-    setFormData((prevData) => ({ ...prevData, message: "", address: "" }));
+    setFormData((prevData) => ({ 
+      ...prevData, 
+      message: "", 
+      address: "" }));
   };
 
   const handleDateTimeChange = (dateTime) => {

@@ -34,11 +34,12 @@ export function StepperWithContent() {
               Step 1
             </Typography>
             <Typography
-              variant="small"
+              // variant="small"
               color={activeStep === 0 ? "blue-gray" : "gray"}
               className="font-normal"
             >
-                {data.userAddress}
+                {/* {data.userAddress} */}
+                Your profile
             </Typography>
           </div>
         </Step>
@@ -55,7 +56,7 @@ export function StepperWithContent() {
               color={activeStep === 1 ? "blue-gray" : "gray"}
               className="font-normal"
             >
-              Details about yout account.
+              Details about your account.
             </Typography>
           </div>
         </Step>

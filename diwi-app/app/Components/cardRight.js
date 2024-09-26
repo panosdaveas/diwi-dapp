@@ -31,7 +31,8 @@ export function MessageCardRight() {
       }
     } catch (error) {
       console.error("Error during decryption:", error);
-      const errorLog = "Patience young padawan..." + error;
+      const errorLog =
+        "Patience young padawan..." + error;
       setData((prevState) => ({
         ...prevState,
         message: errorLog,
