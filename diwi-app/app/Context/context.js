@@ -3,20 +3,26 @@
 import { createContext, useState } from "react";
 
 export const CustomContext = createContext({
+  userAddress: "",
   message: "",
   ciphertext: "",
   plaintext: "",
   client: null,
+  dateTime: "",
+  address: "",
   decryptionTime: "",
-  decryptedMessage: ""
+  decryptedMessage: "",
+  addressRecipient: "",
 });
 
 export default function AppProvider({ children }) {
     const [data, setData] = useState({
+      message: "",
       ciphertext: "",
       plaintext: "",
       client: null,
-      decryptionTime: ""
+      decryptionTime: "",
+      decryptedMessage: "",
     });
 
     return (

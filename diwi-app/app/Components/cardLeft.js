@@ -9,20 +9,20 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import DateTimePicker from "./dateTimePicker";
-import encrypt from "../scripts/timeLockEncrypt";
+import timeLockEncryption from "../scripts/timeLockEncrypt";
 import { CustomContext } from "@/app/Context/context";
+// import { encryptWithPublicKey } from "../utils/encryption";
 
 export function MessageCardLeft() {
   const { data, setData } = useContext(CustomContext);
-  const [open, setOpen] = useState(false);
+  const [encryptedMessage, setEncryptedMessage] = useState("");
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
     address: "",
     dateTime: new Date(),
     message: "",
   });
-
-  // const handleOpen = () => setOpen(!open);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,16 +43,34 @@ export function MessageCardLeft() {
     }));
   };
 
-  const handleEncrypt = async () => {
+  // const handleEncrypt = async () => {
+  //   try {
+  //     setError("");
+  //     const encrypted = await encryptWithPublicKey(formData.address, formData.message);
+  //     setEncryptedMessage(encrypted);
+  //     setData((prevData) => ({
+  //       ...prevData,
+  //       message: encrypted,
+  //       ciphertext: encrypted,
+  //       addressRecipient: formData.address,
+  //     }));
+  //   } catch (err) {
+  //     setError("Encryption failed: " + err.message);
+  //   }
+  // };
+
+  const handleTimeLockEncrypt = async () => {
     try {
-      const result = await encrypt(formData);
-      setData({
+      const result = await timeLockEncryption(formData);
+      setData((prevData) => ({
+        ...prevData, 
         message: result.ciphertext,
         ciphertext: result.ciphertext,
         plaintext: result.plaintext,
         client: result.client,
         decryptionTime: result.decryptionTime,
-      });
+        addressRecipient: formData.address
+      }));
     } catch (error) {
       console.error("Error during encryption:", error);
     }
@@ -65,7 +83,7 @@ export function MessageCardLeft() {
         <CardBody>
           <div className="grid gap-6">
             <Input
-              label="Address"
+              label="Public Key"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
@@ -103,7 +121,8 @@ export function MessageCardLeft() {
             <Button variant="text" color="gray" onClick={handleCancelInput}>
               Cancel
             </Button>
-            <Button variant="gradient" color="gray" onClick={handleEncrypt}>
+            <Button variant="gradient" color="gray" onClick={handleTimeLockEncrypt}>
+            {/* <Button variant="gradient" color="gray" onClick={handleEncrypt}> */}
               Encrypt
             </Button>
           </div>

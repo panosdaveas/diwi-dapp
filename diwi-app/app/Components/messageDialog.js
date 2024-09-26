@@ -7,10 +7,10 @@ import {
   DialogFooter,
   Input,
   Textarea,
-  Typography
+  Typography,
 } from "@material-tailwind/react";
-import DateTimePicker from "./dateTimePicker"; 
-import encrypt from "../scripts/timeLockEncrypt";
+import DateTimePicker from "./dateTimePicker";
+import timeLockEncryption from "../scripts/timeLockEncrypt";
 
 export function MessageDialog() {
   const [open, setOpen] = useState(false);
@@ -18,36 +18,36 @@ export function MessageDialog() {
   const [formData, setFormData] = useState({
     address: "",
     dateTime: new Date(),
-    message: ""
+    message: "",
   });
 
   const handleOpen = () => setOpen(!open);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleDateTimeChange = (dateTime) => {
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      dateTime: dateTime
+      dateTime: dateTime,
     }));
   };
 
   const handleSubmit = async () => {
     try {
-        const result = await encrypt(formData);
-        console.log("Plaintext:", result.plaintext);
-        console.log("Decryption Time:", result.decryptionTime);
-        console.log("Ciphertext:", result.ciphertext);
+      const result = await timeLockEncryption(formData);
+      console.log("Plaintext:", result.plaintext);
+      console.log("Decryption Time:", result.decryptionTime);
+      console.log("Ciphertext:", result.ciphertext);
     } catch (error) {
-        console.error("Error during encryption:", error);
+      console.error("Error during encryption:", error);
     }
-};
+  };
 
   return (
     <>
@@ -87,12 +87,12 @@ export function MessageDialog() {
             />
             {/* <DateTimePicker onChange={handleDateTimeChange} /> */}
             {/* <DateTimePicker onChange={handleDateTimeChange} /> */}
-          
-             <DateTimePicker 
+
+            <DateTimePicker
               selectedDate={formData.dateTime}
               onChange={handleDateTimeChange}
             />
-           
+
             <Textarea
               label="Message"
               name="message"

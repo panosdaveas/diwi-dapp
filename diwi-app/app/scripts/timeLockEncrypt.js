@@ -1,7 +1,7 @@
 const { timelockEncrypt, roundAt, timelockDecrypt } = require("tlock-js");
 const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
-const encrypt = async (formData) => {
+const timeLockEncryption = async (formData) => {
   const plaintext = formData.message;
   // const decryptionTime = formData.dateTime;
   const decryptionTime = Date.now() + 10000;
@@ -27,4 +27,4 @@ const encrypt = async (formData) => {
   };
 };
 
-export default encrypt;
+export default timeLockEncryption;
