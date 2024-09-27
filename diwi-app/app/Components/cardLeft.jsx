@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@material-tailwind/react";
 import DateTimePicker from "./dateTimePicker";
-import timeLockEncryption from "../scripts/timeLockEncrypt";
+import timeLockEncryption from "../utils/timeLockEncrypt";
 import { CustomContext } from "@/app/Context/context";
 // import { encryptWithPublicKey } from "../utils/encryption";
 

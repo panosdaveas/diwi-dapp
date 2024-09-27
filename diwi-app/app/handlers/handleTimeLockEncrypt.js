@@ -1,4 +1,4 @@
-import timeLockEncryption from "@/app/scripts/timeLockEncrypt";
+import timeLockEncryption from "@/app/utils/timeLockEncrypt";
 import { useContext } from "react";
 import { CustomContext } from "@/app/Context/context";
 
