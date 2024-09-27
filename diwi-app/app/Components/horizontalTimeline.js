@@ -4,6 +4,9 @@ import {
   CogIcon,
   UserIcon,
   BuildingLibraryIcon,
+  ClockIcon,
+  KeyIcon,
+  LockOpenIcon
 } from "@heroicons/react/24/outline";
 import { CustomContext } from "@/app/Context/context";
 
@@ -18,14 +21,14 @@ export function StepperWithContent() {
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
 
   return (
-    <div className="w-full px-24 py-4">
+    <div className="w-full px-24">
       <Stepper
         activeStep={activeStep}
         isLastStep={(value) => setIsLastStep(value)}
         isFirstStep={(value) => setIsFirstStep(value)}
       >
         <Step onClick={() => setActiveStep(0)}>
-          <UserIcon className="h-5 w-5" />
+          <KeyIcon className="h-5 w-5" />
           <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
               variant="h6"
@@ -39,12 +42,12 @@ export function StepperWithContent() {
               className="font-normal"
             >
                 {/* {data.userAddress} */}
-                Your profile
+                Encrypt with public key
             </Typography>
           </div>
         </Step>
         <Step onClick={() => setActiveStep(1)}>
-          <CogIcon className="h-5 w-5" />
+          <ClockIcon className="h-5 w-5" />
           <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
               variant="h6"
@@ -56,12 +59,12 @@ export function StepperWithContent() {
               color={activeStep === 1 ? "blue-gray" : "gray"}
               className="font-normal"
             >
-              Details about your account.
+              Time-lock encryption
             </Typography>
           </div>
         </Step>
         <Step onClick={() => setActiveStep(2)}>
-          <BuildingLibraryIcon className="h-5 w-5" />
+          <LockOpenIcon className="h-5 w-5" />
           <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
               variant="h6"
@@ -73,7 +76,7 @@ export function StepperWithContent() {
               color={activeStep === 2 ? "blue-gray" : "gray"}
               className="font-normal"
             >
-              Details about your account.
+              Decrypt if it's time!
             </Typography>
           </div>
         </Step>

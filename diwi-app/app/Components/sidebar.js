@@ -31,15 +31,6 @@ export function SidebarWithContentSeparator() {
     setOpen(open === value ? 0 : value);
   };
 
-  // const handleConnect = () => {
-  //   const userAddress = connectWalletHandler();
-  //   console.log(await userAddress);
-  //   setData((prevData) => ({
-  //     ...prevData,
-  //     userAddress: userAddress,
-  //   }));
-  // };
-
   const handleConnect = async () => {
     try {
     const userAddress = await connectWalletHandler();
@@ -54,7 +45,8 @@ export function SidebarWithContentSeparator() {
   };
  
   return (
-    <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    // <Card className="h-[calc(100vh-2rem)] w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
+    <Card className="h-screen w-full max-w-[20rem] p-4 shadow-xl shadow-blue-gray-900/5">
       <div className="mb-2 p-4">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"

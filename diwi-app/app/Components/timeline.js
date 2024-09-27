@@ -11,10 +11,8 @@ import {
   ArchiveBoxIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/solid";
-import { CustomContext } from "@/app/Context/context";
 
 export function ActivitiesTimeline() {
-  const { data, setData } = useContext(CustomContext);
 
   return (
     <div className="w-[25rem]">

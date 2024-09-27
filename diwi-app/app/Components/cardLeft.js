@@ -81,7 +81,7 @@ export function MessageCardLeft() {
 
   return (
     <>
-      <Card className="mt-6 w-96">
+      <Card className="w-full">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -125,7 +125,6 @@ export function MessageCardLeft() {
               Cancel
             </Button>
             <Button variant="gradient" color="gray" onClick={handleTimeLockEncrypt}>
-            {/* <Button variant="gradient" color="gray" onClick={handleEncrypt}> */}
               Encrypt
             </Button>
           </div>

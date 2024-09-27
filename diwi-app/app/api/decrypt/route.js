@@ -7,7 +7,7 @@ export async function POST(request) {
   try {
     const client = await quicknetClient();
     const plaintext = await timelockDecrypt(ciphertext, client);
-    return NextResponse.json({ decrypted: plaintext.toString(), dateTime });
+    return NextResponse.json({ decrypted: plaintext.toString(), });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

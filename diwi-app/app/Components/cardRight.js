@@ -12,6 +12,13 @@ import { ClipboardDefault } from "./clipboard";
 export function MessageCardRight() {
   const { data, setData } = useContext(CustomContext);
 
+  const handleClear = () => {
+    setData((prevData) => ({
+      ...prevData,
+      message: "",
+    }));
+  };
+
   const handleDecrypt = async () => {
     try {
       const response = await fetch("./api/decrypt", {
@@ -42,7 +49,7 @@ export function MessageCardRight() {
 
   return (
     <>
-      <Card className="mt-6 w-96">
+      <Card className="w-full">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -58,9 +65,9 @@ export function MessageCardRight() {
         <CardFooter className="flex w-full justify-between py-1.5">
           <ClipboardDefault content={data.message}/>
           <div className="flex gap-2">
-            {/* <Button variant="text" color="gray" onClick={handleOpen}>
-              Cancel
-            </Button> */}
+            <Button variant="text" color="gray" onClick={handleClear}>
+              Clear
+            </Button>
             <Button variant="gradient" color="gray" onClick={handleDecrypt}>
               Decrypt
             </Button>

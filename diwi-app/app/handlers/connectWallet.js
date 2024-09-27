@@ -10,8 +10,8 @@ const connectWalletHandler = async () => {
       web3 = new Web3(window.ethereum);
       const accounts = await web3.eth.getAccounts();
       account = accounts[0];
-      const balance = await web3.eth.getBalance(account);
-      const balanceinEth = web3.utils.fromWei(balance, "ether");
+      // const balance = await web3.eth.getBalance(account);
+      // const balanceinEth = web3.utils.fromWei(balance, "ether");
     //   console.log("Connected account:", account);
       //   const myaccount = web3.eth.accounts.encrypt()
     } catch (err) {

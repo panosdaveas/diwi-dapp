@@ -17,12 +17,16 @@ export const CustomContext = createContext({
 
 export default function AppProvider({ children }) {
     const [data, setData] = useState({
+      userAddress: "",
       message: "",
       ciphertext: "",
       plaintext: "",
       client: null,
+      dateTime: "",
+      address: "",
       decryptionTime: "",
       decryptedMessage: "",
+      addressRecipient: "",
     });
 
     return (
