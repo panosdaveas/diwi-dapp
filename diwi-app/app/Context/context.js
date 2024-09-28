@@ -13,6 +13,8 @@ export const CustomContext = createContext({
   decryptionTime: "",
   decryptedMessage: "",
   addressRecipient: "",
+  accountAddress: "",
+  chainName: "",
 });
 
 export default function AppProvider({ children }) {

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import connectWalletHandler from "../handlers/connectWallet";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import { CustomContext } from "@/app/Context/context";
 import Image from "next/image";
 import {
@@ -20,7 +19,6 @@ import {
 } from "@material-tailwind/react";
 import {
   PresentationChartBarIcon,
-  UserCircleIcon,
   Cog6ToothIcon,
   InboxIcon,
   PowerIcon,
@@ -34,6 +32,9 @@ import { MessageCardLeft } from "@/app/Components/cardLeft";
 import { MessageCardRight } from "@/app/Components/cardRight";
 import { StepperWithContent } from "./horizontalTimeline";
 import { Skeleton } from "./skeleton";
+import { ConnectWalletButton } from "./walletButton";
+import { CustomConnectWalletButton } from "./customConnectWalletButton";
+import { encryptWithPublicKey } from "../utils/encryptionWithPublicKey";
 
 const DashboardLayout = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -49,6 +50,45 @@ const DashboardLayout = ({ children }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  function pemToUint8Array(pem) {
+    // Remove the header and footer
+    const pemContents = pem.replace(/-----BEGIN PUBLIC KEY-----/, '')
+      .replace(/-----END PUBLIC KEY-----/, '')
+      .replace(/\s/g, '');
+
+    // Decode the base64 using Buffer
+    const buffer = Buffer.from(pemContents, 'base64');
+
+    // Convert Buffer to Uint8Array
+    return new Uint8Array(buffer);
+  }
+
+  // Usage
+  const pemPublicKey = `-----BEGIN PUBLIC KEY-----
+MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEYAk8b78p6nJFnWEiMukPem6a84Cfrnsx
+Yu7Gd5XijPj74eAXEjmw0NW4KWy8zOTO3JonEUesj/y8kBU/nL0LCQ==
+-----END PUBLIC KEY-----`;
+
+  const uint8ArrayPublicKey = pemToUint8Array(pemPublicKey);
+  console.log(uint8ArrayPublicKey);
+
+  // If you want to see the array contents more clearly:
+  console.log(Array.from(uint8ArrayPublicKey));
+
+  const handleEncrypt = async () => {
+    const newMessage = "hello";
+    const encrypted = await encryptWithPublicKey(pemToUint8Array(pemPublicKey), newMessage);
+    console.log("encrypted" + encrypted.toString());
+  };
+
+  const handleConnectData = useCallback((data) => {
+    setData((prevData) => ({
+      ...prevData,
+      accountAddress: data,
+    }));
+    console.log(data);
+  });
+
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
@@ -56,19 +96,6 @@ const DashboardLayout = ({ children }) => {
 
   const handleAccordionOpen = (value) => {
     setOpenAccordion(openAccordion === value ? 0 : value);
-  };
-
-  const handleConnect = async () => {
-    try {
-      const userAddress = await connectWalletHandler();
-      setData((prevData) => ({
-        ...prevData,
-        userAddress: userAddress,
-      }));
-      console.log(userAddress);
-    } catch (err) {
-      setError("Connection failed: " + err.message);
-    }
   };
 
   const SidebarContent = () => (
@@ -150,12 +177,17 @@ const DashboardLayout = ({ children }) => {
             />
           </ListItemSuffix>
         </ListItem>
-        <ListItem onClick={handleConnect}>
+        {/* <ListItem> */}
+        <div className="p-3">
+        <CustomConnectWalletButton onConnectData={handleConnectData}/>
+        </div>
+        {/* </ListItem> */}
+        {/* <ListItem>
           <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
           </ListItemPrefix>
-          Connect
-        </ListItem>
+          <CustomConnectWalletButton />
+        </ListItem> */}
         <ListItem>
           <ListItemPrefix>
             <Cog6ToothIcon className="h-5 w-5" />
@@ -169,6 +201,8 @@ const DashboardLayout = ({ children }) => {
           Log Out
         </ListItem>
       </List>
+      <button onClick={handleEncrypt}>Encrypt</button>
+      {/* <ConnectWalletButton /> */}
     </Card>
   );
 
@@ -177,9 +211,24 @@ const DashboardLayout = ({ children }) => {
       {!isMobile && (
         <aside className="w-64 bg-white dark:bg-gray-900">
           <SidebarContent />
-          <Typography color="gray" className="absolute bottom-4 left-4 text-xs">
+          <a
+            href="https://github.com/panosdaveas/DiWi-DApp.git"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
+            <Typography color="gray" className="absolute bottom-4 left-4 text-xs">
+              v0.1.9
+            </Typography>
+          </a>
+
+          {/* <Typography color="gray" 
+            className="absolute bottom-4 left-4 text-xs cursor-pointer"
+            rel="github"
+            href="https://github.com/panosdaveas/DiWi-DApp.git"
+            target="_blank">
             ds v0.1.9
-          </Typography>
+          </Typography> */}
         </aside>
       )}
       <div className="flex-1 flex flex-col overflow-hidden">
