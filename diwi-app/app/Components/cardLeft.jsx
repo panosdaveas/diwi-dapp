@@ -8,75 +8,78 @@ import {
   Textarea,
   IconButton,
 } from "@material-tailwind/react";
+import { CustomContext } from "@/app/Context/context";
+import { encryptWithPublicKey, generateKeyPair } from "../utils/asymmetricEncryption";
 import DateTimePicker from "./dateTimePicker";
 import timeLockEncryption from "../utils/timeLockEncrypt";
-import { CustomContext } from "@/app/Context/context";
-// import { encryptWithPublicKey } from "../utils/encryption";
+import { set } from "date-fns";
 
-export function MessageCardLeft() {
+export function CardLeftSteps() {
   const { data, setData } = useContext(CustomContext);
-  const [encryptedMessage, setEncryptedMessage] = useState("");
-  const [error, setError] = useState("");
 
-  const [formData, setFormData] = useState({
-    address: "",
-    dateTime: new Date(),
-    message: "",
-  });
+  //use effect set date time to current date  
+  useEffect(() => {
+    setData((prevData) => ({
+      ...prevData,
+      dateTime: new Date(),
+    }));
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
+    setData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
   };
 
   const handleCancelInput = () => {
-    setFormData((prevData) => ({ 
-      ...prevData, 
-      message: "", 
-      address: "" }));
+    setData((prevData) => ({
+      ...prevData,
+      message: "",
+      publicKey: "",
+      plaintext: "",
+    }));
   };
 
   const handleDateTimeChange = (dateTime) => {
-    setFormData((prevData) => ({
+    setData((prevData) => ({
       ...prevData,
       dateTime: dateTime,
     }));
   };
 
-  // const handleEncrypt = async () => {
-  //   try {
-  //     setError("");
-  //     const encrypted = await encryptWithPublicKey(formData.address, formData.message);
-  //     setEncryptedMessage(encrypted);
-  //     setData((prevData) => ({
-  //       ...prevData,
-  //       message: encrypted,
-  //       ciphertext: encrypted,
-  //       addressRecipient: formData.address,
-  //     }));
-  //   } catch (err) {
-  //     setError("Encryption failed: " + err.message);
-  //   }
-  // };
-
   const handleTimeLockEncrypt = async () => {
     try {
-      const result = await timeLockEncryption(formData);
+      const result = await timeLockEncryption(data.dateTime, data.message);
       setData((prevData) => ({
-        ...prevData, 
+        ...prevData,
         message: result.ciphertext,
-        ciphertext: result.ciphertext,
-        plaintext: result.plaintext,
         client: result.client,
         decryptionTime: result.decryptionTime,
-        addressRecipient: formData.address
+        displayMessageEncrypted: result.ciphertext,
       }));
     } catch (error) {
       console.error("Error during encryption:", error);
     }
+  };
+
+  const handleAsymmetricEncryption = async () => {
+    //create new key pair
+    const newKeyPair = generateKeyPair();
+    console.log("Public key: " + newKeyPair.publicKey);
+    console.log("Private key: " + newKeyPair.privateKey);
+    //encrypt with public key
+    console.log("data.message", data.message);
+    const encrypted = await encryptWithPublicKey(newKeyPair.publicKey, data.plaintext);
+    setData((prevData) => ({
+      ...prevData,
+      message: encrypted,
+      publicKey: newKeyPair.publicKey,
+      privateKey: newKeyPair.privateKey,
+      displayMessage: encrypted,
+      displayMessageEncrypted: encrypted,
+    }));
   };
 
   return (
@@ -85,22 +88,27 @@ export function MessageCardLeft() {
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
-            <Input
+            {data.activeStep === 0 ? <Input
               label="Public Key"
               name="address"
-              value={formData.address}
+              value={data.publicKey}
               onChange={handleInputChange}
-            />
-            <DateTimePicker
-              selectedDate={formData.dateTime}
+            /> : <DateTimePicker
+              selectedDate={data.dateTime}
               onChange={handleDateTimeChange}
-            />
-            <Textarea
+            />}
+            {data.activeStep === 0 ? <Textarea 
               label="Message"
-              name="message"
-              value={formData.message}
+              name="plaintext"
+              value={data.plaintext}
               onChange={handleInputChange}
-            />
+              rows={7}
+            /> : <Textarea
+              label="Message"
+              name="ciphertext"
+              value={data.displayMessage}
+              onChange={handleInputChange}
+              rows={7} />}
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between py-1.5">
@@ -124,9 +132,12 @@ export function MessageCardLeft() {
             <Button variant="text" color="gray" onClick={handleCancelInput}>
               Cancel
             </Button>
-            <Button variant="gradient" color="gray" onClick={handleTimeLockEncrypt}>
+            {data.activeStep === 0 ? 
+            <Button variant="gradient" color="gray" onClick={handleAsymmetricEncryption}>
               Encrypt
-            </Button>
+            </Button> : <Button variant="gradient" color="gray" onClick={handleTimeLockEncrypt}>
+              Encrypt
+            </Button>}
           </div>
         </CardFooter>
       </Card>

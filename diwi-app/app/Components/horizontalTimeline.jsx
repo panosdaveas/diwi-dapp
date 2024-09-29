@@ -1,9 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Stepper, Step, Button, Typography } from "@material-tailwind/react";
 import {
-  CogIcon,
-  UserIcon,
-  BuildingLibraryIcon,
   ClockIcon,
   KeyIcon,
   LockOpenIcon
@@ -14,8 +11,14 @@ export function StepperWithContent() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [isLastStep, setIsLastStep] = React.useState(false);
   const [isFirstStep, setIsFirstStep] = React.useState(false);
-
   const { data, setData } = useContext(CustomContext);
+  // initial data.active step to 0
+  useEffect(() => {
+    setData((prevData) => ({
+      ...prevData,
+      activeStep: 0,
+    }))
+  }, []);
 
   const handleNext = () => !isLastStep && setActiveStep((cur) => cur + 1);
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
@@ -27,7 +30,12 @@ export function StepperWithContent() {
         isLastStep={(value) => setIsLastStep(value)}
         isFirstStep={(value) => setIsFirstStep(value)}
       >
-        <Step onClick={() => setActiveStep(0)}>
+        <Step onClick={() => {
+          setActiveStep(0), setData((prevData) => ({
+            ...prevData,
+            activeStep: 0,
+            displayMessageEncrypted: "",
+          }))} }>
           <KeyIcon className="h-5 w-5" />
           <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
@@ -46,7 +54,13 @@ export function StepperWithContent() {
             </Typography>
           </div>
         </Step>
-        <Step onClick={() => setActiveStep(1)}>
+        <Step onClick={() => {
+          setActiveStep(1), setData((prevData) => ({
+            ...prevData,
+            activeStep: 1,
+            displayMessageEncrypted: "",
+          }))
+        }}>
           <ClockIcon className="h-5 w-5" />
           <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
@@ -63,7 +77,13 @@ export function StepperWithContent() {
             </Typography>
           </div>
         </Step>
-        <Step onClick={() => setActiveStep(2)}>
+        <Step onClick={() => {
+          setActiveStep(2), setData((prevData) => ({
+            ...prevData,
+            activeStep: 2,
+            displayMessageEncrypted: "",
+          }))
+        }}>
           <LockOpenIcon className="h-5 w-5" />
           <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography

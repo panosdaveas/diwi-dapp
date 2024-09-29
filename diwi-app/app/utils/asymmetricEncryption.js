@@ -1,4 +1,5 @@
 import EthCrypto from "eth-crypto";
+import { Main } from "next/document";
 
 export async function encryptWithPublicKey(publicKey, message) {
   try {
@@ -12,6 +13,19 @@ export async function encryptWithPublicKey(publicKey, message) {
     throw error;
   }
 }
+//decrypt with private key
+export async function decryptWithPrivateKey(privateKey, encrypted) {
+  try {
+    const decrypted = await EthCrypto.decryptWithPrivateKey(
+      privateKey, // hex string
+      encrypted // encrypted text
+    );
+    return decrypted;
+  } catch (error) {
+    console.error("Decryption error:", error);
+    throw error;
+  }
+}
 // In utils/encryption.js
 export function generateKeyPair() {
   const identity = EthCrypto.createIdentity();
@@ -20,3 +34,4 @@ export function generateKeyPair() {
     privateKey: identity.privateKey
   };
 }
+

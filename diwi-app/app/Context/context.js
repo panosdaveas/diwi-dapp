@@ -4,7 +4,8 @@ import { createContext, useState } from "react";
 
 export const CustomContext = createContext({
   userAddress: "",
-  message: "",
+  displayMessage: "",
+  displayMessageEncrypted: "",
   ciphertext: "",
   plaintext: "",
   client: null,
@@ -15,6 +16,14 @@ export const CustomContext = createContext({
   addressRecipient: "",
   accountAddress: "",
   chainName: "",
+  activeStep: 0,
+  publicKey: "",
+  privateKey: "",
+  messageOriginal: "",
+  messageEncryptedWithPK: "",
+  messageEncryptedWithTL: "",
+  dateTime: new Date(),
+  decrypted: "",
 });
 
 export default function AppProvider({ children }) {

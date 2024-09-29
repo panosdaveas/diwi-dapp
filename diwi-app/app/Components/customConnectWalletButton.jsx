@@ -1,5 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { CustomContext } from "@/app/Context/context";
 export const CustomConnectWalletButton = ({ onConnectData }) => {
+    const { data, setData } = useContext(CustomContext);
     return (
         <ConnectButton.Custom>
             {({
@@ -52,7 +54,6 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                                 );
                             }
 
-
                             return (
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     <button
@@ -96,6 +97,11 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                                 </div>
                             );
                         })()}
+
+                    data = {(accountAddress) => setData((prevData) => ({
+                ...prevData,
+                accountAddress: accountAddress,
+        }))}
                     </div>
                 );
             }

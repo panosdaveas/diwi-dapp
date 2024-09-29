@@ -8,8 +8,9 @@ import {
 } from "@material-tailwind/react";
 import { CustomContext } from "@/app/Context/context";
 import { ClipboardDefault } from "./clipboard";
+import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
 
-export function MessageCardRight() {
+export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);
 
   const handleClear = () => {
@@ -19,7 +20,17 @@ export function MessageCardRight() {
     }));
   };
 
-  const handleDecrypt = async () => {
+  const handleAsymmetricDecryption = async () => {
+    const decrypted = await decryptWithPrivateKey(data.privateKey, data.message);
+    setData((prevData) => ({
+      ...prevData,
+      displayMessageEncrypted: decrypted,
+      ciphertext: decrypted,
+    }));
+  };
+
+  const handleTimeLockDecryption = async () => {
+
     try {
       const response = await fetch("./api/decrypt", {
         method: "POST",
@@ -33,8 +44,11 @@ export function MessageCardRight() {
         const message = JSON.stringify(await response.json()); 
         setData((prevState) => ({
         ...prevState,
-        message: message
-      }));
+        message: message,
+        displayMessageEncrypted: message,
+
+      })
+    );
       }
     } catch (error) {
       console.error("Error during decryption:", error);
@@ -42,7 +56,7 @@ export function MessageCardRight() {
         "Patience young padawan..." + error;
       setData((prevState) => ({
         ...prevState,
-        message: errorLog,
+        displayMessageEncrypted: errorLog,
       }));
     }
   };
@@ -56,21 +70,27 @@ export function MessageCardRight() {
             <Textarea
               readOnly={true}
               label="Encrypted message"
-              name="message"
-              value={data.message}
+              name="displayMessageEncrypted"
+              value={data.displayMessageEncrypted}
               rows={10}
             />
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between py-1.5">
-          <ClipboardDefault content={data.message}/>
+          <ClipboardDefault content={data.displayMessageEncrypted}/>
           <div className="flex gap-2">
             <Button variant="text" color="gray" onClick={handleClear}>
               Clear
             </Button>
-            <Button variant="gradient" color="gray" onClick={handleDecrypt}>
+            {/* //if active step is 0 then onClick handleAsssymetricDecryption else handleTimeLockDecryption  */}
+            {data.activeStep === 0 ? <Button variant="gradient" color="gray" onClick={handleAsymmetricDecryption}>
               Decrypt
-            </Button>
+            </Button> : <Button variant="gradient" color="gray" onClick={handleTimeLockDecryption}>
+              Decrypt
+            </Button>}  
+            {/* // <Button variant="gradient" color="gray" onClick={handleDecrypt}> */}
+              {/* Decrypt */}
+            {/* </Button> */}
           </div>
         </CardFooter>
       </Card>

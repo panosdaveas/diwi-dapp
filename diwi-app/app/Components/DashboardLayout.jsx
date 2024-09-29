@@ -28,13 +28,12 @@ import {
   ChevronDownIcon,
   Bars3Icon,
 } from "@heroicons/react/24/outline";
-import { MessageCardLeft } from "@/app/Components/cardLeft";
-import { MessageCardRight } from "@/app/Components/cardRight";
 import { StepperWithContent } from "./horizontalTimeline";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { CustomConnectWalletButton } from "./customConnectWalletButton";
-import { encryptWithPublicKey } from "../utils/encryptionWithPublicKey";
+import { CardLeftSteps } from "./cardLeft";
+import { CardRightSteps } from "./cardRight";
 
 const DashboardLayout = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
@@ -42,6 +41,7 @@ const DashboardLayout = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(0);
   const { data, setData } = useContext(CustomContext);
+  const [keyPair, setKeyPair] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -49,37 +49,6 @@ const DashboardLayout = ({ children }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  function pemToUint8Array(pem) {
-    // Remove the header and footer
-    const pemContents = pem.replace(/-----BEGIN PUBLIC KEY-----/, '')
-      .replace(/-----END PUBLIC KEY-----/, '')
-      .replace(/\s/g, '');
-
-    // Decode the base64 using Buffer
-    const buffer = Buffer.from(pemContents, 'base64');
-
-    // Convert Buffer to Uint8Array
-    return new Uint8Array(buffer);
-  }
-
-  // Usage
-  const pemPublicKey = `-----BEGIN PUBLIC KEY-----
-MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEYAk8b78p6nJFnWEiMukPem6a84Cfrnsx
-Yu7Gd5XijPj74eAXEjmw0NW4KWy8zOTO3JonEUesj/y8kBU/nL0LCQ==
------END PUBLIC KEY-----`;
-
-  const uint8ArrayPublicKey = pemToUint8Array(pemPublicKey);
-  console.log(uint8ArrayPublicKey);
-
-  // If you want to see the array contents more clearly:
-  console.log(Array.from(uint8ArrayPublicKey));
-
-  const handleEncrypt = async () => {
-    const newMessage = "hello";
-    const encrypted = await encryptWithPublicKey(pemToUint8Array(pemPublicKey), newMessage);
-    console.log("encrypted" + encrypted.toString());
-  };
 
   const handleConnectData = useCallback((data) => {
     setData((prevData) => ({
@@ -119,9 +88,8 @@ Yu7Gd5XijPj74eAXEjmw0NW4KWy8zOTO3JonEUesj/y8kBU/nL0LCQ==
           icon={
             <ChevronDownIcon
               strokeWidth={2.5}
-              className={`mx-auto h-4 w-4 transition-transform ${
-                openAccordion === 1 ? "rotate-180" : ""
-              }`}
+              className={`mx-auto h-4 w-4 transition-transform ${openAccordion === 1 ? "rotate-180" : ""
+                }`}
             />
           }
         >
@@ -179,7 +147,7 @@ Yu7Gd5XijPj74eAXEjmw0NW4KWy8zOTO3JonEUesj/y8kBU/nL0LCQ==
         </ListItem>
         {/* <ListItem> */}
         <div className="p-3">
-        <CustomConnectWalletButton onConnectData={handleConnectData}/>
+          {/* <CustomConnectWalletButton onConnectData={handleConnectData}/> */}
         </div>
         {/* </ListItem> */}
         {/* <ListItem>
@@ -201,8 +169,7 @@ Yu7Gd5XijPj74eAXEjmw0NW4KWy8zOTO3JonEUesj/y8kBU/nL0LCQ==
           Log Out
         </ListItem>
       </List>
-      <button onClick={handleEncrypt}>Encrypt</button>
-      {/* <ConnectWalletButton /> */}
+      {/* <p>activeStep: {data.activeStep}</p> */}
     </Card>
   );
 
@@ -258,30 +225,30 @@ Yu7Gd5XijPj74eAXEjmw0NW4KWy8zOTO3JonEUesj/y8kBU/nL0LCQ==
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Additional cards */}
               <div className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden">
-                  <StepperWithContent />
+                <StepperWithContent />
                 {/* Add performance overview content here */}
               </div>
               {/* Main content area */}
               {/* <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 align-middle justify-center">  */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-3 align-middle justify-center"> 
+              <div className="col-span-1 md:col-span-2 lg:col-span-3 align-middle justify-center">
                 <div className="grid gap-6 justify-center text-center align-middle lg:max-full lg:w-full lg:mb-0 lg:grid-cols-2 lg:text-left">
-                  <MessageCardLeft />
-                  <MessageCardRight />
+                  <CardLeftSteps />
+                  <CardRightSteps />
                 </div>
                 {children}
               </div>
               <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden">
-                  <Skeleton />
+                <Skeleton />
                 {/* Add performance overview content here */}
               </Card>
 
               {/* Sidebar cards */}
               <div className="col-span-1 space-y-6">
                 <Card className="p-6">
-                    <Skeleton/>
+                  <Skeleton />
                 </Card>
                 <Card className="p-6">
-                    <Skeleton/>
+                  <Skeleton />
                 </Card>
               </div>
             </div>
