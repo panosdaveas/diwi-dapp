@@ -24,6 +24,8 @@ export const CustomContext = createContext({
   messageEncryptedWithTL: "",
   dateTime: new Date(),
   decrypted: "",
+  account: [],
+  accountAddress: "",
 });
 
 export default function AppProvider({ children }) {

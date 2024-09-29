@@ -22,6 +22,7 @@ import {
   Cog6ToothIcon,
   InboxIcon,
   PowerIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/solid";
 import {
   ChevronRightIcon,
@@ -40,8 +41,8 @@ const DashboardLayout = ({ children }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(0);
-  const { data, setData } = useContext(CustomContext);
-  const [keyPair, setKeyPair] = useState(null);
+  const [accountConnected, setAccountConnected] = useState(null);
+  const { data, setData } = useContext(CustomContext);  
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -49,14 +50,6 @@ const DashboardLayout = ({ children }) => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const handleConnectData = useCallback((data) => {
-    setData((prevData) => ({
-      ...prevData,
-      accountAddress: data,
-    }));
-    console.log(data);
-  });
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -67,8 +60,13 @@ const DashboardLayout = ({ children }) => {
     setOpenAccordion(openAccordion === value ? 0 : value);
   };
 
+  //use callback to get data from customConnectWalletButton
+  const handleAccountConnected = (account) => {
+    console.log(account.address);
+  };
+
   const SidebarContent = () => (
-    <Card className="h-full w-full max-w-[20rem] bg-gray-100 p-4 shadow-xl shadow-blue-gray-900/5 dark:bg-gray-900">
+    <Card className="h-full w-full max-w-[20rem] bg-white p-4 shadow-xl shadow-blue-gray-900/5 dark:bg-gray-900">
       <div className="mb-2 p-4">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
@@ -78,9 +76,6 @@ const DashboardLayout = ({ children }) => {
           height={35}
           priority
         />
-        {/* <Typography variant="h5" color={isDarkMode ? "white" : "blue-gray"}>
-          Digital Will
-        </Typography> */}
       </div>
       <List>
         <Accordion
@@ -145,17 +140,12 @@ const DashboardLayout = ({ children }) => {
             />
           </ListItemSuffix>
         </ListItem>
-        {/* <ListItem> */}
-        <div className="p-3">
-          {/* <CustomConnectWalletButton onConnectData={handleConnectData}/> */}
-        </div>
-        {/* </ListItem> */}
-        {/* <ListItem>
+        <ListItem>
           <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
           </ListItemPrefix>
-          <CustomConnectWalletButton />
-        </ListItem> */}
+        Profile
+        </ListItem>
         <ListItem>
           <ListItemPrefix>
             <Cog6ToothIcon className="h-5 w-5" />
@@ -169,7 +159,8 @@ const DashboardLayout = ({ children }) => {
           Log Out
         </ListItem>
       </List>
-      {/* <p>activeStep: {data.activeStep}</p> */}
+      <CustomConnectWalletButton onAccountConnected={handleAccountConnected} />
+      {/* <p>accountConnected: {data.accountAddress}</p> */}
     </Card>
   );
 
@@ -198,9 +189,9 @@ const DashboardLayout = ({ children }) => {
           </Typography> */}
         </aside>
       )}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-white">
         {isMobile && (
-          <Navbar className="mx-auto max-w-screen-xl px-4 py-3">
+          <Navbar className="mx-auto max-w-screen-xl px-4 py-3 bg-white">
             <div className="flex items-center justify-between text-blue-gray-900">
               <Typography
                 as="a"
@@ -220,18 +211,17 @@ const DashboardLayout = ({ children }) => {
             </div>
           </Navbar>
         )}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-white dark:bg-gray-800">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-800">
           <div className="container mx-auto px-6 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Additional cards */}
-              <div className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden">
+              <div className="col-span-1 md:col-span-2 sm:col-span-3 lg:col-span-3 p-6 overflow-hidden">
                 <StepperWithContent />
                 {/* Add performance overview content here */}
               </div>
               {/* Main content area */}
-              {/* <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 align-middle justify-center">  */}
               <div className="col-span-1 md:col-span-2 lg:col-span-3 align-middle justify-center">
-                <div className="grid gap-6 justify-center text-center align-middle lg:max-full lg:w-full lg:mb-0 lg:grid-cols-2 lg:text-left">
+                <div className="grid gap-6 justify-center text-center align-middle lg:max-full lg:w-full lg:mb-0 lg:grid-cols-2 md:grid-cols-1 lg:text-left">
                   <CardLeftSteps />
                   <CardRightSteps />
                 </div>

@@ -24,7 +24,7 @@ export function StepperWithContent() {
   const handlePrev = () => !isFirstStep && setActiveStep((cur) => cur - 1);
 
   return (
-    <div className="w-full px-24">
+    <div className="w-full lg:px-24 md:px-0">
       <Stepper
         activeStep={activeStep}
         isLastStep={(value) => setIsLastStep(value)}

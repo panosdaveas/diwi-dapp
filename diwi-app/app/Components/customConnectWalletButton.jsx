@@ -1,7 +1,26 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CustomContext } from "@/app/Context/context";
-export const CustomConnectWalletButton = ({ onConnectData }) => {
+import { useContext, useEffect, useCallback } from 'react';
+
+export const CustomConnectWalletButton = ({ onAccountConnected }) => {
     const { data, setData } = useContext(CustomContext);
+
+    const updateAccountData = useCallback((account) => {
+        if (account && (!data.account || data.account.address !== account.address)) {
+            setData(prevData => ({
+                ...prevData,
+                account: {
+                    address: account.address,
+                    displayName: account.displayName,
+                    displayBalance: account.displayBalance
+                }
+            }));
+            if (onAccountConnected) {
+                onAccountConnected(account);
+            }
+        }
+    }, [data.account, setData, onAccountConnected]);
+
     return (
         <ConnectButton.Custom>
             {({
@@ -13,8 +32,6 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                 authenticationStatus,
                 mounted,
             }) => {
-                // Note: If your app doesn't use authentication, you
-                // can remove all 'authenticationStatus' checks
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -23,9 +40,12 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                     (!authenticationStatus ||
                         authenticationStatus === 'authenticated');
 
-                const onConnected = () => {
-                    onConnectData(account.address);
-                };
+                useEffect(() => {
+                    if (connected && account) {
+                        updateAccountData(account);
+                    }
+                }, [connected, account, updateAccountData]);
+
                 return (
                     <div
                         {...(!ready && {
@@ -53,7 +73,6 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                                     </button>
                                 );
                             }
-
                             return (
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     <button
@@ -69,8 +88,6 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                                                 className="h-5 w-5"
                                                 style={{
                                                     background: chain.iconBackground,
-                                                    // width: 12,
-                                                    // height: 12,
                                                     borderRadius: 999,
                                                     overflow: 'hidden',
                                                     marginRight: 4,
@@ -81,7 +98,6 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                                                         className="h-5 w-5"
                                                         alt={chain.name ?? 'Chain icon'}
                                                         src={chain.iconUrl}
-                                                    // style={{ width: 12, height: 12 }}
                                                     />
                                                 )}
                                             </div>
@@ -89,23 +105,13 @@ export const CustomConnectWalletButton = ({ onConnectData }) => {
                                     </button>
                                     <button onClick={openAccountModal} type="button">
                                         {account.displayName}
-                                        {/* {account.displayBalance
-                                            ? ` (${account.displayBalance})`
-                                            : ''} */}
                                     </button>
-
                                 </div>
                             );
                         })()}
-
-                    data = {(accountAddress) => setData((prevData) => ({
-                ...prevData,
-                accountAddress: accountAddress,
-        }))}
                     </div>
                 );
-            }
-            }
+            }}
         </ConnectButton.Custom>
     );
 };
