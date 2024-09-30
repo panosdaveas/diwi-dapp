@@ -32,17 +32,19 @@ import {
 import { StepperWithContent } from "./horizontalTimeline";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
-import { CustomConnectWalletButton } from "./customConnectWalletButton";
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
+import { useWallet } from '@/app/Context/WalletContext';
+
 
 const DashboardLayout = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(0);
-  const [accountConnected, setAccountConnected] = useState(null);
-  const { data, setData } = useContext(CustomContext);  
+  const { data, setData } = useContext(CustomContext);
+  const { walletInfo } = useWallet();
+
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -60,14 +62,9 @@ const DashboardLayout = ({ children }) => {
     setOpenAccordion(openAccordion === value ? 0 : value);
   };
 
-  //use callback to get data from customConnectWalletButton
-  const handleAccountConnected = (account) => {
-    console.log(account.address);
-  };
-
   const SidebarContent = () => (
     <Card className="h-full w-full max-w-[20rem] bg-white p-4 shadow-xl shadow-blue-gray-900/5 dark:bg-gray-900">
-      <div className="mb-2 p-4">
+      <div className="mb-0 p-4">
         <Image
           className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
           src="/DiWi-2.svg"
@@ -144,7 +141,7 @@ const DashboardLayout = ({ children }) => {
           <ListItemPrefix>
             <UserCircleIcon className="h-5 w-5" />
           </ListItemPrefix>
-        Profile
+          Profile
         </ListItem>
         <ListItem>
           <ListItemPrefix>
@@ -158,9 +155,10 @@ const DashboardLayout = ({ children }) => {
           </ListItemPrefix>
           Log Out
         </ListItem>
+        <ListItem>
+          <ConnectWalletButton />
+        </ListItem>
       </List>
-      <CustomConnectWalletButton onAccountConnected={handleAccountConnected} />
-      {/* <p>accountConnected: {data.accountAddress}</p> */}
     </Card>
   );
 

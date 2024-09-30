@@ -1,6 +1,6 @@
 import EthCrypto from "eth-crypto";
-import { Main } from "next/document";
 
+//encrypt with public key
 export async function encryptWithPublicKey(publicKey, message) {
   try {
     const encrypted = await EthCrypto.encryptWithPublicKey(
@@ -26,7 +26,7 @@ export async function decryptWithPrivateKey(privateKey, encrypted) {
     throw error;
   }
 }
-// In utils/encryption.js
+//generate key pair
 export function generateKeyPair() {
   const identity = EthCrypto.createIdentity();
   return {

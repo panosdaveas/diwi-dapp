@@ -3,9 +3,10 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
-import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
-
-import { config } from "../wagmi";
+import { RainbowKitProvider, lightTheme, darkTheme, midnightTheme } from "@rainbow-me/rainbowkit";
+import { config } from "../../wagmi";
+import { WalletProvider } from "@/app/Context/WalletContext";
+import { WalletInfoUpdater } from "@/app/utils/WalletInfoUpdater";
 
 const queryClient = new QueryClient();
 
@@ -15,17 +16,19 @@ export function Providers({ children }) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           modalSize="compact"
-          theme={lightTheme({
-            accentColor: "none",
-            accentColorForeground: "blue-gray",
-            borderRadius: "none",
+          theme={midnightTheme({
+            accentColor: "black",
+            accentColorForeground: "white",
+            borderRadius: "medium",
             borderShadow: "none",
             fontStack: "system",
-            fontFamily: "Inherit",
             overlayBlur: "small",
           })}
         >
-          {children}
+          <WalletProvider>
+            <WalletInfoUpdater />
+            {children}
+          </WalletProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

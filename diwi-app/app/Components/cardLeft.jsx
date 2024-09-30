@@ -12,18 +12,9 @@ import { CustomContext } from "@/app/Context/context";
 import { encryptWithPublicKey, generateKeyPair } from "../utils/asymmetricEncryption";
 import DateTimePicker from "./dateTimePicker";
 import timeLockEncryption from "../utils/timeLockEncrypt";
-import { set } from "date-fns";
 
 export function CardLeftSteps() {
   const { data, setData } = useContext(CustomContext);
-
-  //use effect set date time to current date  
-  useEffect(() => {
-    setData((prevData) => ({
-      ...prevData,
-      dateTime: new Date(),
-    }));
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,6 +30,7 @@ export function CardLeftSteps() {
       message: "",
       publicKey: "",
       plaintext: "",
+      dateTime: new Date(),
     }));
   };
 
@@ -67,10 +59,9 @@ export function CardLeftSteps() {
   const handleAsymmetricEncryption = async () => {
     //create new key pair
     const newKeyPair = generateKeyPair();
-    console.log("Public key: " + newKeyPair.publicKey);
-    console.log("Private key: " + newKeyPair.privateKey);
+    // console.log("Public key: " + newKeyPair.publicKey);
+    // console.log("Private key: " + newKeyPair.privateKey);
     //encrypt with public key
-    console.log("data.message", data.message);
     const encrypted = await encryptWithPublicKey(newKeyPair.publicKey, data.plaintext);
     setData((prevData) => ({
       ...prevData,

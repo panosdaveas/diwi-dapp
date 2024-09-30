@@ -1,6 +1,7 @@
 import AppProvider from "./Context/context";
 import "@rainbow-me/rainbowkit/styles.css";
-import { Providers } from "./providers";
+import { Providers } from "./Providers/providers";
+import { WalletProvider } from "./Context/WalletContext";
 
 export const metadata = {
   title: "DiWi",

@@ -9,6 +9,7 @@ import {
 import { CustomContext } from "@/app/Context/context";
 import { ClipboardDefault } from "./clipboard";
 import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
+import EthCrypto from "eth-crypto";
 
 export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);
@@ -21,11 +22,11 @@ export function CardRightSteps() {
   };
 
   const handleAsymmetricDecryption = async () => {
-    const decrypted = await decryptWithPrivateKey(data.privateKey, data.message);
+    const message = await decryptWithPrivateKey(data.privateKey, data.message);
     setData((prevData) => ({
       ...prevData,
-      displayMessageEncrypted: decrypted,
-      ciphertext: decrypted,
+      displayMessageEncrypted: message,
+      ciphertext: message,
     }));
   };
 
@@ -41,14 +42,16 @@ export function CardRightSteps() {
         const errorData = await response.json();
         throw new Error(errorData.error || "Decryption failed");
       } else {
-        const message = JSON.stringify(await response.json()); 
+        const decrypted = JSON.stringify(await response.json());
+        const decryptedMessageString = JSON.parse(decrypted);
+        // console.log(decryptedMessageString.decrypted);
+        // console.log(await decryptWithPrivateKey(data.privateKey, decryptedMessageString.decrypted));
         setData((prevState) => ({
-        ...prevState,
-        message: message,
-        displayMessageEncrypted: message,
-
-      })
-    );
+          ...prevState,
+          message: decryptedMessageString.decrypted,
+          displayMessageEncrypted: decrypted,
+        })
+        );
       }
     } catch (error) {
       console.error("Error during decryption:", error);
@@ -77,7 +80,7 @@ export function CardRightSteps() {
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between py-1.5">
-          <ClipboardDefault content={data.displayMessageEncrypted}/>
+          <ClipboardDefault content={data.displayMessageEncrypted} />
           <div className="flex gap-2">
             <Button variant="text" color="gray" onClick={handleClear}>
               Clear
@@ -87,10 +90,11 @@ export function CardRightSteps() {
               Decrypt
             </Button> : <Button variant="gradient" color="gray" onClick={handleTimeLockDecryption}>
               Decrypt
-            </Button>}  
+            </Button>}
             {/* // <Button variant="gradient" color="gray" onClick={handleDecrypt}> */}
-              {/* Decrypt */}
+            {/* Decrypt */}
             {/* </Button> */}
+            <Button onClick={handleAsymmetricDecryption}>here</Button>
           </div>
         </CardFooter>
       </Card>
