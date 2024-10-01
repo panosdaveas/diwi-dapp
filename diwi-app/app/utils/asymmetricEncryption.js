@@ -29,6 +29,8 @@ export async function decryptWithPrivateKey(privateKey, encrypted) {
 //generate key pair
 export function generateKeyPair() {
   const identity = EthCrypto.createIdentity();
+  console.log("publicKey:", identity.publicKey);  
+  console.log("privateKey:", identity.privateKey);  
   return {
     publicKey: identity.publicKey,
     privateKey: identity.privateKey

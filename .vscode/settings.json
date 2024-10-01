@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["drand", "quicknet", "timelock", "tlock"]
+  "cSpell.words": ["drand", "quicknet", "timelock", "tlock"],
+  "solidity.compileUsingRemoteVersion": "latest"
 }
