@@ -58,16 +58,16 @@ export function CardLeftSteps() {
 
   const handleAsymmetricEncryption = async () => {
     //create new key pair
-    const newKeyPair = generateKeyPair();
+    // const newKeyPair = generateKeyPair();
     // console.log("Public key: " + newKeyPair.publicKey);
     // console.log("Private key: " + newKeyPair.privateKey);
     //encrypt with public key
-    const encrypted = await encryptWithPublicKey(newKeyPair.publicKey, data.plaintext);
+    const encrypted = await encryptWithPublicKey(data.publicKey, data.plaintext);
     setData((prevData) => ({
       ...prevData,
       message: encrypted,
-      publicKey: newKeyPair.publicKey,
-      privateKey: newKeyPair.privateKey,
+      // publicKey: newKeyPair.publicKey,
+      // privateKey: newKeyPair.privateKey,
       displayMessage: encrypted,
       displayMessageEncrypted: encrypted,
     }));

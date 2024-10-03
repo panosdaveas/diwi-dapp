@@ -35,6 +35,9 @@ import { ConnectWalletButton } from "./walletButton";
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
 import { useWallet } from '@/app/Context/WalletContext';
+// import {useContractInteraction} from "@/app/scripts/interact";
+import { TableWithoutBorder } from "./table";
+import ContractDataTable from "./contractDataTable";
 
 
 const DashboardLayout = ({ children }) => {
@@ -43,8 +46,6 @@ const DashboardLayout = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(0);
   const { data, setData } = useContext(CustomContext);
-  const { walletInfo } = useWallet();
-
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -156,9 +157,12 @@ const DashboardLayout = ({ children }) => {
           Log Out
         </ListItem>
         <ListItem>
+          {isMobile && (
           <ConnectWalletButton />
+          )}
         </ListItem>
       </List>
+      {/* {<ContractInteraction />} */}
     </Card>
   );
 
@@ -187,9 +191,9 @@ const DashboardLayout = ({ children }) => {
           </Typography> */}
         </aside>
       )}
-      <div className="flex-1 flex flex-col overflow-hidden bg-white">
-        {isMobile && (
-          <Navbar className="mx-auto max-w-screen-xl px-4 py-3 bg-white">
+      <div className="flex-1 flex flex-col overflow-hidden bg-gray-100">
+        {/* {isMobile && ( */}
+        <Navbar color="white" fullWidth className="mx-auto max-w-screen-xl px-4 py-3">
             <div className="flex items-center justify-between text-blue-gray-900">
               <Typography
                 as="a"
@@ -199,6 +203,7 @@ const DashboardLayout = ({ children }) => {
               >
                 Digital Will
               </Typography>
+              {isMobile && (
               <IconButton
                 variant="text"
                 color="blue-gray"
@@ -206,9 +211,12 @@ const DashboardLayout = ({ children }) => {
               >
                 <Bars3Icon className="h-6 w-6" />
               </IconButton>
+        )}
+        {!isMobile && (
+            <ConnectWalletButton />
+        )}
             </div>
           </Navbar>
-        )}
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-800">
           <div className="container mx-auto px-6 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -216,6 +224,10 @@ const DashboardLayout = ({ children }) => {
               <div className="col-span-1 md:col-span-2 sm:col-span-3 lg:col-span-3 p-6 overflow-hidden">
                 <StepperWithContent />
                 {/* Add performance overview content here */}
+              </div>
+              <div className="col-span-1 md:col-span-2 lg:col-span-3 align-middle justify-center">
+                <ContractDataTable />
+                {/* <TableWithoutBorder /> */}
               </div>
               {/* Main content area */}
               <div className="col-span-1 md:col-span-2 lg:col-span-3 align-middle justify-center">

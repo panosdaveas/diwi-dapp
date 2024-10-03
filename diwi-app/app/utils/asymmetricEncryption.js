@@ -2,9 +2,14 @@ import EthCrypto from "eth-crypto";
 
 //encrypt with public key
 export async function encryptWithPublicKey(publicKey, message) {
+  const publicKeyToHex = Buffer.from(publicKey, "base64").toString("hex");
+  const formattedPublicKey = EthCrypto.publicKey.compress(publicKeyToHex.toString(``));
+  console.log("here");
+  console.log("formattedPublicKey:", formattedPublicKey);
   try {
     const encrypted = await EthCrypto.encryptWithPublicKey(
-      publicKey, // hex string
+      // publicKey, // hex string
+      formattedPublicKey, // hex string
       message // plain text
     );
     return EthCrypto.cipher.stringify(encrypted);
@@ -35,5 +40,6 @@ export function generateKeyPair() {
     publicKey: identity.publicKey,
     privateKey: identity.privateKey
   };
+
 }
 

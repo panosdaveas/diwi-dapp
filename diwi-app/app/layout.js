@@ -1,7 +1,8 @@
 import AppProvider from "./Context/context";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./Providers/providers";
-import { WalletProvider } from "./Context/WalletContext";
+// import { TableProvider } from "./Providers/tableDataProvider";
+import { TableDataProvider } from "./Context/TableDataContext";
 
 export const metadata = {
   title: "DiWi",
@@ -13,7 +14,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AppProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <TableDataProvider>
+              {children}
+              </TableDataProvider>
+          </Providers>
         </AppProvider>
       </body>
     </html>
