@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
+import { Configuration } from "../config";
 
 const contractABI = [
     {
@@ -148,8 +149,8 @@ const contractABI = [
     },
 ];
 
-// Replace with your contract's address
-const contractAddress = "0xccee68b0cb982725753f7b0eba2f10899bcc3e0e";
+// get with your contract's address from config.js
+const contractAddress = Configuration().contractAddress;
 
 export function useContractInteraction() {
   const [contract, setContract] = useState(null);
@@ -160,7 +161,8 @@ export function useContractInteraction() {
   useEffect(() => {
     const setupContract = async () => {
       try {
-        const provider = new ethers.JsonRpcProvider("http://localhost:7545");
+        // const provider = new ethers.JsonRpcProvider(Configuration().networkProvider);
+        const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contractInstance = new ethers.Contract(
           contractAddress,
@@ -181,6 +183,7 @@ export function useContractInteraction() {
     setLoading(true);
     setError(null);
     try {
+      console.log("contractAddress", contractAddress);
       return contractAddress;
     } catch (err) {
       setError("Error fetching contract: " + err.message);
@@ -210,6 +213,8 @@ export function useContractInteraction() {
     setLoading(true);
     setError(null);
     try {
+        const provider = new ethers.JsonRpcProvider("http://localhost:7545");
+        const signer = await provider.getSigner();
       const tx = await contract.requestPublicKey(address, message);
       await tx.wait();
       console.log("Public key requested successfully");

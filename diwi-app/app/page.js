@@ -1,9 +1,16 @@
 "use client";
 
 import "./globals.css";
+import { ThemeProvider } from "@material-tailwind/react";
 
-import DashboardLayout from "./Components/DashboardLayout";
+import DashboardLayout from "./Components/Dashboard";
 
 export default function Home() {
-  return <DashboardLayout></DashboardLayout>;
+
+  return (
+  <ThemeProvider>
+    <DashboardLayout></DashboardLayout>
+  </ThemeProvider>
+  );
+
 }

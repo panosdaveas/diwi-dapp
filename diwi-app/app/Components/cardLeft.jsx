@@ -57,17 +57,11 @@ export function CardLeftSteps() {
   };
 
   const handleAsymmetricEncryption = async () => {
-    //create new key pair
-    // const newKeyPair = generateKeyPair();
-    // console.log("Public key: " + newKeyPair.publicKey);
-    // console.log("Private key: " + newKeyPair.privateKey);
     //encrypt with public key
     const encrypted = await encryptWithPublicKey(data.publicKey, data.plaintext);
     setData((prevData) => ({
       ...prevData,
       message: encrypted,
-      // publicKey: newKeyPair.publicKey,
-      // privateKey: newKeyPair.privateKey,
       displayMessage: encrypted,
       displayMessageEncrypted: encrypted,
     }));
@@ -75,7 +69,7 @@ export function CardLeftSteps() {
 
   return (
     <>
-      <Card className="w-full">
+      <Card className="w-full shadow-none border-b border-r border-t border-blue-gray-100 dark:border-gray-700 dark:bg-gray-900">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -84,6 +78,7 @@ export function CardLeftSteps() {
               name="address"
               value={data.publicKey}
               onChange={handleInputChange}
+              className="overflow-hidden overflow-ellipsis"
             /> : <DateTimePicker
               selectedDate={data.dateTime}
               onChange={handleDateTimeChange}

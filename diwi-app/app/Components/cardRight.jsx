@@ -9,7 +9,6 @@ import {
 import { CustomContext } from "@/app/Context/context";
 import { ClipboardDefault } from "./clipboard";
 import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
-import EthCrypto from "eth-crypto";
 
 export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);
@@ -66,7 +65,7 @@ export function CardRightSteps() {
 
   return (
     <>
-      <Card className="w-full">
+      <Card className="w-full shadow-none border-b border-l border-t border-blue-gray-100 dark:border-gray-700 dark:bg-gray-900">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">

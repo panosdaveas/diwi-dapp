@@ -34,9 +34,6 @@ import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
-import { useWallet } from '@/app/Context/WalletContext';
-// import {useContractInteraction} from "@/app/scripts/interact";
-import { TableWithoutBorder } from "./table";
 import ContractDataTable from "./contractDataTable";
 
 
@@ -162,14 +159,12 @@ const DashboardLayout = ({ children }) => {
           )}
         </ListItem>
       </List>
-      {/* {<ContractInteraction />} */}
     </Card>
   );
 
   return (
     <div className={`flex h-screen ${isDarkMode ? "dark" : ""}`}>
-      {!isMobile && (
-        <aside className="w-64 bg-white dark:bg-gray-900">
+      {!isMobile && ( <aside className="w-64 bg-white dark:bg-gray-900">
           <SidebarContent />
           <a
             href="https://github.com/panosdaveas/DiWi-DApp.git"
@@ -181,19 +176,12 @@ const DashboardLayout = ({ children }) => {
               v0.1.9
             </Typography>
           </a>
-
-          {/* <Typography color="gray" 
-            className="absolute bottom-4 left-4 text-xs cursor-pointer"
-            rel="github"
-            href="https://github.com/panosdaveas/DiWi-DApp.git"
-            target="_blank">
-            ds v0.1.9
-          </Typography> */}
         </aside>
       )}
       <div className="flex-1 flex flex-col overflow-hidden bg-gray-100">
         {/* {isMobile && ( */}
-        <Navbar color="white" fullWidth className="mx-auto max-w-screen-xl px-4 py-3">
+        <Navbar color="white" fullWidth className="mx-auto max-w-screen-xl px-4 py-3 rounded-b-md">
+        {/* <Navbar color="white" fullWidth className="shadow-none border-b-gray-300"> */}
             <div className="flex items-center justify-between text-blue-gray-900">
               <Typography
                 as="a"

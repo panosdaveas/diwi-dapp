@@ -37,7 +37,7 @@ export function StepperWithContent() {
             displayMessageEncrypted: "",
           }))} }>
           <KeyIcon className="h-5 w-5" />
-          <div className="absolute -bottom-[4.5rem] w-max text-center">
+          {/* <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
               variant="h6"
               color={activeStep === 0 ? "blue-gray" : "gray"}
@@ -49,10 +49,10 @@ export function StepperWithContent() {
               color={activeStep === 0 ? "blue-gray" : "gray"}
               className="font-normal"
             >
-                {/* {data.userAddress} */}
+               }
                 Encrypt with public key
             </Typography>
-          </div>
+          </div> */}
         </Step>
         <Step onClick={() => {
           setActiveStep(1), setData((prevData) => ({
@@ -62,7 +62,7 @@ export function StepperWithContent() {
           }))
         }}>
           <ClockIcon className="h-5 w-5" />
-          <div className="absolute -bottom-[4.5rem] w-max text-center">
+          {/* <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
               variant="h6"
               color={activeStep === 1 ? "blue-gray" : "gray"}
@@ -75,7 +75,7 @@ export function StepperWithContent() {
             >
               Time-lock encryption
             </Typography>
-          </div>
+          </div> */}
         </Step>
         <Step onClick={() => {
           setActiveStep(2), setData((prevData) => ({
@@ -85,7 +85,7 @@ export function StepperWithContent() {
           }))
         }}>
           <LockOpenIcon className="h-5 w-5" />
-          <div className="absolute -bottom-[4.5rem] w-max text-center">
+          {/* <div className="absolute -bottom-[4.5rem] w-max text-center">
             <Typography
               variant="h6"
               color={activeStep === 2 ? "blue-gray" : "gray"}
@@ -98,7 +98,7 @@ export function StepperWithContent() {
             >
               Decrypt if it's time!
             </Typography>
-          </div>
+          </div> */}
         </Step>
       </Stepper>
       {/* <div className="mt-32 flex justify-between">

@@ -5,14 +5,11 @@ import {
     Button,
     Spinner,
     Input,
-    List,
-    ListItem,
 } from "@material-tailwind/react";
 import { useContractInteraction } from "@/app/scripts/interact";
 import { useWallet } from "@/app/Context/WalletContext";
 import { CustomContext } from "@/app/Context/context";
-
-import EthCrypto from "eth-crypto";
+import { ClipboardDefault } from './clipboard';
 
 const ContractDataTable = () => {
     const { data, setData } = useContext(CustomContext);
@@ -21,12 +18,14 @@ const ContractDataTable = () => {
     const [tableData, setTableData] = useState({
         owner: '',
         publicKey: '',
+        contractAddress: '',
         requestStatus: ''
     });
     const [targetAddress, setTargetAddress] = useState('');
 
     const handleFetchOwner = async () => {
         const owner = walletInfo.address;
+        // const owner = fetchOwner();
         setTableData(prev => ({ ...prev, owner }));
     };
 
@@ -48,8 +47,6 @@ const ContractDataTable = () => {
         setData((prevData) => ({
             ...prevData,
             publicKey: publicKey,
-            // publicKey: publicKeyUint8Array,
-            // privateKey: newKeyPair.privateKey,
         }));
     };
 
@@ -71,10 +68,10 @@ const ContractDataTable = () => {
     }
 
     return (
-        <Card className="h-full w-full overflow-scroll">
+        <Card className="h-full w-full overflow-scroll shadow-none border-b border-blue-gray-100 dark:border-gray-700 dark:bg-gray-900">
             {/* <Card className="w-full max-w-[1000px] mx-auto overflow-scroll"> */}
             <div className="p-4">
-                <Typography variant="h5" color="blue-gray" className="mb-4">
+                <Typography variant="h5" color="blue-gray" className="mb-4 px-3">
                     Contract Data Dashboard
                 </Typography>
 
@@ -115,7 +112,16 @@ const ContractDataTable = () => {
                                     color="blue-gray"
                                     className="font-bold leading-none"
                                 >
-                                    Copy
+                                    
+                                </Typography>
+                            </th>
+                            <th className="border-b border-gray-300 p-4 pt-10">
+                                <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-bold leading-none"
+                                >
+                                    Status
                                 </Typography>
                             </th>
                         </tr>
@@ -133,9 +139,12 @@ const ContractDataTable = () => {
                                 </Button>
                             </td>
                             <td className="p-4">
-                                <Typography variant="small" color="blue-gray">
+                                <Typography variant="small" color="blue-gray" className="overflow-hidden overflow-ellipsis">
                                     {tableData.contractAddress || '-'}
                                 </Typography>
+                            </td>
+                            <td className="p-4">
+                                <ClipboardDefault content={tableData.contractAddress} />
                             </td>
                             <td className="p-4"></td>
                         </tr>
@@ -151,11 +160,13 @@ const ContractDataTable = () => {
                                 </Button>
                             </td>
                             <td className="p-4">
-                                <Typography variant="small" color="blue-gray">
+                                <Typography variant="small" color="blue-gray" className="overflow-hidden overflow-ellipsis">
                                     {tableData.owner || '-'}
                                 </Typography>
                             </td>
-                            <td className="p-4"></td>
+                            <td className="p-4">
+                                <ClipboardDefault content={tableData.owner} />
+                            </td>
                         </tr>
                         <tr>
                             <td className="p-4 border-b border-blue-gray-50">
@@ -172,10 +183,14 @@ const ContractDataTable = () => {
                                 <Input
                                     type="text"
                                     placeholder="Enter target address"
+                                    label="Target Address"
                                     value={targetAddress}
                                     onChange={(e) => setTargetAddress(e.target.value)}
-                                    className="border rounded p-2 mr-2 before:content-none after:content-none"
+                                    className="border rounded p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis"
                                 />
+                            </td>
+                            <td className="p-4">
+                                <ClipboardDefault content={targetAddress} />
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <Typography variant="small" color="blue-gray">
@@ -194,10 +209,13 @@ const ContractDataTable = () => {
                                     {loading ? <Spinner className="h-4 w-4" /> : 'Get Public Key'}
                                 </Button>
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50">
-                                <Typography variant="small" color="blue-gray">
+                            <td className="p-4 border-b border-blue-gray-50 max-w-[100px] ">
+                                <Typography variant="small" color="blue-gray" className="overflow-hidden overflow-ellipsis">   
                                     {tableData.publicKey || '-'}
                                 </Typography>
+                            </td>
+                            <td className="p-4">
+                                <ClipboardDefault content={tableData.publicKey} />
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
                                 <Typography variant="small" color="blue-gray">
