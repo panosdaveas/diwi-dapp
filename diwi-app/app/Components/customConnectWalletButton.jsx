@@ -15,9 +15,6 @@ export const CustomConnectWalletButton = ({ onAccountConnected }) => {
                     displayBalance: account.displayBalance
                 }
             }));
-            if (onAccountConnected) {
-                onAccountConnected(account);
-            }
         }
     }, [data.account, setData, onAccountConnected]);
 

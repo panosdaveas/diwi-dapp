@@ -2,10 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
 :root {
-  --foreground-rgb: 0, 0, 0;
+  /* --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255; */
+  --color-primary: theme('colors.primary.light');
+    --color-background: theme('colors.background.light');
+    --color-text: theme('colors.text.light');
+}
+
+:root[class~="dark"] {
+  /* Define your CSS variables for dark theme */
+  --color-primary: theme('colors.primary.dark');
+  --color-background: theme('colors.background.dark');
+  --color-text: theme('colors.text.dark');
+  --color-card: theme('colors.card.dark');
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,6 +26,10 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
+}
+body {
+  @apply bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark transition-colors duration-200;
+}
 }
 
 body {

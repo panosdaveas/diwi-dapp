@@ -16,6 +16,32 @@ module.exports = withMT({
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        // Define your custom colors here
+        primary: {
+          light: "white",
+          dark: "#212121",
+        },
+        background: {
+          light: "white",
+          dark: "#1a1a1a",
+        },
+        text: {
+          light: "#212121",
+          dark: "#F5F5F5",
+        },
+        border: {
+          light: "#CFD8DC",
+          dark: "#616161",
+        },
+        card: {
+          light: "#F5F5F5",
+          dark: "#212121",
+        },
+      },
+      borders: {
+        card: "4",
+      },
     },
   },
   plugins: [],

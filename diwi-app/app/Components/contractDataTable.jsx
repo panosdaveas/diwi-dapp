@@ -68,30 +68,21 @@ const ContractDataTable = () => {
     }
 
     return (
-        <Card className="h-full w-full overflow-scroll shadow-none border-b border-blue-gray-100 dark:border-gray-700 dark:bg-gray-900">
+        <Card className="h-full w-full overflow-scroll py-4 shadow-none rounded-none border-b border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark">
             {/* <Card className="w-full max-w-[1000px] mx-auto overflow-scroll"> */}
             <div className="p-4">
-                <Typography variant="h5" color="blue-gray" className="mb-4 px-3">
+                <Typography variant="h5" 
+                // color="blue-gray" 
+                className="mb-4 px-3" >
                     Contract Data Dashboard
                 </Typography>
-
-                {/* <div className="mb-4">
-                    <input
-                        type="text"
-                        placeholder="Enter target address"
-                        value={targetAddress}
-                        onChange={(e) => setTargetAddress(e.target.value)}
-                        className="border rounded p-2 mr-2"
-                    />
-                </div> */}
-
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
                             <th className="border-b border-gray-300 p-4 pt-10">
                                 <Typography
                                     variant="small"
-                                    color="blue-gray"
+                                    // color="blue-gray"
                                     className="font-bold leading-none"
                                 >
                                     Function
@@ -100,7 +91,7 @@ const ContractDataTable = () => {
                             <th className="border-b border-gray-300 p-4 pt-10">
                                 <Typography
                                     variant="small"
-                                    color="blue-gray"
+                                    // color="blue-gray"
                                     className="font-bold leading-none"
                                 >
                                     Return
@@ -109,7 +100,7 @@ const ContractDataTable = () => {
                             <th className="border-b border-gray-300 p-4 pt-10">
                                 <Typography
                                     variant="small"
-                                    color="blue-gray"
+                                    // color="blue-gray"
                                     className="font-bold leading-none"
                                 >
                                     
@@ -118,7 +109,7 @@ const ContractDataTable = () => {
                             <th className="border-b border-gray-300 p-4 pt-10">
                                 <Typography
                                     variant="small"
-                                    color="blue-gray"
+                                    // color="blue-gray"
                                     className="font-bold leading-none"
                                 >
                                     Status
@@ -128,9 +119,10 @@ const ContractDataTable = () => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td className="p-4">
+                            <td className="py-4">
                                 <Button
-                                    variant="text" className="flex items-center gap-2"
+                                    // variant="text" 
+                                    className="flex items-center gap-2"
                                     size="sm"
                                     disabled={loading}
                                     onClick={handleFetchContract}
@@ -139,7 +131,9 @@ const ContractDataTable = () => {
                                 </Button>
                             </td>
                             <td className="p-4">
-                                <Typography variant="small" color="blue-gray" className="overflow-hidden overflow-ellipsis">
+                                <Typography variant="small" 
+                                // color="blue-gray" 
+                                className="overflow-hidden overflow-ellipsis">
                                     {tableData.contractAddress || '-'}
                                 </Typography>
                             </td>
@@ -149,9 +143,10 @@ const ContractDataTable = () => {
                             <td className="p-4"></td>
                         </tr>
                         <tr>
-                            <td className="p-4">
+                            <td className="py-4">
                                 <Button
-                                    variant="text" className="flex items-center gap-2"
+                                    // variant="text" 
+                                    className="flex items-center gap-2"
                                     size="sm"
                                     disabled={loading}
                                     onClick={handleFetchOwner}
@@ -160,7 +155,9 @@ const ContractDataTable = () => {
                                 </Button>
                             </td>
                             <td className="p-4">
-                                <Typography variant="small" color="blue-gray" className="overflow-hidden overflow-ellipsis">
+                                <Typography variant="small" 
+                                // color="blue-gray" 
+                                className="overflow-hidden overflow-ellipsis">
                                     {tableData.owner || '-'}
                                 </Typography>
                             </td>
@@ -169,9 +166,10 @@ const ContractDataTable = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td className="p-4 border-b border-blue-gray-50">
+                            <td className="py-4 border-b border-blue-gray-50">
                                 <Button
-                                    variant="text" className="flex items-center gap-2"
+                                    // variant="text" 
+                                    className="flex items-center gap-2"
                                     size="sm"
                                     disabled={loading || !targetAddress}
                                     onClick={handleRequestPublicKey}
@@ -182,26 +180,32 @@ const ContractDataTable = () => {
                             <td className="p-4 border-b border-blue-gray-50">
                                 <Input
                                     type="text"
+                                    variant="standard"
                                     placeholder="Enter target address"
                                     label="Target Address"
                                     value={targetAddress}
                                     onChange={(e) => setTargetAddress(e.target.value)}
-                                    className="border rounded p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis"
+                                    color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+                                    // className="border rounded p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis text-text-light dark:text-text-dark"
+                                    className="p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis"   
                                 />
                             </td>
-                            <td className="p-4">
+                            <td className="p-4 border-b border-blue-gray-50">
                                 <ClipboardDefault content={targetAddress} />
                             </td>
                             <td className="p-4 border-b border-blue-gray-50">
-                                <Typography variant="small" color="blue-gray">
+                                <Typography variant="small" 
+                                // color="blue-gray"
+                                >
                                     {tableData.requestStatusRequestPK || '-'}
                                 </Typography>
                             </td>
                         </tr>
                         <tr>
-                            <td className="p-4 border-b border-blue-gray-50">
+                            <td className="py-4">
                                 <Button
-                                    variant="text" className="flex items-center gap-2"
+                                    // variant="text"
+                                    className="flex items-center gap-2"
                                     size="sm"
                                     disabled={loading || !targetAddress}
                                     onClick={handleGetPublicKey}
@@ -209,16 +213,20 @@ const ContractDataTable = () => {
                                     {loading ? <Spinner className="h-4 w-4" /> : 'Get Public Key'}
                                 </Button>
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50 max-w-[100px] ">
-                                <Typography variant="small" color="blue-gray" className="overflow-hidden overflow-ellipsis">   
+                            <td className="p-4 max-w-[100px] ">
+                                <Typography variant="small" 
+                                // color="blue-gray" 
+                                className="overflow-hidden overflow-ellipsis">   
                                     {tableData.publicKey || '-'}
                                 </Typography>
                             </td>
                             <td className="p-4">
                                 <ClipboardDefault content={tableData.publicKey} />
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50">
-                                <Typography variant="small" color="blue-gray">
+                            <td className="p-4">
+                                <Typography variant="small" 
+                                // color="blue-gray"
+                                >
                                     {tableData.requestStatusGetPK || '-'}
                                 </Typography>
                             </td>

@@ -69,7 +69,7 @@ export function CardLeftSteps() {
 
   return (
     <>
-      <Card className="w-full shadow-none border-b border-r border-t border-blue-gray-100 dark:border-gray-700 dark:bg-gray-900">
+      <Card className="w-full shadow-none rounded-none border-b border-r border-t border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -79,9 +79,11 @@ export function CardLeftSteps() {
               value={data.publicKey}
               onChange={handleInputChange}
               className="overflow-hidden overflow-ellipsis"
+              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             /> : <DateTimePicker
               selectedDate={data.dateTime}
               onChange={handleDateTimeChange}
+              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             />}
             {data.activeStep === 0 ? <Textarea 
               label="Message"
@@ -89,12 +91,17 @@ export function CardLeftSteps() {
               value={data.plaintext}
               onChange={handleInputChange}
               rows={7}
+              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+              className="dark:focus:border-t-0"
+              
             /> : <Textarea
               label="Message"
               name="ciphertext"
               value={data.displayMessage}
               onChange={handleInputChange}
-              rows={7} />}
+              rows={7} 
+              // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+              />}
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between py-1.5">
@@ -103,7 +110,8 @@ export function CardLeftSteps() {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              // stroke="currentColor"
+              stroke={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               strokeWidth={2}
               className="h-4 w-4"
             >
@@ -115,13 +123,23 @@ export function CardLeftSteps() {
             </svg>
           </IconButton>
           <div className="flex gap-2">
-            <Button variant="text" color="gray" onClick={handleCancelInput}>
+            <Button variant="text" 
+            // color="gray" 
+              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+            onClick={handleCancelInput}>
               Cancel
             </Button>
             {data.activeStep === 0 ? 
-            <Button variant="gradient" color="gray" onClick={handleAsymmetricEncryption}>
+            <Button variant="gradient" 
+            // color="gray" 
+            onClick={handleAsymmetricEncryption}
+              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+              >
               Encrypt
-            </Button> : <Button variant="gradient" color="gray" onClick={handleTimeLockEncrypt}>
+            </Button> : <Button variant="gradient" 
+            // color="gray" 
+              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+            onClick={handleTimeLockEncrypt}>
               Encrypt
             </Button>}
           </div>

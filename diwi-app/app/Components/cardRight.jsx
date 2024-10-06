@@ -65,7 +65,7 @@ export function CardRightSteps() {
 
   return (
     <>
-      <Card className="w-full shadow-none border-b border-l border-t border-blue-gray-100 dark:border-gray-700 dark:bg-gray-900">
+      <Card className="w-full shadow-none rounded-none border-b border-l border-t border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">

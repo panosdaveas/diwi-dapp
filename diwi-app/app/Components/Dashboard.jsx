@@ -23,6 +23,7 @@ import {
     UserCircleIcon,
     // SunIcon,
     MoonIcon,
+    DocumentIcon
 } from "@heroicons/react/24/solid";
 import { SunIcon } from "@heroicons/react/24/outline";
 import {
@@ -52,13 +53,6 @@ const DashboardLayout = ({ children }) => {
     const { data, setData } = useContext(CustomContext);
 
     useEffect(() => {
-        // Initial dark mode setup
-
-        // if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        //     document.body.classList.add("dark");
-        // } else {
-        //     document.body.classList.remove("dark");
-        // }
         if (isDarkMode) {
             // document.documentElement.classList.add('dark');
             document.body.classList.add('dark');
@@ -88,8 +82,8 @@ const DashboardLayout = ({ children }) => {
     };
 
     const SidebarContent = () => (
-        <div className="h-full bg-white dark:bg-gray-900 transition-colors duration-200">
-            <List className="p-4">
+        <div className="h-full bg-background-light dark:bg-background-dark transition-colors duration-200">
+            <List className="p-4 text-text-light dark:text-text-dark" >
                 <Accordion
                     open={openAccordion === 1}
                     icon={
@@ -100,21 +94,21 @@ const DashboardLayout = ({ children }) => {
                         />
                     }
                 >
-                    <ListItem className="p-0" selected={openAccordion === 1}>
+                    <ListItem className="p-0 " selected={openAccordion === 1}>
                         <AccordionHeader
                             onClick={() => handleAccordionOpen(1)}
-                            className="border-b-0 p-3 dark:text-white"
+                            className="border-b-0 p-3 text-text-light dark:text-text-dark"
                         >
                             <ListItemPrefix>
-                                <PresentationChartBarIcon className="h-5 w-5" />
+                                <DocumentIcon className="h-5 w-5" />
                             </ListItemPrefix>
-                            <Typography color="blue-gray" className="mr-auto font-normal dark:text-white">
-                                Dashboard
+                            <Typography className="mr-auto font-normal ">
+                                Documentation
                             </Typography>
                         </AccordionHeader>
                     </ListItem>
-                    <AccordionBody className="py-1">
-                        <List className="p-0 dark:text-white">
+                    <AccordionBody className="py-1 ">
+                        <List className="p-0 text-text-light dark:text-text-dark">
                             <ListItem>
                                 <ListItemPrefix>
                                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -136,7 +130,7 @@ const DashboardLayout = ({ children }) => {
                         </List>
                     </AccordionBody>
                 </Accordion>
-                <hr className="my-2 border-blue-gray-100 dark:border-gray-800" />
+                <hr className="my-2 border-border-light dark:border-border-dark" />
                 <ListItem>
                     <ListItemPrefix>
                         <InboxIcon className="h-5 w-5" />
@@ -176,14 +170,14 @@ const DashboardLayout = ({ children }) => {
                     )}
                 </ListItem>
             </List>
-            <div className="absolute bottom-4 left-4 ">
+            <div className="absolute bottom-4 left-4 text-text-light dark:text-text-dark">
                 <a
                     href="https://github.com/panosdaveas/DiWi-DApp.git"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="cursor-pointer"
                 >
-                    <Typography color="gray" className="absolute bottom-4 left-4 text-xs border border-gray rounded-md px-2 py-1">
+                    <Typography className="absolute bottom-4 left-4 text-xs border border-gray rounded-md px-2 py-1">
                         v0.1.9
                     </Typography>
                 </a>
@@ -192,25 +186,27 @@ const DashboardLayout = ({ children }) => {
     );
 
     return (
-        <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
-            <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-6 py-2 lg:px-6 lg:py-4 border-b border-blue-gray-100 dark:border-gray-700 shadow-none bg-white dark:bg-gray-900 transition-colors duration-200">
-                <div className="flex items-center justify-between text-blue-gray-900">
+        <div className="min-h-screen bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-200">
+            <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-6 py-2 lg:px-6 lg:py-4 bg-background-light dark:bg-background-dark border-t-0 border-r-0 border-l-0 border-b-1 border-border-light dark:border-border-dark shadow-none transition-colors duration-200">
+                <div className="flex items-center justify-between text-text-light dark:text-text-dark">
                     <div className="flex items-center gap-4">
                         {isMobile && (
                             <IconButton
                                 variant="text"
-                                color="blue-gray"
+                                className="text-text-light dark:text-text-dark"
+                                // color="blue-gray"
                                 onClick={() => setIsDrawerOpen(true)}
                             >
                                 <Bars3Icon className="h-6 w-6" />
                             </IconButton>
                         )}
                         <Image
-                            className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert transition-all duration-200"
+                            // className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert transition-all duration-200"
+                            className="relative dark:invert transition-all duration-200"
                             src="/DiWi-2.png"
                             alt="Diwi Logo"
                             width={80}
-                            height={22}
+                            height={14}
                             priority
                         />
                     </div>
@@ -222,7 +218,7 @@ const DashboardLayout = ({ children }) => {
                             target="_blank"
                             > 
                             <svg 
-                            className="bg-white dark:bg-gray-900 dark:fill-white"
+                            className="bg-background-light dark:bg-background-dark dark:fill-primary-light"
                             // fill="currentColor" 
                             // stroke="currentColor" 
                             // style={"vertical-align: middle"}
@@ -236,16 +232,18 @@ const DashboardLayout = ({ children }) => {
                                     </a>
                             <button
                                 onClick={toggleDarkMode}
-                                className="p-2 focus:outline-none"
+                                className="p-2 focus:outline-none "
                             >
                                 {isDarkMode ? (
-                                    <SunIcon className="w-6 h-6 dark:text-gray-400" />
+                                    <SunIcon className="w-6 h-6 dark:text-text-dark" />
                                 ) : (
-                                    <MoonIcon className="w-6 h-6 text-gray-700 dark:text-white" />
+                                    <MoonIcon className="w-6 h-6 text-text-light dark:text-text-dark" />
                                 )}
                             </button>
+                            <div className="ml-4">
+                            <ConnectWalletButton />
+                            </div>
                         </div>
-                        <ConnectWalletButton />
                     </div>
                 </div>
             </Navbar>
@@ -254,18 +252,18 @@ const DashboardLayout = ({ children }) => {
             <div className="flex h-[calc(100vh-64px)]">
                 {/* Sidebar - Hidden on mobile */}
                 {!isMobile && (
-                    <aside className="w-64 flex-shrink-0 border-r border-blue-gray-100 dark:border-gray-700 transition-colors duration-200">
+                    <aside className="w-64 flex-shrink-0 border-r border-border-light dark:border-border-dark transition-colors duration-200">
                         <SidebarContent />
                     </aside>
                 )}
 
                 {/* Main Content */}
                 {/* <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-200"> */}
-                <main className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+                <main className="flex-1 overflow-auto bg-background-light dark:bg-background-dark transition-colors duration-200">
                     <div className="container mx-auto">
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div className="col-span-full">
+                            <div className="col-span-full" >
                                 {/* <div className="h-full w-full overflow-scroll"> */}
                                     <ContractDataTable />
                                 {/* </div> */}
@@ -282,12 +280,12 @@ const DashboardLayout = ({ children }) => {
                                 <CardRightSteps />
                                 {/* </div> */}
                             </div>
-                            <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-blue-gray-100 dark:border-gray-700 shadow-none">
+                            <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border-light dark:border-border-dark shadow-none">
                                 <Skeleton />
                                 {/* Add performance overview content here */}
                             </Card>
                             <div className="col-span-1 space-y-6">
-                                <div className="p-6 border-b border-r border-t border-blue-gray-100 dark:border-gray-700">
+                                <div className="p-6 border-b border-r border-t border-border-light dark:border-border-dark">
                                     <Skeleton />
                                 </div>
                                 <Card className="p-6">
@@ -302,8 +300,9 @@ const DashboardLayout = ({ children }) => {
 
             {/* Mobile Drawer */}
             {isMobile && (
-                <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-                    <div className="mb-2 flex items-center justify-between p-4">
+                <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}
+                className="bg-background-light dark:bg-background-dark">
+                    <div className="mb-2 flex items-center justify-between p-4 ">
                         {/* <Typography variant="h5" color="blue-gray">
               Material Tailwind
             </Typography> */}
@@ -317,8 +316,9 @@ const DashboardLayout = ({ children }) => {
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 strokeWidth={2}
-                                stroke="currentColor"
-                                className="h-5 w-5"
+                                // stroke="currentColor"
+                                stroke={!isDarkMode ? "currentColor" : "white"}
+                                className="h-5 w-5 "
                             >
                                 <path
                                     strokeLinecap="round"
