@@ -37,11 +37,11 @@ const ContractDataTable = () => {
     const handleGetPublicKey = async () => {
         if (!targetAddress) return;
         const publicKey = await getPublicKey(targetAddress);
-        const success = await requestPublicKey(targetAddress, "Fetching the public key");
+        // const success = await getPublicKey(targetAddress, "Fetching the public key");
         setTableData(prev => ({ ...prev, publicKey }));
         setTableData(prev => ({
             ...prev,
-            requestStatusGetPK: success ? 'Successful call' : 'Call failed'
+            requestStatusGetPK: publicKey ? 'Successful call' : 'Call failed'
         }));
         
         setData((prevData) => ({

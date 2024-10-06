@@ -4,11 +4,6 @@ import { Configuration } from "../config";
 
 const contractABI = [
     {
-      inputs: [],
-      stateMutability: "nonpayable",
-      type: "constructor",
-    },
-    {
       anonymous: false,
       inputs: [
         {
@@ -56,6 +51,42 @@ const contractABI = [
       inputs: [
         {
           internalType: "address",
+          name: "userB",
+          type: "address",
+        },
+        {
+          internalType: "string",
+          name: "message",
+          type: "string",
+        },
+      ],
+      name: "requestPublicKey",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "publicKey",
+          type: "string",
+        },
+      ],
+      name: "submitPublicKey",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      stateMutability: "nonpayable",
+      type: "constructor",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
           name: "user",
           type: "address",
         },
@@ -66,6 +97,25 @@ const contractABI = [
           internalType: "string",
           name: "",
           type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "user",
+          type: "address",
+        },
+      ],
+      name: "getRecepients",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
         },
       ],
       stateMutability: "view",
@@ -104,6 +154,25 @@ const contractABI = [
       type: "function",
     },
     {
+      inputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      name: "publicUsers",
+      outputs: [
+        {
+          internalType: "address",
+          name: "",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
       inputs: [],
       name: "recepient",
       outputs: [
@@ -117,34 +186,16 @@ const contractABI = [
       type: "function",
     },
     {
-      inputs: [
+      inputs: [],
+      name: "signer",
+      outputs: [
         {
           internalType: "address",
-          name: "userB",
+          name: "",
           type: "address",
         },
-        {
-          internalType: "string",
-          name: "message",
-          type: "string",
-        },
       ],
-      name: "requestPublicKey",
-      outputs: [],
-      stateMutability: "nonpayable",
-      type: "function",
-    },
-    {
-      inputs: [
-        {
-          internalType: "string",
-          name: "publicKey",
-          type: "string",
-        },
-      ],
-      name: "submitPublicKey",
-      outputs: [],
-      stateMutability: "nonpayable",
+      stateMutability: "view",
       type: "function",
     },
 ];
@@ -213,11 +264,11 @@ export function useContractInteraction() {
     setLoading(true);
     setError(null);
     try {
-        const provider = new ethers.JsonRpcProvider("http://localhost:7545");
+        const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
       const tx = await contract.requestPublicKey(address, message);
       await tx.wait();
-      console.log("Public key requested successfully");
+      console.log("Public key requested successfully" + address);
       return true;
     } catch (err) {
       setError("Error requesting public key: " + err.message);
@@ -231,7 +282,10 @@ export function useContractInteraction() {
     setLoading(true);
     setError(null);
     try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      console.log(await contract.publicKeys[address]);
       const publicKey = await contract.getPublicKey(address);
+      console.log("address", address);
       console.log("Public key:", publicKey);
       return publicKey;
     } catch (err) {
