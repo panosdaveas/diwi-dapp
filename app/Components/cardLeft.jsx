@@ -10,7 +10,7 @@ import {
 } from "@material-tailwind/react";
 import { useContext } from "react";
 import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
-import { timeLockEncryption } from "../utils/timeLockEncrypt";
+import timeLockEncryption from "../utils/timeLockEncrypt";
 import { DateTimePicker } from "./dateTimePicker";
 
 export function CardLeftSteps() {
