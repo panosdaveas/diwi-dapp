@@ -8,10 +8,15 @@ import {
     Spinner,
     Typography,
 } from "@material-tailwind/react";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ClipboardDefault } from "./clipboard";
 
 const ContractDataTable = () => {
+
+    useEffect(() => {
+        localStorage.getItem('darkMode');
+    }, []);
+
     const { data, setData } = useContext(CustomContext);
     const { walletInfo } = useWallet();
     const {
@@ -207,9 +212,11 @@ const ContractDataTable = () => {
                                     value={targetAddress}
                                     onChange={(e) => setTargetAddress(e.target.value)}
                                     color={
-                                        localStorage.getItem("darkMode") === "true"
+                                        typeof window !== 'undefined' ?
+                                        (localStorage.getItem("darkMode") === "true"
                                             ? "white"
                                             : "gray"
+                                     ) : null
                                     }
                                     // className="border rounded p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis text-text-light dark:text-text-dark"
                                     className="p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis"
@@ -248,10 +255,12 @@ const ContractDataTable = () => {
                                     value={targetAddressGetPK}
                                     onChange={(e) => setTargetAddressGetPK(e.target.value)}
                                     color={
-                                        localStorage.getItem("darkMode") === "true"
-                                            ? "white"
-                                            : "gray"
-                                    }
+                                            typeof window !== 'undefined' ?
+                                                (localStorage.getItem("darkMode") === "true"
+                                                    ? "white"
+                                                    : "gray"
+                                                ) : null
+                                        }
                                     // className="border rounded p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis text-text-light dark:text-text-dark"
                                     className="p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis"
                                 />
