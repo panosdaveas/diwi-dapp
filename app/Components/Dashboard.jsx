@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
-import ContractDataTable from "./contractDataTable";
+import { ContractDataTable } from "./contractDataTable";
 import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
@@ -185,4 +185,4 @@ const DashboardLayout = ({ children }) => {
     );
 };
 
-export default DashboardLayout;
+export { DashboardLayout };

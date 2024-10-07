@@ -20,14 +20,19 @@ import {
     ListItemSuffix,
     Typography,
 } from "@material-tailwind/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConnectWalletButton } from "./walletButton";
 
-
-
 export function SidebarContent() {
-    const [isMobile, setIsMobile] = useState(false);
     const [openAccordion, setOpenAccordion] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const handleAccordionOpen = (value) => {
         setOpenAccordion(openAccordion === value ? 0 : value);

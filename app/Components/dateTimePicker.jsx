@@ -10,7 +10,7 @@ import { DayPicker } from "react-day-picker";
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 
-export default function DateTimePicker({ selectedDate, onChange }) {
+const DateTimePicker = ({ selectedDate, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [date, setInternalDate] = useState(selectedDate || new Date());
   const [hours, setHours] = useState(date.getHours());
@@ -158,4 +158,6 @@ export default function DateTimePicker({ selectedDate, onChange }) {
       </Popover>
     </div>
   );
-}
+};
+
+export { DateTimePicker };

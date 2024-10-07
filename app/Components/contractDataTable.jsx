@@ -279,4 +279,4 @@ const ContractDataTable = () => {
     );
 };
 
-export default ContractDataTable;
+export { ContractDataTable };

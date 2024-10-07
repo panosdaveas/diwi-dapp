@@ -2,7 +2,7 @@
 
 import "./globals.css";
 
-import DashboardLayout from "./Components/Dashboard";
+import { DashboardLayout } from "./Components/Dashboard";
 
 // import dynamic from "next/dynamic";
 
@@ -13,7 +13,7 @@ import DashboardLayout from "./Components/Dashboard";
 export default function Home() {
 
   return (
-    <DashboardLayout></DashboardLayout>
+    <DashboardLayout />
   );
 
 }
