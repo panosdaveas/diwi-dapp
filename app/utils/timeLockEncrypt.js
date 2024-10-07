@@ -28,4 +28,4 @@ const timeLockEncryption = async (dateTime, message) => {
   };
 };
 
-export default timeLockEncryption;
+export { timeLockEncryption };

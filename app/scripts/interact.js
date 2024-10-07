@@ -302,6 +302,7 @@ export function useContractInteraction() {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const publicKeys = await contract.getPublicKeys(address);
+      console.log(publicKeys);
       if (publicKeys.length === 0) {
         return "No public key found";
       }
