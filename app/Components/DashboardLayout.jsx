@@ -34,7 +34,12 @@ import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
-import ContractDataTable from "./contractDataTable";
+// import ContractDataTable from "./contractDataTable";
+import dynamic from "next/dynamic";
+
+const ContractDataTable = dynamic(() => import("./contractDataTable"), {
+  ssr: false,
+});
 
 
 const DashboardLayout = ({ children }) => {
