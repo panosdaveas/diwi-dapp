@@ -1,7 +1,7 @@
-import React from "react";
-import { IconButton } from "@material-tailwind/react";
-import { useCopyToClipboard } from "usehooks-ts";
 import { CheckIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { IconButton } from "@material-tailwind/react";
+import React from "react";
+import { useCopyToClipboard } from "usehooks-ts";
 
 export function ClipboardDefault({ content }) {
   const [, copy] = useCopyToClipboard();
@@ -10,10 +10,9 @@ export function ClipboardDefault({ content }) {
   return (
     <div>
       <div className="flex items-center gap-x-4">
-        <IconButton variant="text" 
-        className="text-text-light dark:text-text-dark"
-        // color="blue-gray" 
-        size="sm"
+        <IconButton variant="text"
+          className="text-text-light dark:text-text-dark"
+          size="sm"
           onMouseLeave={() => setCopied(false)}
           onClick={() => {
             copy(content);

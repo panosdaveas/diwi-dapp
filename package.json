@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/panosdaveas/DiWi-DApp/issues"
   },
-  "homepage": "https://github.com/panosdaveas/DiWi-DApp#readme"
+  "homepage": "https://github.com/panosdaveas/DiWi-DApp#readme",
+  "dependencies": {
+    "@wagmi/cli": "^2.1.16"
+  }
 }

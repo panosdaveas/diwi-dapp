@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import { CustomContext } from "@/app/Context/context";
 import {
+  Button,
   Card,
   CardBody,
   CardFooter,
-  Button,
   Textarea,
 } from "@material-tailwind/react";
-import { CustomContext } from "@/app/Context/context";
-import { ClipboardDefault } from "./clipboard";
+import { useContext } from "react";
 import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
+import { ClipboardDefault } from "./clipboard";
 
 export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);

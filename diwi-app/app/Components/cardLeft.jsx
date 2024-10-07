@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import { CustomContext } from "@/app/Context/context";
 import {
+  Button,
   Card,
   CardBody,
   CardFooter,
-  Button,
+  IconButton,
   Input,
   Textarea,
-  IconButton,
 } from "@material-tailwind/react";
-import { CustomContext } from "@/app/Context/context";
-import { encryptWithPublicKey, generateKeyPair } from "../utils/asymmetricEncryption";
-import DateTimePicker from "./dateTimePicker";
+import { useContext } from "react";
+import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
 import timeLockEncryption from "../utils/timeLockEncrypt";
+import DateTimePicker from "./dateTimePicker";
 
 export function CardLeftSteps() {
   const { data, setData } = useContext(CustomContext);
@@ -85,7 +85,7 @@ export function CardLeftSteps() {
               onChange={handleDateTimeChange}
               color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             />}
-            {data.activeStep === 0 ? <Textarea 
+            {data.activeStep === 0 ? <Textarea
               label="Message"
               name="plaintext"
               value={data.plaintext}
@@ -93,15 +93,15 @@ export function CardLeftSteps() {
               rows={7}
               color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               className="dark:focus:border-t-0"
-              
+
             /> : <Textarea
               label="Message"
               name="ciphertext"
               value={data.displayMessage}
               onChange={handleInputChange}
-              rows={7} 
-              // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
-              />}
+              rows={7}
+            // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+            />}
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between py-1.5">
@@ -123,25 +123,25 @@ export function CardLeftSteps() {
             </svg>
           </IconButton>
           <div className="flex gap-2">
-            <Button variant="text" 
-            // color="gray" 
+            <Button variant="text"
+              // color="gray" 
               color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
-            onClick={handleCancelInput}>
+              onClick={handleCancelInput}>
               Cancel
             </Button>
-            {data.activeStep === 0 ? 
-            <Button variant="gradient" 
-            // color="gray" 
-            onClick={handleAsymmetricEncryption}
-              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+            {data.activeStep === 0 ?
+              <Button variant="gradient"
+                // color="gray" 
+                onClick={handleAsymmetricEncryption}
+                color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               >
-              Encrypt
-            </Button> : <Button variant="gradient" 
-            // color="gray" 
-              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
-            onClick={handleTimeLockEncrypt}>
-              Encrypt
-            </Button>}
+                Encrypt
+              </Button> : <Button variant="gradient"
+                // color="gray" 
+                color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
+                onClick={handleTimeLockEncrypt}>
+                Encrypt
+              </Button>}
           </div>
         </CardFooter>
       </Card>

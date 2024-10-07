@@ -1,6 +1,6 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CustomContext } from "@/app/Context/context";
-import { useContext, useEffect, useCallback } from 'react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useCallback, useContext, useEffect } from 'react';
 
 export const CustomConnectWalletButton = ({ onAccountConnected }) => {
     const { data, setData } = useContext(CustomContext);
