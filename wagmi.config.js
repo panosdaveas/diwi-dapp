@@ -84,5 +84,5 @@ export const config = getDefaultConfig({
     [ganacheChain.id]: http(),
     [avalancheFuji.id]: http(),
   },
-  ssr: true,
+  
 });
