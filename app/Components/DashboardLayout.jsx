@@ -34,12 +34,12 @@ import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
-// import ContractDataTable from "./contractDataTable";
-import dynamic from "next/dynamic";
+import ContractDataTable from "./contractDataTable";
+// import dynamic from "next/dynamic";
 
-const ContractDataTable = dynamic(() => import("./contractDataTable"), {
-  ssr: false,
-});
+// const ContractDataTable = dynamic(() => import("./contractDataTable"), {
+//   ssr: false,
+// });
 
 
 const DashboardLayout = ({ children }) => {
@@ -178,7 +178,7 @@ const DashboardLayout = ({ children }) => {
             className="cursor-pointer"
           >
             <Typography color="gray" className="absolute bottom-4 left-4 text-xs">
-              v0.1.9
+              v0.1.8
             </Typography>
           </a>
         </aside>
