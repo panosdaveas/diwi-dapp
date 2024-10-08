@@ -43,8 +43,19 @@ const ContractDataTable = () => {
     };
 
     const handleFetchContract = async () => {
-        const contractAddress = await fetchContract();
+        const result = await fetchContract();
+        const contractAddress = result.contractAddress;
         setTableData((prev) => ({ ...prev, contractAddress}));
+        setTableData((prev) => ({
+            ...prev,
+            requestStatusRequestContract: result.success
+                ? <a
+                    href={result.blockExplorerUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                >View in block explorer</a>
+                : "Request failed",
+        }));
     };
 
     const handleGetPublicKey = async () => {
@@ -85,8 +96,10 @@ const ContractDataTable = () => {
         return <div className="p-4 text-red-500">Error: {error}</div>;
     }
 
+    const classes = "p-4 border-b border-blue-gray-50";
+
     return (
-        <Card className="h-full w-full overflow-scroll py-4 shadow-none rounded-none border-b border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark">
+        <div className="h-full w-full overflow-scroll py-4 shadow-none rounded-none border-b border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark">
             {/* <Card className="w-full max-w-[1000px] mx-auto overflow-scroll"> */}
             <div className="p-4">
                 <Typography
@@ -96,6 +109,7 @@ const ContractDataTable = () => {
                 >
                     Contract Data Dashboard
                 </Typography>
+                <Card className="h-full w-full overflow-scroll border border-gray-300 px-6">
                 <table className="w-full min-w-max table-auto text-left">
                     <thead>
                         <tr>
@@ -136,8 +150,8 @@ const ContractDataTable = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td className="py-4">
+                        <tr className="hover:bg-gray-50" >
+                            <td className={classes}>
                                 <Button
                                     // variant="text"
                                     className="flex items-center gap-2"
@@ -160,9 +174,13 @@ const ContractDataTable = () => {
                             <td className="p-4">
                                 <ClipboardDefault content={tableData.contractAddress} />
                             </td>
-                            <td className="p-4"></td>
+                            <td className="p-4">
+                                <Typography variant="small">
+                                    {tableData.requestStatusRequestContract || "-"}
+                                </Typography>
+                            </td>
                         </tr>
-                        <tr>
+                        <tr className="hover:bg-gray-50" >
                             <td className="py-4">
                                 <Button
                                     // variant="text"
@@ -187,8 +205,8 @@ const ContractDataTable = () => {
                                 <ClipboardDefault content={tableData.owner} />
                             </td>
                         </tr>
-                        <tr>
-                            <td className="py-4 border-b border-blue-gray-50">
+                        <tr className="hover:bg-gray-50" >
+                            <td className="py-4">
                                 <Button
                                     // variant="text"
                                     className="flex items-center gap-2"
@@ -203,7 +221,7 @@ const ContractDataTable = () => {
                                     )}
                                 </Button>
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50">
+                            <td className="p-4">
                                 <Input
                                     type="text"
                                     variant="standard"
@@ -222,10 +240,10 @@ const ContractDataTable = () => {
                                     className="p-2 mr-2 before:content-none after:content-none overflow-hidden overflow-ellipsis"
                                 />
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50">
+                            <td className="p-4">
                                 <ClipboardDefault content={targetAddress} />
                             </td>
-                            <td className="p-4 border-b border-blue-gray-50">
+                            <td className="p-4">
                                 <Typography
                                     variant="small"
                                 // color="blue-gray"
@@ -234,7 +252,7 @@ const ContractDataTable = () => {
                                 </Typography>
                             </td>
                         </tr>
-                        <tr>
+                        <tr className="hover:bg-gray-50" >
                             <td className="py-4">
                                 <Button
                                     // variant="text"
@@ -283,8 +301,9 @@ const ContractDataTable = () => {
                         </tr>
                     </tbody>
                 </table>
+                </Card>
             </div>
-        </Card>
+        </div>
     );
 };
 

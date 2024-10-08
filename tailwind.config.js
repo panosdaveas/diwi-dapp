@@ -33,14 +33,13 @@ module.exports = withMT({
         border: {
           light: "#CFD8DC",
           dark: "#616161",
+          cardLight: "#CFD8DC",
+          cardDark: "#616161",
         },
         card: {
           light: "#F5F5F5",
           dark: "#212121",
         },
-      },
-      borders: {
-        card: "4",
       },
     },
   },

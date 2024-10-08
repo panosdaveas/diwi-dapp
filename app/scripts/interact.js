@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { useChainId } from "wagmi";
 import { Configuration } from "../config";
-import { useChainId, useReadContracts } from 'wagmi';
-import { getBlockExplorerUrl } from "./blockExplorers";
+import { getBlockExplorerUrl, getContractExplorerUrl } from "./blockExplorers";
 import { contractCurrentABI } from "./contractABI";
 
 // Contract ABI
-const contractABI = contractCurrentABI; 
+const contractABI = contractCurrentABI;
 
 // Get deployed contract address
 const contractAddress = Configuration().contractAddress;
@@ -51,7 +51,6 @@ export function useContractInteraction() {
       // Get the explorer URL immediately after getting the transaction hash
       const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
       setLastTxHash(tx.hash);
-      setBlockExplorerUrl(explorerUrl);
 
       await tx.wait();
       console.log("Public key requested successfully from " + address);
@@ -72,7 +71,6 @@ export function useContractInteraction() {
     }
   };
 
-
   const getPublicKey = async (address) => {
     if (!contract) return;
     setLoading(true);
@@ -80,6 +78,7 @@ export function useContractInteraction() {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const publicKeys = await contract.getPublicKeys(address);
+      console.log(publicKeys);
       if (publicKeys.length === 0) {
         return "No public key found";
       }
@@ -110,10 +109,19 @@ export function useContractInteraction() {
     if (!contract) return;
     setLoading(true);
     setError(null);
+    const explorerUrl = getContractExplorerUrl(chainId, contractAddress);
     try {
-      return contractAddress;
+      return {
+        success: true,
+        contractAddress: contractAddress,
+        blockExplorerUrl: explorerUrl,
+      };
     } catch (err) {
       setError("Error fetching contract: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -128,6 +136,6 @@ export function useContractInteraction() {
     getPublicKey,
     fetchContract,
     lastTxHash,
-    blockExplorerUrl
+    blockExplorerUrl,
   };
 }

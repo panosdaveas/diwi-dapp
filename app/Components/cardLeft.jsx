@@ -91,7 +91,6 @@ export function CardLeftSteps() {
                     : "gray"
                   ) : null
               }
-              // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             /> : <DateTimePicker
               selectedDate={data.dateTime}
               onChange={handleDateTimeChange}
@@ -110,16 +109,14 @@ export function CardLeftSteps() {
                     : "gray"
                   ) : null
               }
-              // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               className="dark:focus:border-t-0"
 
-            /> : <Textarea
+            /> : <Input
               label="Message"
               name="ciphertext"
               value={data.displayMessage}
               onChange={handleInputChange}
               rows={7}
-            // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             />}
           </div>
         </CardBody>
@@ -129,7 +126,6 @@ export function CardLeftSteps() {
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              // stroke="currentColor"
               stroke={
                 typeof window !== 'undefined' ?
                   (localStorage.getItem("darkMode") === "true"
@@ -137,7 +133,6 @@ export function CardLeftSteps() {
                     : "gray"
                   ) : null
               }
-              // stroke={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               strokeWidth={2}
               className="h-4 w-4"
             >
@@ -150,7 +145,6 @@ export function CardLeftSteps() {
           </IconButton>
           <div className="flex gap-2">
             <Button variant="text"
-              // color="gray"
               color={
                 typeof window !== 'undefined' ?
                   (localStorage.getItem("darkMode") === "true"
@@ -158,7 +152,6 @@ export function CardLeftSteps() {
                     : "gray"
                   ) : null
               } 
-              // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               onClick={handleCancelInput}>
               Cancel
             </Button>
@@ -173,7 +166,6 @@ export function CardLeftSteps() {
                       : "gray"
                     ) : null
                 }
-                // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
               >
                 Encrypt
               </Button> : <Button variant="gradient"
@@ -185,7 +177,6 @@ export function CardLeftSteps() {
                       : "gray"
                     ) : null
                 }
-                // color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
                 onClick={handleTimeLockEncrypt}>
                 Encrypt
               </Button>}

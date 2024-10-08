@@ -4,9 +4,11 @@ import {
 } from "@heroicons/react/24/outline";
 import {
     Card,
+    CardBody,
     Drawer,
     IconButton,
     Navbar,
+    Typography,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
@@ -17,6 +19,7 @@ import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
+import { DefaultTable } from "./contractTable";
 
 const DashboardLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
@@ -122,7 +125,16 @@ const DashboardLayout = ({ children }) => {
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="col-span-full" >
-                                <ContractDataTable />
+                                <div className="p-4">
+                                    <Typography
+                                        variant="h5"
+                                        // color="blue-gray"
+                                        className="mb-4 px-3"
+                                    >
+                                        Contract Data Dashboard
+                                    </Typography>
+                                    <DefaultTable />
+                                </div>
                             </div>
                             <div className="col-span-full px-6">
                                 <StepperWithContent />
