@@ -1,228 +1,15 @@
 import { ethers } from "ethers";
 import { useEffect, useState, useCallback } from "react";
 import { Configuration } from "../config";
-import { useChainId } from 'wagmi';
+import { useChainId, useReadContracts } from 'wagmi';
+import { getBlockExplorerUrl } from "./blockExplorers";
+import { contractCurrentABI } from "./contractABI";
 
-const contractABI = [
-  {
-    inputs: [],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "message",
-        type: "string",
-      },
-    ],
-    name: "PublicKeyRequested",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "string",
-        name: "publicKey",
-        type: "string",
-      },
-    ],
-    name: "PublicKeySubmitted",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "recipient",
-        type: "address",
-      },
-    ],
-    name: "getPublicKeys",
-    outputs: [
-      {
-        internalType: "string[]",
-        name: "",
-        type: "string[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "signer",
-        type: "address",
-      },
-    ],
-    name: "getRecipients",
-    outputs: [
-      {
-        internalType: "address[]",
-        name: "",
-        type: "address[]",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "publicKeys",
-    outputs: [
-      {
-        internalType: "string",
-        name: "publicKey",
-        type: "string",
-      },
-      {
-        internalType: "bool",
-        name: "exists",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "recipient",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "message",
-        type: "string",
-      },
-    ],
-    name: "requestPublicKey",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    name: "signerRecipients",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "signer",
-        type: "address",
-      },
-      {
-        internalType: "string",
-        name: "publicKey",
-        type: "string",
-      },
-    ],
-    name: "submitPublicKey",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-]; // Your existing ABI
+// Contract ABI
+const contractABI = contractCurrentABI; 
 
+// Get deployed contract address
 const contractAddress = Configuration().contractAddress;
-
-// Helper function to get block explorer URL based on chain ID
-const getBlockExplorerUrl = (chainId, txHash) => {
-  const explorers = {
-    1: `https://etherscan.io/tx/${txHash}`, // Ethereum Mainnet
-    137: `https://polygonscan.com/tx/${txHash}`, // Polygon
-    10: `https://optimistic.etherscan.io/tx/${txHash}`, // Optimism
-    42161: `https://arbiscan.io/tx/${txHash}`, // Arbitrum
-    8453: `https://basescan.org/tx/${txHash}`, // Base
-    1337: null, // Ganache (local) - no explorer
-    43113: `https://testnet.snowtrace.io/tx/${txHash}`, // Avalanche Fuji Testnet
-    11155111: `https://sepolia.etherscan.io/tx/${txHash}`, // Sepolia
-  };
-  
-  return explorers[chainId] || null;
-};
 
 export function useContractInteraction() {
   const [contract, setContract] = useState(null);
@@ -251,15 +38,6 @@ export function useContractInteraction() {
 
     setupContract();
   }, []);
-
-  // Helper function to update transaction details
-  const updateTransactionDetails = useCallback((txHash) => {
-    setLastTxHash(txHash);
-    if (chainId) {
-      const explorerUrl = getBlockExplorerUrl(chainId, txHash);
-      setBlockExplorerUrl(explorerUrl);
-    }
-  }, [chainId]);
 
   const requestPublicKey = async (address, message) => {
     if (!contract) return;
@@ -302,11 +80,10 @@ export function useContractInteraction() {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const publicKeys = await contract.getPublicKeys(address);
-      console.log(publicKeys);
       if (publicKeys.length === 0) {
         return "No public key found";
       }
-      return publicKeys[0];
+      return publicKeys.at(-1);
     } catch (err) {
       setError("Error fetching public key: " + err.message);
     } finally {
@@ -334,7 +111,6 @@ export function useContractInteraction() {
     setLoading(true);
     setError(null);
     try {
-      console.log("contractAddress", contractAddress);
       return contractAddress;
     } catch (err) {
       setError("Error fetching contract: " + err.message);

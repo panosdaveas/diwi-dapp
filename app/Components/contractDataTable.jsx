@@ -38,13 +38,13 @@ const ContractDataTable = () => {
 
     const handleFetchOwner = async () => {
         // const owner = walletInfo.address;
-        const owner = fetchOwner();
+        const owner = await fetchOwner();
         setTableData((prev) => ({ ...prev, owner }));
     };
 
     const handleFetchContract = async () => {
-        const contractAddress = fetchContract();
-        setTableData((prev) => ({ ...prev, contractAddress }));
+        const contractAddress = await fetchContract();
+        setTableData((prev) => ({ ...prev, contractAddress}));
     };
 
     const handleGetPublicKey = async () => {
@@ -270,7 +270,7 @@ const ContractDataTable = () => {
                                 </Typography> */}
                             </td>
                             <td className="p-4">
-                                <ClipboardDefault content={tableData.publicKey} />
+                                <ClipboardDefault content={targetAddressGetPK} />
                             </td>
                             <td className="p-4">
                                 <Typography
