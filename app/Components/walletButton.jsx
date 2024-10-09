@@ -2,6 +2,7 @@
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '@material-tailwind/react';
+import gradient from '@material-tailwind/react/theme/components/timeline/timelineIconColors/gradient';
 
 const ConnectWalletButton = () => {
 
@@ -90,7 +91,7 @@ const ConnectWalletButton = () => {
                                         )}
                                     </button>
 
-                                    <Button size="md" onClick={openAccountModal}>
+                                    <Button onClick={openAccountModal} variant="gradient">
                                         {account.displayName}
                                     </Button>
                                 </div>

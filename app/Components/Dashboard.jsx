@@ -1,25 +1,25 @@
 import {
     MoonIcon,
-    Square3Stack3DIcon, SunIcon
+    Square3Stack3DIcon,
 } from "@heroicons/react/24/outline";
 import {
+    SunIcon,
+} from "@heroicons/react/24/solid";
+import {
     Card,
-    CardBody,
     Drawer,
     IconButton,
-    Navbar,
-    Typography,
+    Navbar
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
-import { ContractDataTable } from "./contractDataTable";
+import { DefaultTable } from "./contractTable";
 import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
-import { DefaultTable } from "./contractTable";
 
 const DashboardLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);

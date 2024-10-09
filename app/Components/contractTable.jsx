@@ -1,17 +1,14 @@
 import { CustomContext } from "@/app/Context/context";
-import { useContractInteraction } from "@/app/scripts/interact";
-import { useContext, useState, useEffect } from "react";
 import {
-    buttonTypography,
-    typography,
-    cardHeader,
-    cardBody,
     card,
+    cardBody,
+    cardHeader,
     table,
     td,
-    tr,
     tdLast,
+    tr
 } from "@/app/scripts/classesCustomization";
+import { useContractInteraction } from "@/app/scripts/interact";
 import {
     Button,
     Card,
@@ -21,6 +18,7 @@ import {
     Spinner,
     Typography,
 } from "@material-tailwind/react";
+import { useContext, useEffect, useState } from "react";
 import { ClipboardDefault } from "./clipboard";
 
 export function DefaultTable() {
@@ -117,7 +115,7 @@ export function DefaultTable() {
 
     const handleSubmitPublicKey = async () => {
         if (!targetSubmitPK) return;
-        const result = await submitPublicKey(targetAddress, targetSubmitPK);
+        const result = await submitPublicKey(tableData.owner, targetSubmitPK);
         setTableData((prev) => ({
             ...prev,
             requestStatusSubmitPK: result.success
@@ -195,86 +193,93 @@ export function DefaultTable() {
 
     return (
         <Card className={card}>
-            <CardHeader className={cardHeader}><Typography variant="h5" className="mb-4">Contract Data Dashboard</Typography></CardHeader>
+            <CardHeader className={cardHeader}>
+                <Typography variant="h5" className="mb-4">
+                    Contract Data Dashboard
+                </Typography>
+                <Typography>
+                    Here you can see the data of the contract and the public keys of the signers.
+                </Typography>
+            </CardHeader>
             <CardBody className={cardBody}>
-            <table className={table}>
-                <thead>
-                    <tr>
-                        {TABLE_HEAD.map((head) => (
-                            <th
-                                key={head}
-                                // className="bg-blue-gray-50 p-4"
-                                className={td}
-                            >
-                                <Typography
-                                    variant="small"
-                                    // color="blue-gray"
-                                    className="font-bold leading-none opacity-100"
+                <table className={table}>
+                    <thead>
+                        <tr>
+                            {TABLE_HEAD.map((head) => (
+                                <th
+                                    key={head}
+                                    // className="bg-blue-gray-50 p-4"
+                                    className={td}
                                 >
-                                    {head}
-                                </Typography>
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody>
-                    {TABLE_ROWS.map(({ func, name, result, clipboard, status, disabled }, index) => {
-                        const isLast = index === TABLE_ROWS.length - 1;
-                        const tdClass = isLast ? tdLast : td;
-                        return (
-                            <tr key={name} className={tr}>
-                                <td className={tdClass}>
-                                    <Button
-                                        variant="gradient"
-                                        size="sm"
-                                        disabled={disabled}
-                                        onClick={func}
-                                        className={`buttonTypography flex items-center gap-2`}
-                                    >
-                                        {loading ? <Spinner className="h-4 w-4" /> : name}
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            strokeWidth={2}
-                                            stroke="currentColor"
-                                            className="h-5 w-5"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                                            />
-                                        </svg>
-                                    </Button>
-                                </td>
-                                <td className={tdClass}>
                                     <Typography
-                                        variant="small"
-                                        className="font-normal dark:text-text-dark"
-                                    >
-                                        {result}
-                                    </Typography>
-                                </td>
-                                <td className={tdClass}>
-                                    <ClipboardDefault content={clipboard} />
-                                </td>
-                                <td className={tdClass}>
-                                    <Typography
-                                        as="a"
-                                        href="#"
                                         variant="small"
                                         // color="blue-gray"
-                                        className="font-normal dark:text-text-dark"
+                                        className="font-bold leading-none opacity-100"
                                     >
-                                        {status}
+                                        {head}
                                     </Typography>
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-        </table>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {TABLE_ROWS.map(({ func, name, result, clipboard, status, disabled }, index) => {
+                            const isLast = index === TABLE_ROWS.length - 1;
+                            const tdClass = isLast ? tdLast : td;
+                            return (
+                                <tr key={name} className={tr}>
+                                    <td className={tdClass}>
+                                        <Button
+                                            variant="gradient"
+                                            size="sm"
+                                            disabled={disabled}
+                                            onClick={func}
+                                            className={`buttonTypography flex items-center gap-2`}
+                                        >
+                                            {loading ? <Spinner className="h-4 w-4" /> : name}
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth={2}
+                                                stroke="currentColor"
+                                                className="h-5 w-5"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                                                />
+                                            </svg>
+                                        </Button>
+                                    </td>
+                                    <td className={tdClass}>
+                                        <Typography
+                                            variant="small"
+                                            className="font-normal dark:text-text-dark overflow-elipsis"
+                                        >
+                                            {result}
+                                        </Typography>
+                                    </td>
+                                    <td className={tdClass}>
+                                        <ClipboardDefault content={clipboard} />
+                                    </td>
+                                    <td className={tdClass}>
+                                        <Typography
+                                            as="a"
+                                            href="#"
+                                            variant="small"
+                                            // color="blue-gray"
+                                            className="font-normal dark:text-text-dark"
+                                        >
+                                            {status}
+                                        </Typography>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </CardBody>
         </Card>
     );
