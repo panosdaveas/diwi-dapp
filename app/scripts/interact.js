@@ -39,6 +39,7 @@ export function useContractInteraction() {
     setupContract();
   }, []);
 
+  //Function to request public key from a recipient
   const requestPublicKey = async (address, message) => {
     if (!contract) return;
     setLoading(true);
@@ -47,14 +48,10 @@ export function useContractInteraction() {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
       const tx = await contract.requestPublicKey(address, message);
-
       // Get the explorer URL immediately after getting the transaction hash
       const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
       setLastTxHash(tx.hash);
-
       await tx.wait();
-      console.log("Public key requested successfully from " + address);
-      console.log("Block explorer URL: " + explorerUrl);
       return {
         success: true,
         txHash: tx.hash,
@@ -71,6 +68,36 @@ export function useContractInteraction() {
     }
   };
 
+  //Submit public key
+  const submitPublicKey = async (address, publicKey) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const tx = await contract.submitPublicKey(address, publicKey);
+      const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
+      setLastTxHash(tx.hash);
+      await tx.wait();
+      console.log("Public key submitted successfully from " + address);
+      return {
+        success: true,
+        txHash: tx.hash,
+        blockExplorerUrl: explorerUrl, // Return the URL directly instead of from state
+      };
+    } catch (err) {
+      setError("Error submitting public key: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //Function to get public key from a recipient-signer pair
   const getPublicKey = async (address) => {
     if (!contract) return;
     setLoading(true);
@@ -90,6 +117,7 @@ export function useContractInteraction() {
     }
   };
 
+  //Function to fetch the owner of the contract
   const fetchOwner = async () => {
     if (!contract) return;
     setLoading(true);
@@ -105,6 +133,7 @@ export function useContractInteraction() {
     }
   };
 
+  //Function to get the contract address
   const fetchContract = async () => {
     if (!contract) return;
     setLoading(true);
@@ -133,6 +162,7 @@ export function useContractInteraction() {
     error,
     fetchOwner,
     requestPublicKey,
+    submitPublicKey,
     getPublicKey,
     fetchContract,
     lastTxHash,

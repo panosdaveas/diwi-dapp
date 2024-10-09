@@ -126,13 +126,6 @@ const DashboardLayout = ({ children }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="col-span-full" >
                                 <div className="p-4">
-                                    <Typography
-                                        variant="h5"
-                                        // color="blue-gray"
-                                        className="mb-4 px-3"
-                                    >
-                                        Contract Data Dashboard
-                                    </Typography>
                                     <DefaultTable />
                                 </div>
                             </div>

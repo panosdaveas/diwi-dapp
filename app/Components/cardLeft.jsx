@@ -92,7 +92,7 @@ export function CardLeftSteps() {
                   ) : null
               }
             /> : <DateTimePicker
-              selectedDate={data.dateTime}
+              selectedDate={new Date()}
               onChange={handleDateTimeChange}
               color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             />}
@@ -111,7 +111,7 @@ export function CardLeftSteps() {
               }
               className="dark:focus:border-t-0"
 
-            /> : <Input
+            /> : <Textarea
               label="Message"
               name="ciphertext"
               value={data.displayMessage}

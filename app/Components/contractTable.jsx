@@ -4,14 +4,19 @@ import { useContext, useState, useEffect } from "react";
 import {
     buttonTypography,
     typography,
+    cardHeader,
+    cardBody,
     card,
     table,
     td,
     tr,
+    tdLast,
 } from "@/app/scripts/classesCustomization";
 import {
     Button,
     Card,
+    CardBody,
+    CardHeader,
     Input,
     Spinner,
     Typography,
@@ -36,6 +41,7 @@ export function DefaultTable() {
         fetchContract,
         requestPublicKey,
         getPublicKey,
+        submitPublicKey,
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({
@@ -48,6 +54,7 @@ export function DefaultTable() {
     const { data, setData } = useContext(CustomContext);
     const [targetAddress, setTargetAddress] = useState("");
     const [targetAddressGetPK, setTargetAddressGetPK] = useState("");
+    const [targetSubmitPK, setTargetSubmitPK] = useState("");
 
     const TABLE_HEAD = ["Function", "Return", "", "Status"];
 
@@ -108,20 +115,37 @@ export function DefaultTable() {
         }));
     };
 
+    const handleSubmitPublicKey = async () => {
+        if (!targetSubmitPK) return;
+        const result = await submitPublicKey(targetAddress, targetSubmitPK);
+        setTableData((prev) => ({
+            ...prev,
+            requestStatusSubmitPK: result.success
+                ? <a
+                    href={result.blockExplorerUrl}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                >View in block explorer</a>
+                : "Request failed",
+        }));
+    };
+
     const TABLE_ROWS = [
         {
             func: handleFetchContract,
             name: "Fetch contract",
             result: tableData.contractAddress || "-",
             clipboard: tableData.contractAddress,
-            status: tableData.requestStatusRequestContract || "-"
+            status: tableData.requestStatusRequestContract || "-",
+            disabled: loading
         },
         {
             func: handleFetchOwner,
             name: "Fetch Owner",
             result: tableData.owner || "-",
             clipboard: tableData.owner,
-            status: ""
+            status: "",
+            disabled: loading
         },
         {
             func: handleRequestPublicKey,
@@ -134,7 +158,23 @@ export function DefaultTable() {
                 onChange={(e) => setTargetAddress(e.target.value)}
             />,
             clipboard: targetAddress,
-            status: tableData.requestStatusRequestPK || "-"
+            status: tableData.requestStatusRequestPK || "-",
+            disabled: loading || !targetAddress
+        },
+        {
+            func: handleSubmitPublicKey,
+            name: "Submit Public Key",
+            result: <Input
+                variant="standard"
+                placeholder="Enter your public key"
+                label="Public Key"
+                value={targetSubmitPK}
+                className="overflow-elipsis"
+                onChange={(e) => setTargetSubmitPK(e.target.value)}
+            />,
+            clipboard: targetSubmitPK,
+            status: tableData.requestStatusSubmitPK || "-",
+            disabled: loading || !targetSubmitPK
         },
         {
             func: handleGetPublicKey,
@@ -147,13 +187,16 @@ export function DefaultTable() {
                 onChange={(e) => setTargetAddressGetPK(e.target.value)}
             />,
             clipboard: targetAddressGetPK,
-            status: tableData.requestStatusGetPK || "-"
+            status: tableData.requestStatusGetPK || "-",
+            disabled: loading || !targetAddressGetPK
         },
     ];
 
 
     return (
         <Card className={card}>
+            <CardHeader className={cardHeader}><Typography variant="h5" className="mb-4">Contract Data Dashboard</Typography></CardHeader>
+            <CardBody className={cardBody}>
             <table className={table}>
                 <thead>
                     <tr>
@@ -175,22 +218,37 @@ export function DefaultTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    {TABLE_ROWS.map(({ func, name, result, clipboard, status }, index) => {
-
+                    {TABLE_ROWS.map(({ func, name, result, clipboard, status, disabled }, index) => {
+                        const isLast = index === TABLE_ROWS.length - 1;
+                        const tdClass = isLast ? tdLast : td;
                         return (
                             <tr key={name} className={tr}>
-                                <td className={td}>
+                                <td className={tdClass}>
                                     <Button
-                                        variant="outlined"
+                                        variant="gradient"
                                         size="sm"
-                                        disabled={loading}
+                                        disabled={disabled}
                                         onClick={func}
-                                        className={buttonTypography}
+                                        className={`buttonTypography flex items-center gap-2`}
                                     >
                                         {loading ? <Spinner className="h-4 w-4" /> : name}
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={2}
+                                            stroke="currentColor"
+                                            className="h-5 w-5"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                                            />
+                                        </svg>
                                     </Button>
                                 </td>
-                                <td className={td}>
+                                <td className={tdClass}>
                                     <Typography
                                         variant="small"
                                         className="font-normal dark:text-text-dark"
@@ -198,10 +256,10 @@ export function DefaultTable() {
                                         {result}
                                     </Typography>
                                 </td>
-                                <td className={td}>
+                                <td className={tdClass}>
                                     <ClipboardDefault content={clipboard} />
                                 </td>
-                                <td className={td}>
+                                <td className={tdClass}>
                                     <Typography
                                         as="a"
                                         href="#"
@@ -216,7 +274,8 @@ export function DefaultTable() {
                         );
                     })}
                 </tbody>
-            </table>
+        </table>
+            </CardBody>
         </Card>
     );
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract PublicKeyRequestWithMessage {
+contract Diwi {
     
     // Define the contract owner
     address public owner;
