@@ -1,7 +1,6 @@
 export function Configuration() {
-  const contractAddress = "0xae8330a25b33f929106e6cc377f901079deba819";
-  const contractAddressChecksummed =
-    "0xaE8330A25b33f929106e6cC377F901079DEBa819";
+  const contractAddress = "0xa8b97669fd22ecd287934CfC2d83482c5Ddf53CA";
+  // 0xa8b97669fd22ecd287934cfc2d83482c5ddf53ca;
   //Compiler version 0.8.25
   //EVM version Paris
   const publicKey =
@@ -13,7 +12,5 @@ export function Configuration() {
   return {
     contractAddress,
     privateKey,
-    contractAddressChecksummed,
-    // networkProvider,
   };
 }

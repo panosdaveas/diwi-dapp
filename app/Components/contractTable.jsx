@@ -81,10 +81,9 @@ export function DefaultTable() {
 
     const handleGetPublicKey = async () => {
         if (!targetAddressGetPK) return;
-        const success = await getPublicKey(
-            targetAddressGetPK,
-            "Fetching the public key"
-        );
+        const success = await getPublicKey(targetAddressGetPK);
+            // "Fetching the public key"
+        // );
         const publicKey = success;
         setTableData((prev) => ({ ...prev, publicKey }));
         setTableData((prev) => ({
@@ -115,7 +114,7 @@ export function DefaultTable() {
 
     const handleSubmitPublicKey = async () => {
         if (!targetSubmitPK) return;
-        const result = await submitPublicKey(tableData.owner, targetSubmitPK);
+        const result = await submitPublicKey("0xE2a7027C0DCcF4F322e0e792765038902ce4500e", targetSubmitPK);
         setTableData((prev) => ({
             ...prev,
             requestStatusSubmitPK: result.success
@@ -182,6 +181,7 @@ export function DefaultTable() {
                 placeholder="Enter target address"
                 label="Target Address"
                 value={targetAddressGetPK}
+                className="overflow-elipsis"
                 onChange={(e) => setTargetAddressGetPK(e.target.value)}
             />,
             clipboard: targetAddressGetPK,

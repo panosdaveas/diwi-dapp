@@ -22,10 +22,17 @@ import {
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { ConnectWalletButton } from "./walletButton";
+import { useContractInteraction } from "@/app/scripts/interact";
+import { useWallet } from "@/app/Context/WalletContext";
 
 export function SidebarContent() {
     const [openAccordion, setOpenAccordion] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
+    const { walletInfo } = useWallet();
+
+    const {
+        logRecipientsAndPublicKeys,
+    } = useContractInteraction();
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -36,6 +43,10 @@ export function SidebarContent() {
 
     const handleAccordionOpen = (value) => {
         setOpenAccordion(openAccordion === value ? 0 : value);
+    };
+
+    const handleLogContractData = async () => {
+        const dataUrl = await logRecipientsAndPublicKeys(walletInfo.address);
     };
 
     return (
@@ -109,11 +120,11 @@ export function SidebarContent() {
                     </ListItemPrefix>
                     Profile
                 </ListItem>
-                <ListItem>
+                <ListItem onClick={handleLogContractData}>
                     <ListItemPrefix>
                         <Cog6ToothIcon className="h-5 w-5" />
                     </ListItemPrefix>
-                    Settings
+                    Contract Data
                 </ListItem>
                 <ListItem>
                     <ListItemPrefix>

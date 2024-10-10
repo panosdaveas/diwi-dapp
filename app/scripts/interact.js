@@ -39,6 +39,49 @@ export function useContractInteraction() {
     setupContract();
   }, []);
 
+  async function logRecipientsAndPublicKeys(signerAddress) {
+    // Connect to the Ethereum network (replace with your preferred provider)
+     const result = {
+       signer: signerAddress,
+       recipients: [],
+     };
+
+    try {
+      // Get recipients for the signer
+      const recipients = await contract.getRecipients(signerAddress);
+      // console.log("Recipients for signer", signerAddress, ":", recipients);
+
+      // For each recipient, get their public keys
+      for (const recipient of recipients) {
+        const publicKeys = await contract.getPublicKeys(recipient);
+        // console.log("Public keys for recipient", recipient, ":", publicKeys);
+
+        result.recipients.push({
+          address: recipient,
+          publicKeys: publicKeys,
+        });
+      }
+
+      // Create a JSON string with formatting
+      const jsonData = JSON.stringify(result, null, 2);
+
+      // Create a data URL
+      const dataUrl = `data:application/json;charset=utf-8,${encodeURIComponent(
+        jsonData
+      )}`;
+
+      // Open the data URL in a new tab
+      window.open(dataUrl, "_blank");
+
+      console.log("JSON data opened in a new tab.");
+
+      // Also return the data URL in case you want to use it elsewhere
+      return dataUrl;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+};
+
   //Function to request public key from a recipient
   const requestPublicKey = async (address, message) => {
     if (!contract) return;
@@ -105,7 +148,6 @@ export function useContractInteraction() {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const publicKeys = await contract.getPublicKeys(address);
-      console.log(publicKeys);
       if (publicKeys.length === 0) {
         return "No public key found";
       }
@@ -165,6 +207,7 @@ export function useContractInteraction() {
     submitPublicKey,
     getPublicKey,
     fetchContract,
+    logRecipientsAndPublicKeys,
     lastTxHash,
     blockExplorerUrl,
   };
