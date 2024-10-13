@@ -152,7 +152,10 @@ export function DefaultTable() {
                 label="Target Address"
                 value={targetAddress}
                 onChange={(e) => setTargetAddress(e.target.value)}
-                className="text-content"
+                className="text-content border-none "
+                labelProps={{
+                    className: "before:content-none after:content-none",
+                }}
             />,
             clipboard: targetAddress,
             status: tableData.requestStatusRequestPK || "-",

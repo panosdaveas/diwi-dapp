@@ -18,6 +18,7 @@ import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { ThemeToggle } from "./themeToggle";
+import { DynamicLogo } from "./dynamicLogo";
 import { CardTest } from "./card-test";
 
 const DashboardLayout = ({ children }) => {
@@ -45,14 +46,7 @@ const DashboardLayout = ({ children }) => {
                                 <Square3Stack3DIcon className="h-6 w-6" />
                             </IconButton>
                         )}
-                        <img
-                            // className={`relative transition-all duration-200 pl-1 ${localStorage.getItem("darkMode") === 'true' ? "invert" : "invert-0"}`}
-                            className="fill-content text-content relative transition-all duration-200 pl-1"
-                            src="./Diwi-logo.svg"
-                            // alt="Diwi Logo"
-                            width="80"
-                            priority="true"
-                            />
+                        <DynamicLogo width={80} className="pl-1" />
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -71,7 +65,7 @@ const DashboardLayout = ({ children }) => {
                                     </path>
                                 </svg>
                             </a>
-                            <ThemeToggle/>
+                            <ThemeToggle />
                             <div className="ml-4">
                                 {!isMobile && <ConnectWalletButton />}
                             </div>

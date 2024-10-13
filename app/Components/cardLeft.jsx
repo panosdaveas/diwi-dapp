@@ -83,7 +83,7 @@ export function CardLeftSteps() {
               name="address"
               value={data.publicKey}
               onChange={handleInputChange}
-              className="overflow-hidden overflow-ellipsis text-content"
+              className="overflow-hidden overflow-ellipsis" 
             /> : <DateTimePicker
               selectedDate={new Date()}
               onChange={handleDateTimeChange}
