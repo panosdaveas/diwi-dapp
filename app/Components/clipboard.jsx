@@ -11,7 +11,7 @@ export function ClipboardDefault({ content }) {
     <div>
       <div className="flex items-center gap-x-4">
         <IconButton variant="text"
-          className="text-text-light dark:text-text-dark"
+          className="text-content"
           size="sm"
           onMouseLeave={() => setCopied(false)}
           onClick={() => {

@@ -11,35 +11,23 @@ module.exports = withMT({
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
+      // backgroundImage: {
+      //   "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+      //   "gradient-conic":
+      //     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      // },
       colors: {
-        // Define your custom colors here
-        primary: {
-          light: "white",
-          dark: "#212121",
+        accent1: "var(--color-accent1)",
+        // bkg: "hsl(var(--color-bkg) / <alpha-value»)",
+        bkg: "var(--color-bkg)",
+        content: "var(--color-content)",
+        borderColor: "var(--color-borderColor)",
+        sky: {
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          200: "#bae6fd",
         },
-        background: {
-          light: "white",
-          dark: "#1a1a1a",
-        },
-        text: {
-          light: "#212121",
-          dark: "#F5F5F5",
-        },
-        border: {
-          light: "#CFD8DC",
-          dark: "#616161",
-          cardLight: "#CFD8DC",
-          cardDark: "#616161",
-        },
-        card: {
-          light: "#F5F5F5",
-          dark: "#212121",
-        },
+        textareaColor: "var(--color-textareaColor)",
       },
     },
   },

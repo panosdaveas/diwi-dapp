@@ -1,41 +1,34 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Diwi {
-    
-    // Define the contract owner
+// Storage contract to manage the state
+contract DiwiStorage {
     address public owner;
     
-     // Struct to represent a public key submission
     struct PublicKeySubmission {
         string publicKey;
         bool exists;
     }
-
-     // Mapping to store recipients for each signer
+    
     mapping(address => address[]) public signerRecipients;
-
-    // Mapping to store public keys for each signer-recipient pair
     mapping(address => mapping(address => PublicKeySubmission[])) public publicKeys;
+}
 
-    // Event to request the public key with a message
+// Implementation contract (your current Diwi contract with modifications)
+contract DiwiImplementation is DiwiStorage {
     event PublicKeyRequested(address indexed from, address indexed to, string message);
-
-    // Event to store the response (recipient's public key)
     event PublicKeySubmitted(address indexed from, address indexed to, string publicKey);
-
-    // Modifier to ensure only the pair (signer, recipient) can submit public keys
+    
     modifier onlyPair(address signer) {
         require(isRecipientOfSigner(signer, msg.sender), "Only valid signer-recipient pair can submit public keys");
         _;
     }
-
-    // Constructor to set the contract owner (UserA)
-    constructor() {
+    
+    function initialize() public {
+        require(owner == address(0), "Contract already initialized");
         owner = msg.sender;
     }
-
-    // Internal function to check if an address is a recipient of a signer
+    
     function isRecipientOfSigner(address signer, address recipient) internal view returns (bool) {
         address[] storage recipients = signerRecipients[signer];
         for (uint i = 0; i < recipients.length; i++) {
@@ -45,8 +38,7 @@ contract Diwi {
         }
         return false;
     }
-
-     // Function to request the public key of a recipient with a custom message
+    
     function requestPublicKey(address recipient, string memory message) public {
         require(bytes(message).length > 0, "Message cannot be empty");
         if (!isRecipientOfSigner(msg.sender, recipient)) {
@@ -54,15 +46,13 @@ contract Diwi {
         }
         emit PublicKeyRequested(msg.sender, recipient, message);
     }
-
-    // Function for a recipient to respond with their public key
+    
     function submitPublicKey(address signer, string memory publicKey) public onlyPair(signer) {
         require(bytes(publicKey).length > 0, "Public key cannot be empty");
         publicKeys[signer][msg.sender].push(PublicKeySubmission(publicKey, true));
         emit PublicKeySubmitted(msg.sender, signer, publicKey);
     }
-
-     // Function to retrieve all public keys of a recipient for a specific signer
+    
     function getPublicKeys(address recipient) public view returns (string[] memory) {
         PublicKeySubmission[] storage submissions = publicKeys[msg.sender][recipient];
         string[] memory keys = new string[](submissions.length);
@@ -71,10 +61,47 @@ contract Diwi {
         }
         return keys;
     }
-
-    // Function to get recipients for a signer
+    
     function getRecipients(address signer) public view returns (address[] memory) {
         return signerRecipients[signer];
     }
+}
 
+// Proxy contract
+contract DiwiProxy {
+    address public implementation;
+    address public admin;
+    
+    constructor(address _implementation) {
+        implementation = _implementation;
+        admin = msg.sender;
+    }
+    
+    modifier onlyAdmin() {
+        require(msg.sender == admin, "Only admin can perform this action");
+        _;
+    }
+    
+    function upgrade(address newImplementation) public onlyAdmin {
+        implementation = newImplementation;
+    }
+    
+    fallback() external payable {
+        address _impl = implementation;
+        require(_impl != address(0), "Implementation contract not set");
+        
+        assembly {
+            let ptr := mload(0x40)
+            calldatacopy(ptr, 0, calldatasize())
+            let result := delegatecall(gas(), _impl, ptr, calldatasize(), 0, 0)
+            let size := returndatasize()
+            returndatacopy(ptr, 0, size)
+            
+            switch result
+            case 0 { revert(ptr, size) }
+            default { return(ptr, size) }
+        }
+    }
+    
+    receive() external payable {}
 }

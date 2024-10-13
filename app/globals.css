@@ -4,46 +4,30 @@
 
 @layer base {
   :root {
-    /* --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255; */
-    --color-primary: theme("colors.primary.light");
-    --color-background: theme("colors.background.light");
-    --color-text: theme("colors.text.light");
+    /* Light theme variables */
+    /* --color-bkg: 210deg 40% 98%; */
+    --color-bkg: #F5F5F5;
+    --color-content: #212121;
+    --color-accent1: #f2f0f0;
+    --color-accent2: 168deg 83.8% 48.2%;
+    --color-borderColor: #E0E0E0;
+  --color-textareaColor: #f0f9ff;
   }
 
-  :root[class~="dark"] {
-    /* Define your CSS variables for dark theme */
-    --color-primary: theme("colors.primary.dark");
-    --color-background: theme("colors.background.dark");
-    --color-text: theme("colors.text.dark");
-    --color-card: theme("colors.card.dark");
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --foreground-rgb: 255, 255, 255;
-      --background-start-rgb: 0, 0, 0;
-      --background-end-rgb: 0, 0, 0;
-    }
-  }
-  body {
-    @apply bg-background-light text-text-light dark:bg-background-dark dark:text-text-dark transition-colors duration-200;
+  :root[data-theme="dark"] {
+    /* Dark theme variables */
+    --color-bkg: #1A1A1A;
+    /* --color-bkg: 217deg 32.6% 17.5%; */
+    --color-content: #F5F5F5;
+    --color-accent1: #212121;
+    --color-accent2: 168deg 83.8% 48.2%;
+    --color-borderColor: #424242;
+    --color-textareaColor: #f0f9ff;
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  color: var(--color-content);
+  background: var(--color-bkg);
+  /* border-color: var(--color-accent1); */
 }

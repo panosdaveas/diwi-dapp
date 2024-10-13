@@ -5,13 +5,13 @@ import {
   CardBody,
   CardFooter,
   IconButton,
-  Input,
-  Textarea,
+  Input
 } from "@material-tailwind/react";
 import { useContext, useEffect } from "react";
 import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
 import { timeLockEncryption } from "../utils/timeLockEncrypt";
 import { DateTimePicker } from "./dateTimePicker";
+import { TextareaCustom } from "./textarea";
 
 export function CardLeftSteps() {
 
@@ -74,7 +74,7 @@ export function CardLeftSteps() {
 
   return (
     <>
-      <Card className="w-full shadow-none rounded-none border-b border-r border-t border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-text-light dark:text-text-dark">
+      <Card className="w-full shadow-none rounded-none border-b border-r border-t border-borderColor bg-bkg text-content">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -83,35 +83,18 @@ export function CardLeftSteps() {
               name="address"
               value={data.publicKey}
               onChange={handleInputChange}
-              className="overflow-hidden overflow-ellipsis"
-              color={
-                typeof window !== 'undefined' ?
-                  (localStorage.getItem("darkMode") === "true"
-                    ? "white"
-                    : "gray"
-                  ) : null
-              }
+              className="overflow-hidden overflow-ellipsis text-content"
             /> : <DateTimePicker
               selectedDate={new Date()}
               onChange={handleDateTimeChange}
-              color={localStorage.getItem('darkMode') === 'true' ? "white" : "gray"}
             />}
-            {data.activeStep === 0 ? <Textarea
+            {data.activeStep === 0 ? <TextareaCustom
               label="Message"
               name="plaintext"
               value={data.plaintext}
               onChange={handleInputChange}
               rows={7}
-              color={
-                typeof window !== 'undefined' ?
-                  (localStorage.getItem("darkMode") === "true"
-                    ? "white"
-                    : "gray"
-                  ) : null
-              }
-              className="dark:focus:border-t-0"
-
-            /> : <Textarea
+            /> : <TextareaCustom
               label="Message"
               name="ciphertext"
               value={data.displayMessage}
@@ -121,18 +104,11 @@ export function CardLeftSteps() {
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between py-1.5">
-          <IconButton variant="text" color="blue-gray" size="sm">
+          <IconButton variant="text" size="sm" className="stroke-content">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              stroke={
-                typeof window !== 'undefined' ?
-                  (localStorage.getItem("darkMode") === "true"
-                    ? "white"
-                    : "gray"
-                  ) : null
-              }
               strokeWidth={2}
               className="h-4 w-4"
             >
@@ -145,38 +121,16 @@ export function CardLeftSteps() {
           </IconButton>
           <div className="flex gap-2">
             <Button variant="text"
-              color={
-                typeof window !== 'undefined' ?
-                  (localStorage.getItem("darkMode") === "true"
-                    ? "white"
-                    : "gray"
-                  ) : null
-              } 
+              className="text-content"
               onClick={handleCancelInput}>
               Cancel
             </Button>
             {data.activeStep === 0 ?
               <Button variant="gradient"
-                // color="gray" 
                 onClick={handleAsymmetricEncryption}
-                color={
-                  typeof window !== 'undefined' ?
-                    (localStorage.getItem("darkMode") === "true"
-                      ? "white"
-                      : "gray"
-                    ) : null
-                }
               >
                 Encrypt
               </Button> : <Button variant="gradient"
-                // color="gray" 
-                color={
-                  typeof window !== 'undefined' ?
-                    (localStorage.getItem("darkMode") === "true"
-                      ? "white"
-                      : "gray"
-                    ) : null
-                }
                 onClick={handleTimeLockEncrypt}>
                 Encrypt
               </Button>}

@@ -50,8 +50,8 @@ export function SidebarContent() {
     };
 
     return (
-        <div className="h-full bg-background-light dark:bg-background-dark transition-colors duration-200">
-            <List className="p-4 text-text-light dark:text-text-dark" >
+        <div className="h-full bg-bkg transition-colors duration-200">
+            <List className="p-4 text-content" >
                 <Accordion
                     open={openAccordion === 1}
                     icon={
@@ -65,7 +65,7 @@ export function SidebarContent() {
                     <ListItem className="p-0 " selected={openAccordion === 1}>
                         <AccordionHeader
                             onClick={() => handleAccordionOpen(1)}
-                            className="border-b-0 p-3 text-text-light dark:text-text-dark"
+                            className="border-b-0 border-borderColor p-3 text-content"
                         >
                             <ListItemPrefix>
                                 <DocumentIcon className="h-5 w-5" />
@@ -75,8 +75,8 @@ export function SidebarContent() {
                             </Typography>
                         </AccordionHeader>
                     </ListItem>
-                    <AccordionBody className="py-1 ">
-                        <List className="p-0 text-text-light dark:text-text-dark">
+                    <AccordionBody className="py-1 text-content">
+                        <List className="p-0 text-content">
                             <ListItem>
                                 <ListItemPrefix>
                                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
@@ -98,7 +98,7 @@ export function SidebarContent() {
                         </List>
                     </AccordionBody>
                 </Accordion>
-                <hr className="my-2 border-border-light dark:border-border-dark" />
+                <hr className="my-2 border-borderColor" />
                 <ListItem>
                     <ListItemPrefix>
                         <InboxIcon className="h-5 w-5" />
@@ -138,14 +138,14 @@ export function SidebarContent() {
                     )}
                 </ListItem>
             </List>
-            <div className="absolute bottom-4 left-4 text-text-light dark:text-text-dark">
+            <div className="absolute bottom-4 left-4 text-content">
                 <a
                     href="https://github.com/panosdaveas/DiWi-DApp.git"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="cursor-pointer"
                 >
-                    <Typography className="absolute bottom-4 left-4 text-xs border border-gray rounded-md px-2 py-1">
+                    <Typography className="absolute bottom-4 left-4 text-xs border border-borderColor rounded-md px-2 py-1">
                         v0.1.9
                     </Typography>
                 </a>

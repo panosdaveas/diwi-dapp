@@ -1,15 +1,12 @@
 import {
-    MoonIcon,
     Square3Stack3DIcon,
 } from "@heroicons/react/24/outline";
-import {
-    SunIcon,
-} from "@heroicons/react/24/solid";
 import {
     Card,
     Drawer,
     IconButton,
-    Navbar
+    Navbar,
+    img,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
@@ -20,24 +17,12 @@ import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
+import { ThemeToggle } from "./themeToggle";
+import { CardTest } from "./card-test";
 
 const DashboardLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('darkMode') === 'true'
-        }
-        return false;
-    });
-
-    useEffect(() => {
-        if (isDarkMode) {
-            document.body.classList.add('dark');
-        } else {
-            document.body.classList.remove('dark');
-        }
-    }, []);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -46,34 +31,28 @@ const DashboardLayout = ({ children }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const toggleDarkMode = () => {
-        const newDarkMode = !isDarkMode;
-        setIsDarkMode(newDarkMode);
-        localStorage.setItem('darkMode', newDarkMode);
-        document.body.classList.toggle("dark");
-    };
-
     return (
-        <div className="min-h-screen bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-200">
-            <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-6 py-2 lg:px-6 bg-background-light dark:bg-background-dark border-t-0 border-r-0 border-l-0 border-b-1 border-border-light dark:border-border-dark shadow-none transition-colors duration-200">
-                <div className="flex items-center justify-between text-text-light dark:text-text-dark">
+        <div className="min-h-screen bg-bkg text-content transition-colors duration-200">
+            <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-6 py-2 lg:px-6 bg-bkg border-t-0 border-r-0 border-l-0 border-b-1 border-borderColor shadow-none transition-colors duration-200">
+                <div className="flex items-center justify-between text-content">
                     <div className="flex items-center gap-4">
                         {isMobile && (
                             <IconButton
                                 variant="text"
-                                className="text-text-light dark:text-text-dark"
+                                className="text-content"
                                 onClick={() => setIsDrawerOpen(true)}
                             >
                                 <Square3Stack3DIcon className="h-6 w-6" />
                             </IconButton>
                         )}
                         <img
-                            className="relative dark:invert transition-all duration-200 pl-1"
-                            src="/Diwi-logo.svg"
-                            alt="Diwi Logo"
-                            width="80px"
+                            // className={`relative transition-all duration-200 pl-1 ${localStorage.getItem("darkMode") === 'true' ? "invert" : "invert-0"}`}
+                            className="fill-content text-content relative transition-all duration-200 pl-1"
+                            src="./Diwi-logo.svg"
+                            // alt="Diwi Logo"
+                            width="80"
                             priority="true"
-                        />
+                            />
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -83,7 +62,7 @@ const DashboardLayout = ({ children }) => {
                                 target="_blank"
                             >
                                 <svg
-                                    className="bg-background-light dark:bg-background-dark dark:fill-primary-light"
+                                    className="fill-content"
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24"
                                     height="24"
@@ -92,16 +71,7 @@ const DashboardLayout = ({ children }) => {
                                     </path>
                                 </svg>
                             </a>
-                            <button
-                                onClick={toggleDarkMode}
-                                className="p-2 focus:outline-none "
-                            >
-                                {isDarkMode ? (
-                                    <SunIcon className="w-6 h-6 dark:text-text-dark" />
-                                ) : (
-                                    <MoonIcon className="w-6 h-6 text-text-light dark:text-text-dark" />
-                                )}
-                            </button>
+                            <ThemeToggle/>
                             <div className="ml-4">
                                 {!isMobile && <ConnectWalletButton />}
                             </div>
@@ -114,18 +84,19 @@ const DashboardLayout = ({ children }) => {
             <div className="flex h-[calc(100vh-64px)]">
                 {/* Sidebar - Hidden on mobile */}
                 {!isMobile && (
-                    <aside className="w-64 flex-shrink-0 border-r border-border-light dark:border-border-dark transition-colors duration-200">
+                    <aside className="w-64 flex-shrink-0 border-r border-borderColor transition-colors duration-200">
                         <SidebarContent />
                     </aside>
                 )}
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-auto bg-background-light dark:bg-background-dark transition-colors duration-200">
+                <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200">
                     <div className="container mx-auto">
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="col-span-full" >
                                 <div className="p-4">
+                                    {/* <CardTest /> */}
                                     <DefaultTable />
                                 </div>
                             </div>
@@ -136,12 +107,12 @@ const DashboardLayout = ({ children }) => {
                                 <CardLeftSteps />
                                 <CardRightSteps />
                             </div>
-                            <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border-light dark:border-border-dark shadow-none">
+                            <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border1 shadow-none">
                                 <Skeleton />
                                 {/* Add performance overview content here */}
                             </Card>
                             <div className="col-span-1 space-y-6">
-                                <div className="p-6 border-b border-r border-t border-border-light dark:border-border-dark">
+                                <div className="p-6 border-b border-r border-t border-border1">
                                     <Skeleton />
                                 </div>
                                 <Card className="p-6">
@@ -157,14 +128,14 @@ const DashboardLayout = ({ children }) => {
             {/* Mobile Drawer */}
             {isMobile && (
                 <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}
-                    className="bg-background-light dark:bg-background-dark">
+                    className="bg-bkg">
                     <div className="mb-2 flex items-center justify-between p-4 ">
                         {/* <Typography variant="h5" color="blue-gray">
               Material Tailwind
             </Typography> */}
                         <IconButton
                             variant="text"
-                            color="blue-gray"
+                            color="text-content"
                             onClick={() => setIsDrawerOpen(false)}
                         >
                             <svg
@@ -172,8 +143,7 @@ const DashboardLayout = ({ children }) => {
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 strokeWidth={2}
-                                stroke={!isDarkMode ? "currentColor" : "white"}
-                                className="h-5 w-5 "
+                                className="h-5 w-5 stroke-content"
                             >
                                 <path
                                     strokeLinecap="round"

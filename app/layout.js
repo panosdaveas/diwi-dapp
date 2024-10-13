@@ -2,6 +2,7 @@ import AppProvider from "./Context/context";
 import "@rainbow-me/rainbowkit/styles.css";
 import { Providers } from "./Providers/providers";
 import { CustomThemeProvider } from "./Providers/customTheme";
+import "./globals.css";
 
 export const metadata = {
   title: "DiWi",
@@ -14,7 +15,9 @@ export default function RootLayout({ children }) {
       <CustomThemeProvider>
         <body>
           <AppProvider>
-            <Providers>{children}</Providers>
+            <Providers>
+               {children}
+              </Providers>
           </AppProvider>
         </body>
       </CustomThemeProvider>

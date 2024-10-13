@@ -5,21 +5,22 @@ import {
     cardHeader,
     table,
     td,
+    tdHead,
     tdLast,
     tr
 } from "@/app/scripts/classesCustomization";
 import { useContractInteraction } from "@/app/scripts/interact";
 import {
-    Button,
     Card,
     CardBody,
     CardHeader,
     Input,
     Spinner,
-    Typography,
+    Typography
 } from "@material-tailwind/react";
 import { useContext, useEffect, useState } from "react";
 import { ClipboardDefault } from "./clipboard";
+import { TruncatedAddress } from "./truncatedText";
 
 export function DefaultTable() {
 
@@ -82,8 +83,6 @@ export function DefaultTable() {
     const handleGetPublicKey = async () => {
         if (!targetAddressGetPK) return;
         const success = await getPublicKey(targetAddressGetPK);
-            // "Fetching the public key"
-        // );
         const publicKey = success;
         setTableData((prev) => ({ ...prev, publicKey }));
         setTableData((prev) => ({
@@ -131,7 +130,7 @@ export function DefaultTable() {
         {
             func: handleFetchContract,
             name: "Fetch contract",
-            result: tableData.contractAddress || "-",
+            result: < TruncatedAddress address={tableData.contractAddress || ""} />,
             clipboard: tableData.contractAddress,
             status: tableData.requestStatusRequestContract || "-",
             disabled: loading
@@ -139,7 +138,7 @@ export function DefaultTable() {
         {
             func: handleFetchOwner,
             name: "Fetch Owner",
-            result: tableData.owner || "-",
+            result: < TruncatedAddress address={tableData.owner || ""} />,
             clipboard: tableData.owner,
             status: "",
             disabled: loading
@@ -153,6 +152,7 @@ export function DefaultTable() {
                 label="Target Address"
                 value={targetAddress}
                 onChange={(e) => setTargetAddress(e.target.value)}
+                className="text-content"
             />,
             clipboard: targetAddress,
             status: tableData.requestStatusRequestPK || "-",
@@ -166,8 +166,8 @@ export function DefaultTable() {
                 placeholder="Enter your public key"
                 label="Public Key"
                 value={targetSubmitPK}
-                className="overflow-elipsis"
                 onChange={(e) => setTargetSubmitPK(e.target.value)}
+                className="text-content"
             />,
             clipboard: targetSubmitPK,
             status: tableData.requestStatusSubmitPK || "-",
@@ -181,8 +181,8 @@ export function DefaultTable() {
                 placeholder="Enter target address"
                 label="Target Address"
                 value={targetAddressGetPK}
-                className="overflow-elipsis"
                 onChange={(e) => setTargetAddressGetPK(e.target.value)}
+                className="text-content"
             />,
             clipboard: targetAddressGetPK,
             status: tableData.requestStatusGetPK || "-",
@@ -194,12 +194,14 @@ export function DefaultTable() {
     return (
         <Card className={card}>
             <CardHeader className={cardHeader}>
-                <Typography variant="h5" className="mb-4">
-                    Contract Data Dashboard
-                </Typography>
-                <Typography>
-                    Here you can see the data of the contract and the public keys of the signers.
-                </Typography>
+                <div>
+                    <Typography variant="h5" className="mt-1 mb-4">
+                        Contract Data Dashboard
+                    </Typography>
+                    <Typography>
+                        Here you can see the data of the contract and the public keys of the signers.
+                    </Typography>
+                </div>
             </CardHeader>
             <CardBody className={cardBody}>
                 <table className={table}>
@@ -208,12 +210,10 @@ export function DefaultTable() {
                             {TABLE_HEAD.map((head) => (
                                 <th
                                     key={head}
-                                    // className="bg-blue-gray-50 p-4"
-                                    className={td}
+                                    className={tdHead}
                                 >
                                     <Typography
                                         variant="small"
-                                        // color="blue-gray"
                                         className="font-bold leading-none opacity-100"
                                     >
                                         {head}
@@ -229,14 +229,15 @@ export function DefaultTable() {
                             return (
                                 <tr key={name} className={tr}>
                                     <td className={tdClass}>
-                                        <Button
-                                            variant="gradient"
-                                            size="sm"
+                                        <Typography
+                                            as="a"
+                                            href="#"
+                                            variant="small"
                                             disabled={disabled}
+                                            className={`font-bold textTransform flex items-center gap-2 ${disabled ? "text-gray-500" : "text-content"}`}
                                             onClick={func}
-                                            className={`buttonTypography flex items-center gap-2`}
                                         >
-                                            {loading ? <Spinner className="h-4 w-4" /> : name}
+                                            {loading ? <Spinner className="h-4 w-4" /> : name} 
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -251,15 +252,10 @@ export function DefaultTable() {
                                                     d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
                                                 />
                                             </svg>
-                                        </Button>
+                                        </Typography>
                                     </td>
                                     <td className={tdClass}>
-                                        <Typography
-                                            variant="small"
-                                            className="font-normal dark:text-text-dark overflow-elipsis"
-                                        >
-                                            {result}
-                                        </Typography>
+                                        {result}
                                     </td>
                                     <td className={tdClass}>
                                         <ClipboardDefault content={clipboard} />
@@ -269,8 +265,7 @@ export function DefaultTable() {
                                             as="a"
                                             href="#"
                                             variant="small"
-                                            // color="blue-gray"
-                                            className="font-normal dark:text-text-dark"
+                                            className="font-normal"
                                         >
                                             {status}
                                         </Typography>

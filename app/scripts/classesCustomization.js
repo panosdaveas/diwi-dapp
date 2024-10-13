@@ -1,13 +1,14 @@
-export const td =
-    "p-4 border-b border-blue-gray-50 dark:bg-card-dark dark:border-border-dark",
-  tdLast = "p-4 dark:bg-card-dark",
-  tr = "hover:bg-gray-50",
+export const td = "p-4 border-b border-borderColor text-content bg-bkg",
+  tdLast = "p-4 bg-bkg",
+  tdHead = "p-4 bg-bkg border-b border-borderColor text-content",
+  // tr = "hover:bg-gray-50",
+  tr = "hover:bg-accent1",
   card =
-    "h-full w-full overflow-scroll shadow-none border border-border-light dark:border-border-dark",
+    "h-full w-full text-content bg-bkg shadow-none overflow-hidden border border-borderColor",
   cardHeader =
-    " h-full w-full m-0 pr-4 pl-4 pt-4 pb-8 rounded-none bg-gray-100 dark:bg-background-dark shadow-none floated-false dark:text-text-dark",
-  cardBody = "rounded-none p-0",
+    " h-full w-full m-0 pr-4 pl-4 pt-4 pb-8 rounded-none text-content bg-accent1 shadow-none floated-false",
+  cardBody = "rounded-none p-0 overflow-scroll",
   table =
-    "w-full min-w-max table-auto text-left text-text-light dark:text-text-dark",
-  buttonTypography = "text-text-light dark:text-text-dark",
-  typography = "text-text-light dark:text-text-dark";
+    "w-full min-w-max text-left text-content table-responsive",
+  buttonTypography = "text-content",
+  typography = "text-content";

@@ -43,8 +43,6 @@ export function CardRightSteps() {
       } else {
         const decrypted = JSON.stringify(await response.json());
         const decryptedMessageString = JSON.parse(decrypted);
-        // console.log(decryptedMessageString.decrypted);
-        // console.log(await decryptWithPrivateKey(data.privateKey, decryptedMessageString.decrypted));
         setData((prevState) => ({
           ...prevState,
           message: decryptedMessageString.decrypted,
@@ -81,18 +79,14 @@ export function CardRightSteps() {
         <CardFooter className="flex w-full justify-between py-1.5">
           <ClipboardDefault content={data.displayMessageEncrypted} />
           <div className="flex gap-2">
-            <Button variant="text" color="gray" onClick={handleClear}>
+            <Button variant="text" color="gray" onClick={handleClear} className="text-content">
               Clear
             </Button>
-            {/* //if active step is 0 then onClick handleAsssymetricDecryption else handleTimeLockDecryption  */}
             {data.activeStep === 0 ? <Button variant="gradient" color="gray" onClick={handleAsymmetricDecryption}>
               Decrypt
             </Button> : <Button variant="gradient" color="gray" onClick={handleTimeLockDecryption}>
               Decrypt
             </Button>}
-            {/* // <Button variant="gradient" color="gray" onClick={handleDecrypt}> */}
-            {/* Decrypt */}
-            {/* </Button> */}
             <Button onClick={handleAsymmetricDecryption}>here</Button>
           </div>
         </CardFooter>

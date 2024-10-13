@@ -1,6 +1,6 @@
 "use client";
 
-import { List, ThemeProvider, } from "@material-tailwind/react";
+import { List, ThemeProvider } from "@material-tailwind/react";
 
 export function CustomThemeProvider({ children }) {
   const customTheme = {
@@ -68,8 +68,6 @@ export function CustomThemeProvider({ children }) {
       },
     },
   };
- 
-  return (
-  <ThemeProvider value={customTheme}>{children}</ThemeProvider>
-  );
+
+  return <ThemeProvider value={customTheme}>{children}</ThemeProvider>;
 }
