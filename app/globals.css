@@ -5,8 +5,8 @@
 @layer base {
   :root {
     /* Light theme variables */
-    /* --color-bkg: 210deg 40% 98%; */
     --color-bkg: #F5F5F5;
+    /* --color-bkg: #00000000; */
     --color-content: #212121;
     --color-accent1: #f2f0f0;
     --color-accent2: 168deg 83.8% 48.2%;
@@ -17,7 +17,6 @@
   :root[data-theme="dark"] {
     /* Dark theme variables */
     --color-bkg: #1A1A1A;
-    /* --color-bkg: 217deg 32.6% 17.5%; */
     --color-content: #F5F5F5;
     --color-accent1: #212121;
     --color-accent2: 168deg 83.8% 48.2%;
@@ -29,5 +28,6 @@
 body {
   color: var(--color-content);
   background: var(--color-bkg);
+  /* background-image: url('/Runes.png'); */
   /* border-color: var(--color-accent1); */
 }
