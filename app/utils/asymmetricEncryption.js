@@ -18,7 +18,7 @@ export async function encryptWithPublicKey(publicKey, message) {
 //decrypt with private key
 export async function decryptWithPrivateKey(privateKey, encrypted) {
   try {
-    privateKey = Configuration().privateKey;
+    // privateKey = Configuration().privateKey;
     privateKey = stripHexPrefix(privateKey);
     const decrypted = await EthCrypto.decryptWithPrivateKey(
       privateKey, // hex string

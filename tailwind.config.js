@@ -29,6 +29,9 @@ module.exports = withMT({
         },
         textareaColor: "var(--color-textareaColor)",
       },
+      boxShadow: {
+        "3xl": "12px 12px 0 0 rgb(0, 0, 0)",
+      },
     },
   },
   plugins: [],

@@ -84,7 +84,7 @@ const DashboardLayout = ({ children }) => {
                 )}
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200">
+                <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200 mb-6">
                     <div className="container mx-auto">
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,22 +97,22 @@ const DashboardLayout = ({ children }) => {
                             <div className="col-span-full px-6">
                                 <StepperWithContent />
                             </div>
-                            <div className="col-span-full grid md:grid-cols-2 gap-6">
+                            <div className="col-span-full grid md:grid-cols-2 gap-4 px-4">
                                 <CardLeftSteps />
                                 <CardRightSteps />
                             </div>
-                            <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border1 shadow-none">
-                                <Skeleton />
+                            {/* <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border1 shadow-none"> */}
+                                {/* <Skeleton /> */}
                                 {/* Add performance overview content here */}
-                            </Card>
-                            <div className="col-span-1 space-y-6">
-                                <div className="p-6 border-b border-r border-t border-border1">
-                                    <Skeleton />
-                                </div>
-                                <Card className="p-6">
-                                    <Skeleton />
-                                </Card>
-                            </div>
+                            {/* </Card> */}
+                            {/* <div className="col-span-1 space-y-6"> */}
+                                {/* <div className="p-6 border-b border-r border-t border-border1"> */}
+                                    {/* <Skeleton /> */}
+                                {/* </div> */}
+                                {/* <Card className="p-6"> */}
+                                    {/* <Skeleton /> */}
+                                {/* </Card> */}
+                            {/* </div> */}
                             {/* Your grid content */}
                         </div>
                     </div>

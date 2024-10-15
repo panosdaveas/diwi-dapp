@@ -170,7 +170,10 @@ export function DefaultTable() {
                 label="Public Key"
                 value={targetSubmitPK}
                 onChange={(e) => setTargetSubmitPK(e.target.value)}
-                className="text-content"
+                className="text-content border-none"
+                labelProps={{
+                    className: "before:content-none after:content-none",
+                }}
             />,
             clipboard: targetSubmitPK,
             status: tableData.requestStatusSubmitPK || "-",
@@ -185,7 +188,10 @@ export function DefaultTable() {
                 label="Target Address"
                 value={targetAddressGetPK}
                 onChange={(e) => setTargetAddressGetPK(e.target.value)}
-                className="text-content"
+                className="text-content border-none"
+                labelProps={{
+                    className: "before:content-none after:content-none",
+                }}
             />,
             clipboard: targetAddressGetPK,
             status: tableData.requestStatusGetPK || "-",

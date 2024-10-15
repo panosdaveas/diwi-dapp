@@ -20,11 +20,13 @@ export function useContractInteraction() {
   const [blockExplorerUrl, setBlockExplorerUrl] = useState(null);
   const chainId = useChainId();
 
+  // Setup contract instance
   useEffect(() => {
     const setupContract = async () => {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
+        // if (!signer) return;
         const contractInstance = new ethers.Contract(
           contractAddress,
           contractABI,
@@ -35,9 +37,10 @@ export function useContractInteraction() {
         setError("Failed to setup contract: " + err.message);
       }
     };
-
     setupContract();
   }, []);
+
+
 
   async function logRecipientsAndPublicKeys(signerAddress) {
     // Connect to the Ethereum network (replace with your preferred provider)

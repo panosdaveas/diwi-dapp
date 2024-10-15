@@ -9,7 +9,7 @@ const TruncatedAddress = ({ address }) => {
     return (
         <Typography
             variant="small"
-            className="font-mono font-normal dark:text-text-dark"
+            className="font-mono font-normal text-content"
         >
             {truncate(address)}
         </Typography>

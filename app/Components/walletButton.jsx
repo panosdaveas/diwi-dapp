@@ -2,16 +2,15 @@
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '@material-tailwind/react';
-import gradient from '@material-tailwind/react/theme/components/timeline/timelineIconColors/gradient';
+import { useContractInteraction } from "@/app/scripts/interact";
 
 const ConnectWalletButton = () => {
 
+    const {
+       setupContract,
+    } = useContractInteraction();
+
     return (
-            // <ConnectButton
-            //     accountStatus="address"
-            //     chainStatus="icon"
-            //     showBalance={false}
-            // />
         <ConnectButton.Custom>
             {({
                 account,
@@ -63,8 +62,6 @@ const ConnectWalletButton = () => {
                             return (
                                 <div style={{ display: 'flex', gap: 12 }}>
                                     <button
-                                        // variant="text"
-                                        // className="rounded-full"
                                         onClick={openChainModal}
                                         style={{ display: 'flex', alignItems: 'center' }}
                                         type="button"
@@ -84,7 +81,6 @@ const ConnectWalletButton = () => {
                                                         className="h-6 w-6"
                                                         alt={chain.name ?? 'Chain icon'}
                                                         src={chain.iconUrl}
-                                                        // style={{ width: 12, height: 12 }}
                                                     />
                                                 )}
                                             </div>

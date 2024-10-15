@@ -12,6 +12,7 @@ import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
 import { timeLockEncryption } from "../utils/timeLockEncrypt";
 import { DateTimePicker } from "./dateTimePicker";
 import { TextareaCustom } from "./textarea";
+import { truncate } from "./truncatedText";
 
 export function CardLeftSteps() {
 
@@ -29,7 +30,7 @@ export function CardLeftSteps() {
     }));
   };
 
-  const handleCancelInput = () => {
+  const handleClearInput = () => {
     setData((prevData) => ({
       ...prevData,
       message: "",
@@ -74,16 +75,17 @@ export function CardLeftSteps() {
 
   return (
     <>
-      <Card className="w-full shadow-none rounded-none border-b border-r border-t border-borderColor bg-bkg text-content">
+      <Card className="w-full shadow-none rounded-none border border-borderColor bg-bkg text-content">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
             {data.activeStep === 0 ? <Input
               label="Public Key"
-              name="address"
+              name="publicKey"
               value={data.publicKey}
               onChange={handleInputChange}
-              className="overflow-hidden overflow-ellipsis" 
+              className="text-content overflow-hidden overflow-ellipsis" 
+              labelProps={{ className: "peer-placeholder-shown:text-content" }}
             /> : <DateTimePicker
               selectedDate={new Date()}
               onChange={handleDateTimeChange}
@@ -103,7 +105,7 @@ export function CardLeftSteps() {
             />}
           </div>
         </CardBody>
-        <CardFooter className="flex w-full justify-between py-1.5">
+        <CardFooter className="flex w-full justify-between">
           <IconButton variant="text" size="sm" className="stroke-content">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -122,8 +124,8 @@ export function CardLeftSteps() {
           <div className="flex gap-2">
             <Button variant="text"
               className="text-content"
-              onClick={handleCancelInput}>
-              Cancel
+              onClick={handleClearInput}>
+              Clear
             </Button>
             {data.activeStep === 0 ?
               <Button variant="gradient"
