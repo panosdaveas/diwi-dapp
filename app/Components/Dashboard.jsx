@@ -6,7 +6,6 @@ import {
     Drawer,
     IconButton,
     Navbar,
-    img,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 

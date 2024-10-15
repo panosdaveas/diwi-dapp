@@ -7,28 +7,23 @@ import {
   IconButton,
   Input
 } from "@material-tailwind/react";
-import { useContext, useEffect } from "react";
-import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
-import { timeLockEncryption } from "../utils/timeLockEncrypt";
+import { useContext } from "react";
 import { DateTimePicker } from "./dateTimePicker";
 import { TextareaCustom } from "./textarea";
-import { truncate } from "./truncatedText";
+import { handleScripts } from "../scripts/handles";
 
 export function CardLeftSteps() {
 
-  useEffect(() => {
-    localStorage.getItem('darkMode');
-  }, []);
+  const {
+    handleAsymmetricEncryption,
+    handleTimeLockEncrypt,
+    handleDateTimeChange,
+    handleInputChange,
+  } = handleScripts();
 
   const { data, setData } = useContext(CustomContext);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  
 
   const handleClearInput = () => {
     setData((prevData) => ({
@@ -37,39 +32,6 @@ export function CardLeftSteps() {
       publicKey: "",
       plaintext: "",
       dateTime: new Date(),
-    }));
-  };
-
-  const handleDateTimeChange = (dateTime) => {
-    setData((prevData) => ({
-      ...prevData,
-      dateTime: dateTime,
-    }));
-  };
-
-  const handleTimeLockEncrypt = async () => {
-    try {
-      const result = await timeLockEncryption(data.dateTime, data.message);
-      setData((prevData) => ({
-        ...prevData,
-        message: result.ciphertext,
-        client: result.client,
-        decryptionTime: result.decryptionTime,
-        displayMessageEncrypted: result.ciphertext,
-      }));
-    } catch (error) {
-      console.error("Error during encryption:", error);
-    }
-  };
-
-  const handleAsymmetricEncryption = async () => {
-    //encrypt with public key
-    const encrypted = await encryptWithPublicKey(data.publicKey, data.plaintext);
-    setData((prevData) => ({
-      ...prevData,
-      message: encrypted,
-      displayMessage: encrypted,
-      displayMessageEncrypted: encrypted,
     }));
   };
 

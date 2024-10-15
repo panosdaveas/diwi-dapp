@@ -8,19 +8,17 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { useContext } from "react";
-import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
 import { ClipboardDefault } from "./clipboard";
+import { handleScripts } from "../scripts/handles";
 
 export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  const {
+    handleAsymmetricDecryption,
+    handleTimeLockDecryption,
+    handleInputChange,
+  } = handleScripts();
 
   const handleClear = () => {
     setData((prevData) => ({
@@ -29,47 +27,6 @@ export function CardRightSteps() {
       privateKey: "",
       displayMessageEncrypted: "",
     }));
-  };
-
-  const handleAsymmetricDecryption = async () => {
-    const message = await decryptWithPrivateKey(data.privateKey, data.message);
-    setData((prevData) => ({
-      ...prevData,
-      displayMessageEncrypted: message,
-      ciphertext: message,
-    }));
-  };
-
-  const handleTimeLockDecryption = async () => {
-
-    try {
-      const response = await fetch("./api/decrypt", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Decryption failed");
-      } else {
-        const decrypted = JSON.stringify(await response.json());
-        const decryptedMessageString = JSON.parse(decrypted);
-        setData((prevState) => ({
-          ...prevState,
-          message: decryptedMessageString.decrypted,
-          displayMessageEncrypted: decrypted,
-        })
-        );
-      }
-    } catch (error) {
-      console.error("Error during decryption:", error);
-      const errorLog =
-        "Patience young padawan..." + error;
-      setData((prevState) => ({
-        ...prevState,
-        displayMessageEncrypted: errorLog,
-      }));
-    }
   };
 
   return (
@@ -102,11 +59,9 @@ export function CardRightSteps() {
             <Button variant="text" color="gray" onClick={handleClear} className="text-content">
               Clear
             </Button>
-            {data.activeStep === 0 ? <Button variant="gradient" color="gray" onClick={handleAsymmetricDecryption}>
-              Decrypt
-            </Button> : <Button variant="gradient" color="gray" onClick={handleTimeLockDecryption}>
-              Decrypt
-            </Button>}
+              <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
+                Decrypt
+              </Button>
           </div>
         </CardFooter>
       </Card>

@@ -55,6 +55,7 @@ export default function AppProvider({ children }) {
       account: [],
       accountAddress: "",
       formattedPublicKey: null,
+      tlEncrypted: "false",
     });
 
     return (
