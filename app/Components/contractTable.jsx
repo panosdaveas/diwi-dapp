@@ -137,7 +137,7 @@ export function DefaultTable() {
         },
         {
             func: handleFetchOwner,
-            name: "Fetch Owner",
+            name: "Fetch owner",
             result: < TruncatedAddress address={tableData.owner || ""} />,
             clipboard: tableData.owner,
             status: "",
@@ -152,33 +152,33 @@ export function DefaultTable() {
                 label="Target Address"
                 value={targetAddress}
                 onChange={(e) => setTargetAddress(e.target.value)}
-                className="text-content border-none "
+                className="text-content border-none"
                 labelProps={{
-                    className: "before:content-none after:content-none",
+                    className: "before:content-none after:content-none text-content",
                 }}
             />,
             clipboard: targetAddress,
             status: tableData.requestStatusRequestPK || "-",
             disabled: loading || !targetAddress
         },
-        {
-            func: handleSubmitPublicKey,
-            name: "Submit Public Key",
-            result: <Input
-                variant="standard"
-                placeholder="Enter your public key"
-                label="Public Key"
-                value={targetSubmitPK}
-                onChange={(e) => setTargetSubmitPK(e.target.value)}
-                className="text-content border-none"
-                labelProps={{
-                    className: "before:content-none after:content-none",
-                }}
-            />,
-            clipboard: targetSubmitPK,
-            status: tableData.requestStatusSubmitPK || "-",
-            disabled: loading || !targetSubmitPK
-        },
+        // {
+        //     func: handleSubmitPublicKey,
+        //     name: "Submit Public Key",
+        //     result: <Input
+        //         variant="standard"
+        //         placeholder="Enter your public key"
+        //         label="Public Key"
+        //         value={targetSubmitPK}
+        //         onChange={(e) => setTargetSubmitPK(e.target.value)}
+        //         className="text-content border-none"
+        //         labelProps={{
+        //             className: "before:content-none after:content-none",
+        //         }}
+        //     />,
+        //     clipboard: targetSubmitPK,
+        //     status: tableData.requestStatusSubmitPK || "-",
+        //     disabled: loading || !targetSubmitPK
+        // },
         {
             func: handleGetPublicKey,
             name: "Get Public Key",
@@ -205,10 +205,10 @@ export function DefaultTable() {
             <CardHeader className={cardHeader}>
                 <div>
                     <Typography variant="h5" className="mt-1 mb-4">
-                        Contract Data Dashboard
+                        Signer Dashboard
                     </Typography>
                     <Typography>
-                        Here you can see the data of the contract and the public keys of the signers.
+                        Here you can see the data of the contract and the public keys of the recipients.
                     </Typography>
                 </div>
             </CardHeader>

@@ -23,8 +23,6 @@ export function CardLeftSteps() {
 
   const { data, setData } = useContext(CustomContext);
 
-  
-
   const handleClearInput = () => {
     setData((prevData) => ({
       ...prevData,

@@ -77,13 +77,41 @@ export function SidebarContent() {
                     </ListItem>
                     <AccordionBody className="py-1 text-content">
                         <List className="p-0 text-content">
-                            <ListItem>
+                <ListItem>
+                    <ListItemPrefix>
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    </ListItemPrefix>
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                </ListItem>
+                <ListItem>
+                    <ListItemPrefix>
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    </ListItemPrefix>
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                            </ListItem>
+                            {/* <ListItem>
                                 <ListItemPrefix>
                                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                                 </ListItemPrefix>
                                 Analytics
-                            </ListItem>
-                            <ListItem>
+                            </ListItem> */}
+                            {/* <ListItem>
                                 <ListItemPrefix>
                                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                                 </ListItemPrefix>
@@ -94,12 +122,12 @@ export function SidebarContent() {
                                     <ChevronRightIcon strokeWidth={3} className="h-3 w-5" />
                                 </ListItemPrefix>
                                 Projects
-                            </ListItem>
+                            </ListItem> */}
                         </List>
                     </AccordionBody>
                 </Accordion>
                 <hr className="my-2 border-borderColor" />
-                <ListItem>
+                {/* <ListItem>
                     <ListItemPrefix>
                         <InboxIcon className="h-5 w-5" />
                     </ListItemPrefix>
@@ -113,12 +141,54 @@ export function SidebarContent() {
                             className="rounded-full"
                         />
                     </ListItemSuffix>
+                </ListItem> */}
+                <ListItem>
+                    <ListItemPrefix>
+                        {/* <UserCircleIcon className="h-5 w-5" /> */}
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    </ListItemPrefix>
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    {/* Profile */}
                 </ListItem>
                 <ListItem>
                     <ListItemPrefix>
-                        <UserCircleIcon className="h-5 w-5" />
+                        {/* <UserCircleIcon className="h-5 w-5" /> */}
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
                     </ListItemPrefix>
-                    Profile
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    {/* Profile */}
+                </ListItem>
+                <ListItem>
+                    <ListItemPrefix>
+                        {/* <UserCircleIcon className="h-5 w-5" /> */}
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    </ListItemPrefix>
+                    <div className="max-w-full animate-pulse">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                            &nbsp;
+                        </div>
+                        </div>
+                    {/* Profile */}
                 </ListItem>
                 <ListItem onClick={handleLogContractData}>
                     <ListItemPrefix>
@@ -126,12 +196,12 @@ export function SidebarContent() {
                     </ListItemPrefix>
                     Contract Data
                 </ListItem>
-                <ListItem>
+                {/* <ListItem>
                     <ListItemPrefix>
                         <PowerIcon className="h-5 w-5" />
                     </ListItemPrefix>
                     Log Out
-                </ListItem>
+                </ListItem> */}
                 <ListItem>
                     {isMobile && (
                         <ConnectWalletButton />

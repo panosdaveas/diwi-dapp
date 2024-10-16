@@ -189,6 +189,7 @@ export function useContractInteraction() {
         success: true,
         contractAddress: contractAddress,
         blockExplorerUrl: explorerUrl,
+
       };
     } catch (err) {
       setError("Error fetching contract: " + err.message);

@@ -5,16 +5,26 @@ import { timeLockEncryption } from "../utils/timeLockEncrypt";
 import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
 
 export function handleScripts() {
-
   const { data, setData } = useContext(CustomContext);
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  setData((prevData) => ({
-    ...prevData,
-    [name]: value,
-  }));
-};
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleClearInputSigner = () => {
+    setData((prevData) => ({
+      ...prevData,
+      message: "",
+      publicKey: "",
+      plaintext: "",
+      dateTime: new Date(),
+      displayMessage: "",
+    }));
+  };
 
   const handleDateTimeChange = (dateTime) => {
     setData((prevData) => ({
@@ -34,13 +44,13 @@ const handleInputChange = (e) => {
         displayMessageEncrypted: result.ciphertext,
         tlEncrypted: "true",
       }));
+      console.log(result.ciphertext);
     } catch (error) {
       console.error("Error during encryption:", error);
     }
   };
 
   const handleAsymmetricEncryption = async () => {
-    //encrypt with public key
     const encrypted = await encryptWithPublicKey(
       data.publicKey,
       data.plaintext
@@ -51,13 +61,37 @@ const handleInputChange = (e) => {
       displayMessage: encrypted,
       displayMessageEncrypted: encrypted,
     }));
+    console.log(encrypted);
+  };
+
+  const handleEncrypt = async () => {
+    const encrypted = await encryptWithPublicKey(
+      data.publicKey,
+      data.plaintext
+    );
+    try {
+      const result = await timeLockEncryption(data.dateTime, encrypted);
+      setData((prevData) => ({
+        ...prevData,
+        message: result.ciphertext,
+        displayMessage: result.ciphertext,
+        tlEncrypted: "true",
+      }));
+    } catch (error) {
+      console.error("Error during encryption:", error);
+    }
+  };
+
+  const handleDecrypt = async () => {
+      await handleTimeLockDecryption();
+      handleAsymmetricDecryption();
   };
 
   const handleAsymmetricDecryption = async () => {
     const message = await decryptWithPrivateKey(data.privateKey, data.message);
     setData((prevData) => ({
       ...prevData,
-      displayMessageEncrypted: message,
+      displayMessage: message,
       ciphertext: message,
     }));
   };
@@ -78,7 +112,7 @@ const handleInputChange = (e) => {
         setData((prevState) => ({
           ...prevState,
           message: decryptedMessageString.decrypted,
-          displayMessageEncrypted: decrypted,
+          displayMessage: decrypted,
           tlEncrypted: "false",
         }));
       }
@@ -87,11 +121,10 @@ const handleInputChange = (e) => {
       const errorLog = "Patience young padawan..." + error;
       setData((prevState) => ({
         ...prevState,
-        displayMessageEncrypted: errorLog,
+        displayMessage: errorLog,
       }));
     }
   };
-
 
   return {
     handleAsymmetricDecryption,
@@ -100,5 +133,8 @@ const handleInputChange = (e) => {
     handleTimeLockEncrypt,
     handleDateTimeChange,
     handleInputChange,
+    handleEncrypt,
+    handleDecrypt,
+    handleClearInputSigner,
   };
 }

@@ -19,6 +19,8 @@ import { ConnectWalletButton } from "./walletButton";
 import { ThemeToggle } from "./themeToggle";
 import { DynamicLogo } from "./dynamicLogo";
 import { CardTest } from "./card-test";
+import { SignerDashboard } from "./signerDashboard";
+import { RecipientDashboard } from "./recipientDashboard";
 
 const DashboardLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
@@ -93,13 +95,19 @@ const DashboardLayout = ({ children }) => {
                                     <DefaultTable />
                                 </div>
                             </div>
-                            <div className="col-span-full px-6">
+                            {/* <div className="col-span-full px-6">
                                 <StepperWithContent />
-                            </div>
-                            <div className="col-span-full grid md:grid-cols-2 gap-4 px-4">
-                                <CardLeftSteps />
-                                <CardRightSteps />
-                            </div>
+                            </div> */}
+                            <div className="col-span-full p-4" >
+                                <SignerDashboard />
+                                </div>
+                            <div className="col-span-full p-4" >
+                                <RecipientDashboard />
+                                </div>
+                            {/* <div className="col-span-full grid md:grid-cols-2 gap-4 px-4"> */}
+                                {/* <CardLeftSteps /> */}
+                                {/* <CardRightSteps /> */}
+                            {/* </div> */}
                             {/* <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border1 shadow-none"> */}
                                 {/* <Skeleton /> */}
                                 {/* Add performance overview content here */}
