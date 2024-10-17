@@ -3,9 +3,14 @@ import { useContext } from "react";
 import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
 import { timeLockEncryption } from "../utils/timeLockEncrypt";
 import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
+import { useContractInteraction } from "@/app/scripts/interact";
 
 export function handleScripts() {
   const { data, setData } = useContext(CustomContext);
+  const {
+    sendMessageToRecipient,
+    pollForMessages,
+  } = useContractInteraction();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +49,6 @@ export function handleScripts() {
         displayMessageEncrypted: result.ciphertext,
         tlEncrypted: "true",
       }));
-      console.log(result.ciphertext);
     } catch (error) {
       console.error("Error during encryption:", error);
     }
@@ -61,7 +65,17 @@ export function handleScripts() {
       displayMessage: encrypted,
       displayMessageEncrypted: encrypted,
     }));
-    console.log(encrypted);
+  };
+
+  const handleSendMessage = async (message) => {
+    const recipientAddress = data.addressRecipient;
+
+    const result = await sendMessageToRecipient(recipientAddress, message);
+    if (result.success) {
+        console.log(result);
+    } else {
+      console.error("Failed to send message:", result.error);
+    }
   };
 
   const handleEncrypt = async () => {
@@ -77,9 +91,14 @@ export function handleScripts() {
         displayMessage: result.ciphertext,
         tlEncrypted: "true",
       }));
+      const emitMessage = await sendMessageToRecipient(
+        data.addressRecipient,
+        result.ciphertext
+      );
     } catch (error) {
       console.error("Error during encryption:", error);
     }
+    
   };
 
   const handleDecrypt = async () => {
@@ -112,19 +131,28 @@ export function handleScripts() {
         setData((prevState) => ({
           ...prevState,
           message: decryptedMessageString.decrypted,
-          displayMessage: decrypted,
+          displayMessage: decryptedMessageString.decrypted,
           tlEncrypted: "false",
         }));
       }
     } catch (error) {
       console.error("Error during decryption:", error);
-      const errorLog = "Patience young padawan..." + error;
+      const errorLog = error;
       setData((prevState) => ({
         ...prevState,
         displayMessage: errorLog,
       }));
     }
   };
+
+  //handle poll for messages    
+  const handlePollMessages = async() => {
+    const pollResults= await pollForMessages();
+    setData((prevState) => ({
+      ...prevState,
+      displayMessage: pollResults[pollResults.length - 1].message,
+    }));
+};
 
   return {
     handleAsymmetricDecryption,
@@ -136,5 +164,6 @@ export function handleScripts() {
     handleEncrypt,
     handleDecrypt,
     handleClearInputSigner,
+    handlePollMessages,
   };
 }

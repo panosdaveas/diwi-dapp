@@ -80,13 +80,13 @@ export function SidebarContent() {
                 <ListItem>
                     <ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>
                     </ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>
@@ -94,13 +94,13 @@ export function SidebarContent() {
                 <ListItem>
                     <ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>
                     </ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>
@@ -146,13 +146,13 @@ export function SidebarContent() {
                     <ListItemPrefix>
                         {/* <UserCircleIcon className="h-5 w-5" /> */}
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-content">
                             &nbsp;
                         </div>
                         </div>
                     </ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-content">
                             &nbsp;
                         </div>
                         </div>
@@ -162,13 +162,13 @@ export function SidebarContent() {
                     <ListItemPrefix>
                         {/* <UserCircleIcon className="h-5 w-5" /> */}
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-content">
                             &nbsp;
                         </div>
                         </div>
                     </ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>
@@ -178,13 +178,13 @@ export function SidebarContent() {
                     <ListItemPrefix>
                         {/* <UserCircleIcon className="h-5 w-5" /> */}
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>
                     </ListItemPrefix>
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-gray-300 rounded-full text-inherit">
+                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
                             &nbsp;
                         </div>
                         </div>

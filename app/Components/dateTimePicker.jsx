@@ -76,10 +76,16 @@ const DateTimePicker = ({ selectedDate, onChange }) => {
       <Popover placement="bottom" open={isOpen} handler={setIsOpen}>
         <PopoverHandler>
           <Input
+          variant="standard"
             label="Select Date and Time"
             onChange={() => null}
             value={formatDateTime()}
             onClick={() => setIsOpen(true)}
+            // color="gray"
+            className="text-content border-none"
+            labelProps={{
+              className: "before:content-none after:content-none text-content",
+            }}
           />
         </PopoverHandler>
         <PopoverContent className="p-6 z-[9999]" ref={popoverRef}>

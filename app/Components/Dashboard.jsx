@@ -85,7 +85,7 @@ const DashboardLayout = ({ children }) => {
                 )}
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200 mb-6">
+                <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200">
                     <div className="container mx-auto">
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

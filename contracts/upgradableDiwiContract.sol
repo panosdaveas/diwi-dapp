@@ -18,6 +18,7 @@ contract DiwiStorage {
 contract DiwiImplementation is DiwiStorage {
     event PublicKeyRequested(address indexed from, address indexed to, string message);
     event PublicKeySubmitted(address indexed from, address indexed to, string publicKey);
+    event MessageSent(address indexed from, address indexed to, string message);
     
     modifier onlyPair(address signer) {
         require(isRecipientOfSigner(signer, msg.sender), "Only valid signer-recipient pair can submit public keys");
@@ -33,6 +34,16 @@ contract DiwiImplementation is DiwiStorage {
         address[] storage recipients = signerRecipients[signer];
         for (uint i = 0; i < recipients.length; i++) {
             if (recipients[i] == recipient) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function hasSubmittedPublicKey(address signer, address recipient) internal view returns (bool) {
+        PublicKeySubmission[] storage submissions = publicKeys[signer][recipient];
+        for (uint i = 0; i < submissions.length; i++) {
+            if (submissions[i].exists) {
                 return true;
             }
         }
@@ -64,6 +75,14 @@ contract DiwiImplementation is DiwiStorage {
     
     function getRecipients(address signer) public view returns (address[] memory) {
         return signerRecipients[signer];
+    }
+
+    function sendMessageToRecipient(address recipient, string memory message) public {
+        require(isRecipientOfSigner(msg.sender, recipient), "Recipient is not associated with the signer");
+        require(hasSubmittedPublicKey(msg.sender, recipient), "Recipient has not submitted a public key yet");
+        require(bytes(message).length > 0, "Message cannot be empty");
+        
+        emit MessageSent(msg.sender, recipient, message);
     }
 }
 

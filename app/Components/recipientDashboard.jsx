@@ -19,6 +19,7 @@ export function RecipientDashboard() {
     handleTimeLockDecryption,
     handleInputChange,
     handleDecrypt,
+    handlePollMessages,
   } = handleScripts();
 
   const handleClear = () => {
@@ -32,7 +33,7 @@ export function RecipientDashboard() {
 
   return (
     <>
-      <Card className="w-full shadow-none rounded-none border border-borderColor bg-bkg text-content">
+      <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -50,6 +51,7 @@ export function RecipientDashboard() {
               label="Encrypted message"
               name="displayMessage"
               value={data.displayMessage}
+            //   value=""
               onChange={handleInputChange}
               rows={7}
               className="text-content"
@@ -57,11 +59,14 @@ export function RecipientDashboard() {
           </div>
         </CardBody>
         <CardFooter className="flex w-full justify-between">
-          <ClipboardDefault content={data.displayMessageEncrypted} />
+          <ClipboardDefault content={data.displayMessage} />
           <div className="flex gap-2">
             <Button variant="text" color="gray" onClick={handleClear} className="text-content">
               Clear
             </Button>
+                      <Button variant="text" color="gray" onClick={handlePollMessages} className="text-content">
+                        Poll
+                        </Button>
               <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
                 Decrypt
               </Button>

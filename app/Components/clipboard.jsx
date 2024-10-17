@@ -9,7 +9,6 @@ export function ClipboardDefault({ content }) {
 
   return (
     <div>
-      <div className="flex items-center gap-x-4">
         <IconButton variant="text"
           className="text-content"
           size="sm"
@@ -26,6 +25,6 @@ export function ClipboardDefault({ content }) {
           )}
         </IconButton>
       </div>
-    </div>
+    
   );
 }

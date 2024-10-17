@@ -12,6 +12,7 @@ import { DateTimePicker } from "./dateTimePicker";
 import { TextareaCustom } from "./textarea";
 import { handleScripts } from "../scripts/handles";
 import { ClipboardDefault } from "./clipboard";
+import { NetworkToggle } from "./networkToggle";
 
 export function SignerDashboard() {
 
@@ -31,13 +32,17 @@ export function SignerDashboard() {
                 <CardBody>
                     <div className="grid gap-6">
                         <Input
+                            variant="standard"
                             readOnly={true}
                             label="Public Key"
                             name="publicKey"
                             value={data.publicKey}
                             onChange={handleInputChange}
-                            className="text-content overflow-hidden overflow-ellipsis"
-                            labelProps={{ className: "peer-placeholder-shown:text-content" }}
+                            className="text-content overflow-hidden overflow-ellipsis border-none"
+                            // labelProps={{ className: "peer-placeholder-shown:text-content" }}
+                            labelProps={{
+                                className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content",
+                            }}
                         />
                         <DateTimePicker
                             selectedDate={new Date()}
@@ -62,7 +67,10 @@ export function SignerDashboard() {
                     </div>
                 </CardBody>
                 <CardFooter className="flex w-full justify-between">
+      <div className="flex items-center gap-x-2">
                     <ClipboardDefault content={data.displayMessage} />
+                    {/* <NetworkToggle /> */}
+                    </div>
                     <div className="flex gap-2">
                         <Button variant="text"
                             className="text-content"

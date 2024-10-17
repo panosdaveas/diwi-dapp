@@ -84,6 +84,7 @@ export function DefaultTable() {
         if (!targetAddressGetPK) return;
         const success = await getPublicKey(targetAddressGetPK);
         const publicKey = success;
+
         setTableData((prev) => ({ ...prev, publicKey }));
         setTableData((prev) => ({
             ...prev,
@@ -93,6 +94,7 @@ export function DefaultTable() {
         setData((prevData) => ({
             ...prevData,
             publicKey: publicKey,
+            addressRecipient: targetAddressGetPK,
         }));
     };
 
@@ -154,7 +156,7 @@ export function DefaultTable() {
                 onChange={(e) => setTargetAddress(e.target.value)}
                 className="text-content border-none"
                 labelProps={{
-                    className: "before:content-none after:content-none text-content",
+                    className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content",
                 }}
             />,
             clipboard: targetAddress,
@@ -190,7 +192,7 @@ export function DefaultTable() {
                 onChange={(e) => setTargetAddressGetPK(e.target.value)}
                 className="text-content border-none"
                 labelProps={{
-                    className: "before:content-none after:content-none",
+                    className: "before:content-none after:content-none peer-placeholder-shown:text-content",
                 }}
             />,
             clipboard: targetAddressGetPK,

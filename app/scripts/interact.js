@@ -40,14 +40,12 @@ export function useContractInteraction() {
     setupContract();
   }, []);
 
-
-
   async function logRecipientsAndPublicKeys(signerAddress) {
     // Connect to the Ethereum network (replace with your preferred provider)
-     const result = {
-       signer: signerAddress,
-       recipients: [],
-     };
+    const result = {
+      signer: signerAddress,
+      recipients: [],
+    };
 
     try {
       // Get recipients for the signer
@@ -83,7 +81,7 @@ export function useContractInteraction() {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-};
+  }
 
   //Function to request public key from a recipient
   const requestPublicKey = async (address, message) => {
@@ -189,7 +187,6 @@ export function useContractInteraction() {
         success: true,
         contractAddress: contractAddress,
         blockExplorerUrl: explorerUrl,
-
       };
     } catch (err) {
       setError("Error fetching contract: " + err.message);
@@ -197,6 +194,66 @@ export function useContractInteraction() {
         success: false,
         error: err.message,
       };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendMessageToRecipient = async (recipientAddress, message) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const tx = await contract.sendMessageToRecipient(
+        recipientAddress,
+        message
+      );
+      const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
+      setLastTxHash(tx.hash);
+      console.log("Message sent:", message);
+      await tx.wait();
+      return {
+        success: true,
+        txHash: tx.hash,
+        blockExplorerUrl: explorerUrl,
+      };
+    } catch (err) {
+      setError("Error sending message: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pollForMessages = async () => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      // const toBlock = "latest";
+      const toBlock = await provider.getBlockNumber(); // Latest block number
+      const fromBlock = toBlock - 1000; // Get the starting block (1000 blocks ago)
+      const filter = contract.filters.MessageSent(null, signer);
+      const events = await contract.queryFilter(filter, fromBlock, toBlock);
+
+      const messages = events.map((event) => ({
+        from: event.args.from,
+        message: event.args.message,
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+      }));
+      console.log("Messages received:", messages);
+      return messages;
+    } catch (err) {
+      setError("Error polling for messages: " + err.message);
+      return [];
     } finally {
       setLoading(false);
     }
@@ -214,5 +271,7 @@ export function useContractInteraction() {
     logRecipientsAndPublicKeys,
     lastTxHash,
     blockExplorerUrl,
+    sendMessageToRecipient,
+    pollForMessages,
   };
 }
