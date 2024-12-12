@@ -10,6 +10,7 @@ export function handleScripts() {
   const {
     sendMessageToRecipient,
     pollForMessages,
+    pollForPublicKeyRequests,
   } = useContractInteraction();
 
   const handleInputChange = (e) => {
@@ -154,6 +155,11 @@ export function handleScripts() {
     }));
 };
 
+  //handle poll for public key requests
+  const handlePollPublicKeyRequests = async() => {
+    const requests= await pollForPublicKeyRequests();
+};
+
   return {
     handleAsymmetricDecryption,
     handleTimeLockDecryption,
@@ -165,5 +171,6 @@ export function handleScripts() {
     handleDecrypt,
     handleClearInputSigner,
     handlePollMessages,
+    handlePollPublicKeyRequests,
   };
 }

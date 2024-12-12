@@ -10,6 +10,7 @@ import {
 import { useContext } from "react";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
+import { RecipientTable } from "./recipientTable";
 
 export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);

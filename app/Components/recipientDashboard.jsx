@@ -10,6 +10,7 @@ import {
 import { useContext } from "react";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
+import { RecipientTable } from "./recipientTable";
 
 export function RecipientDashboard() {
   const { data, setData } = useContext(CustomContext);
@@ -20,6 +21,7 @@ export function RecipientDashboard() {
     handleInputChange,
     handleDecrypt,
     handlePollMessages,
+    handlePollPublicKeyRequests,
   } = handleScripts();
 
   const handleClear = () => {
@@ -34,6 +36,7 @@ export function RecipientDashboard() {
   return (
     <>
       <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+        <RecipientTable />
         <div className="flex items-center justify-between"></div>
         <CardBody>
           <div className="grid gap-6">
@@ -67,6 +70,9 @@ export function RecipientDashboard() {
                       <Button variant="text" color="gray" onClick={handlePollMessages} className="text-content">
                         Poll
                         </Button>
+                      <Button variant="text" color="gray" onClick={handlePollPublicKeyRequests} className="text-content">
+                          Requests
+                      </Button>
               <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
                 Decrypt
               </Button>

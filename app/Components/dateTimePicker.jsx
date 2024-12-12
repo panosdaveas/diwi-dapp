@@ -96,7 +96,7 @@ const DateTimePicker = ({ selectedDate, onChange }) => {
               selected={date}
               onSelect={handleDateChange}
               showOutsideDays
-              className="border-0"
+              className="border-0 flex flex-col justify-center items-center text-center"
               modifiers={{
                 today: (day) => isToday(day),
                 disabled: (day) => isBefore(day, startOfDay(new Date())),

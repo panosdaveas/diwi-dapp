@@ -41,7 +41,7 @@ export function useContractInteraction() {
   }, []);
 
   async function logRecipientsAndPublicKeys(signerAddress) {
-    // Connect to the Ethereum network (replace with your preferred provider)
+    // Connect to the Ethereum network 
     const result = {
       signer: signerAddress,
       recipients: [],
@@ -50,7 +50,6 @@ export function useContractInteraction() {
     try {
       // Get recipients for the signer
       const recipients = await contract.getRecipients(signerAddress);
-      // console.log("Recipients for signer", signerAddress, ":", recipients);
 
       // For each recipient, get their public keys
       for (const recipient of recipients) {
@@ -76,7 +75,7 @@ export function useContractInteraction() {
 
       console.log("JSON data opened in a new tab.");
 
-      // Also return the data URL in case you want to use it elsewhere
+      // Also return the data URL 
       return dataUrl;
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -99,7 +98,7 @@ export function useContractInteraction() {
       return {
         success: true,
         txHash: tx.hash,
-        blockExplorerUrl: explorerUrl, // Return the URL directly instead of from state
+        blockExplorerUrl: explorerUrl, 
       };
     } catch (err) {
       setError("Error requesting public key: " + err.message);
@@ -237,22 +236,97 @@ export function useContractInteraction() {
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const signer = await provider.getSigner();
-      // const toBlock = "latest";
       const toBlock = await provider.getBlockNumber(); // Latest block number
-      const fromBlock = toBlock - 1000; // Get the starting block (1000 blocks ago)
+      const fromBlock = toBlock - 2000; // Get the starting block (1000 blocks ago)
       const filter = contract.filters.MessageSent(null, signer);
       const events = await contract.queryFilter(filter, fromBlock, toBlock);
-
       const messages = events.map((event) => ({
         from: event.args.from,
         message: event.args.message,
         blockNumber: event.blockNumber,
         transactionHash: event.transactionHash,
+        blockExplorerUrl: getBlockExplorerUrl(chainId, event.transactionHash),
       }));
       console.log("Messages received:", messages);
       return messages;
     } catch (err) {
       setError("Error polling for messages: " + err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pollForPublicKeyRequests = async () => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const toBlock = await provider.getBlockNumber(); // Latest block number
+      const fromBlock = toBlock - 2000; // Get the starting block (2000 blocks ago)
+      const filter = contract.filters.PublicKeyRequested(null, signer);
+      const events = await contract.queryFilter(filter, fromBlock, toBlock);
+      const requests = events.map((event) => ({
+        from: event.args.from,
+        message: event.args.message,
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+        blockExplorerUrl: getBlockExplorerUrl(chainId, event.transactionHash),
+      }));
+
+      console.log("Public key requests found:", requests);
+      return requests;
+    } catch (err) {
+      setError("Error searching for public key requests: " + err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const publicKeySubmitted = async (signer, recipient) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const toBlock = await provider.getBlockNumber(); // Latest block number
+      const fromBlock = toBlock - 2000; // Get the starting block (2000 blocks ago)
+      const filter = contract.filters.PublicKeySubmitted(null, signer, recipient);
+      const events = await contract.queryFilter(filter, fromBlock, toBlock);
+      const requests = events.map((event) => ({
+        from: event.args.from,
+        message: event.args.message,
+        publicKey: event.args.publicKey,
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+        blockExplorerUrl: getBlockExplorerUrl(chainId, event.transactionHash),
+        pkExists: event.args.publicKey ? "true" : "false",
+      }));
+      console.log("Public key submitted", requests);
+      return requests;
+    } catch (err) {
+      setError("Error finding public key submitted: " + err.message);
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //get recipients and public keys
+  const getRecipientsAndPublicKeys = async () => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const recipients = await contract.getRecipients(signer.address);
+      console.log("Recipients and public keys:", recipients);
+      return { recipients};
+    } catch (err) {
+      setError("Error fetching recipients: " + err.message);
       return [];
     } finally {
       setLoading(false);
@@ -273,5 +347,7 @@ export function useContractInteraction() {
     blockExplorerUrl,
     sendMessageToRecipient,
     pollForMessages,
+    pollForPublicKeyRequests,
+    publicKeySubmitted,
   };
 }
