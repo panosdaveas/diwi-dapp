@@ -31,7 +31,7 @@ export function SidebarContent() {
     const { walletInfo } = useWallet();
 
     const {
-        logRecipientsAndPublicKeys,
+        getAllWills,
     } = useContractInteraction();
 
     useEffect(() => {
@@ -46,7 +46,7 @@ export function SidebarContent() {
     };
 
     const handleLogContractData = async () => {
-        const dataUrl = await logRecipientsAndPublicKeys(walletInfo.address);
+        const dataUrl = await getAllWills();
     };
 
     return (

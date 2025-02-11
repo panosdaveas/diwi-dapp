@@ -41,6 +41,7 @@ export function DefaultTable() {
         requestPublicKey,
         getPublicKey,
         submitPublicKey,
+        getRecipientRequest,
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({
@@ -66,7 +67,6 @@ export function DefaultTable() {
     const handleFetchContract = async () => {
         const result = await fetchContract();
         const contractAddress = result.contractAddress;
-        console.log(contractAddress);
         setTableData((prev) => ({ ...prev, contractAddress }));
         setTableData((prev) => ({
             ...prev,
