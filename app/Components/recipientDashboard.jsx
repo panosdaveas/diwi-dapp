@@ -20,8 +20,7 @@ export function RecipientDashboard() {
     handleTimeLockDecryption,
     handleInputChange,
     handleDecrypt,
-    handlePollMessages,
-    handlePollPublicKeyRequests,
+    handleRequests,
   } = handleScripts();
 
   const handleClear = () => {
@@ -67,10 +66,7 @@ export function RecipientDashboard() {
             <Button variant="text" color="gray" onClick={handleClear} className="text-content">
               Clear
             </Button>
-                      <Button variant="text" color="gray" onClick={handlePollMessages} className="text-content">
-                        Poll
-                        </Button>
-                      <Button variant="text" color="gray" onClick={handlePollPublicKeyRequests} className="text-content">
+                      <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
                           Requests
                       </Button>
               <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>

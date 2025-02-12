@@ -9,8 +9,7 @@ export function handleScripts() {
   const { data, setData } = useContext(CustomContext);
   const {
     sendMessageToRecipient,
-    pollForMessages,
-    pollForPublicKeyRequests,
+    getRecipientRequest,
   } = useContractInteraction();
 
   const handleInputChange = (e) => {
@@ -156,8 +155,8 @@ export function handleScripts() {
 };
 
   //handle poll for public key requests
-  const handlePollPublicKeyRequests = async() => {
-    const requests= await pollForPublicKeyRequests();
+  const handleRequests = async() => {
+    const requests= await getRecipientRequest();
 };
 
   return {
@@ -171,6 +170,6 @@ export function handleScripts() {
     handleDecrypt,
     handleClearInputSigner,
     handlePollMessages,
-    handlePollPublicKeyRequests,
+    handleRequests,
   };
 }

@@ -172,12 +172,15 @@ export function useContractInteraction() {
     }
   };
 
-  const getRecipientRequest = async (signerAddress) => {
+  const getRecipientRequest = async () => {
     if (!contract) return;
     setLoading(true);
     setError(null);
     try {
-      const result = await contract.getRecipientRequest(signerAddress);
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const result = await contract.getRecipientRequest(signer);
+      console.log(result);
       return {
         exists: result[0],
         fulfilled: result[1],
@@ -303,6 +306,87 @@ export function useContractInteraction() {
     }
   };
 
+  // Add this to your useContractInteraction hook
+const getRecipientRequests = async () => {
+  if (!contract) return;
+  setLoading(true);
+  setError(null);
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    console.log(signer.address); 
+    // Get the request details
+    const result = await contract.getRecipientRequest(signer.address);
+    
+    // Get block number for additional details
+    const blockNumber = await provider.getBlockNumber();
+    
+    // Format the request with additional metadata
+    const formattedRequest = {
+      exists: result[0],
+      fulfilled: result[1],
+      message: result[2],
+      publicKey: result[3],
+      blockNumber: blockNumber,
+      // We'll get this from events for the transaction hash
+      transactionHash: '-',
+      blockExplorerUrl: '-'
+    };
+
+    // If the request exists, get the transaction details from events
+    if (result[0]) {
+      const toBlock = blockNumber;
+      const fromBlock = toBlock - 2000; // Look back 2000 blocks
+      const filter = contract.filters.PublicKeyRequested(null, signer.address);
+      const events = await contract.queryFilter(filter, fromBlock, toBlock);
+      
+      if (events.length > 0) {
+        const latestEvent = events[events.length - 1];
+        formattedRequest.transactionHash = latestEvent.transactionHash;
+        formattedRequest.blockExplorerUrl = getBlockExplorerUrl(chainId, latestEvent.transactionHash);
+        formattedRequest.from = latestEvent.args.from;
+      }
+    }
+
+    return formattedRequest;
+  } catch (err) {
+    setError("Error getting recipient requests: " + err.message);
+    return null;
+  } finally {
+    setLoading(false);
+  }
+};
+
+const pollForPublicKeyRequests = async () => {
+  if (!contract) return;
+  setLoading(true);
+  setError(null);
+  try {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const toBlock = await provider.getBlockNumber(); // Latest block number
+    const fromBlock = toBlock - 2000; // Get the starting block (2000 blocks ago)
+    const filter = contract.filters.PublicKeyRequested(null, signer);
+    const events = await contract.queryFilter(filter, fromBlock, toBlock);
+    const requests = events.map((event) => ({
+      from: event.args.from,
+      message: event.args.message,
+      blockNumber: event.blockNumber,
+      transactionHash: event.transactionHash,
+      blockExplorerUrl: getBlockExplorerUrl(chainId, event.transactionHash),
+    }));
+
+    console.log("Public key requests found:", requests);
+    return requests;
+  } catch (err) {
+    setError("Error searching for public key requests: " + err.message);
+    return [];
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   return {
     loading,
     error,
@@ -317,6 +401,8 @@ export function useContractInteraction() {
     getAllWills,
     getWillsBySigner,
     getWillsByRecipient,
-    listenToEvents
+    listenToEvents,
+    getRecipientRequests,
+    pollForPublicKeyRequests,
   };
 }

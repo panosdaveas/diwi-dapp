@@ -37,6 +37,8 @@ export function RecipientTable() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+       
+
     const {
         loading,
         error,
@@ -44,6 +46,8 @@ export function RecipientTable() {
         pollForPublicKeyRequests,
         pollForMessages,
         publicKeySubmitted,
+        getRecipientRequest,
+        getRecipientRequests,
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({

@@ -11,7 +11,8 @@ export function Configuration() {
   };
 }
 
-
+//UserB:
+//0x1c08Ad51b53C9DEaAD8e10C4a208d56a2Bd2cB8d
 //implementation address of the contract:
 //0x3339ceded1db4f1f517fa6eed00a9c70dd826062
 //proxy contract address:
