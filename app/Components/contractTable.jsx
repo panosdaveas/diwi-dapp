@@ -39,8 +39,7 @@ export function DefaultTable() {
         fetchOwner,
         fetchContract,
         requestPublicKey,
-        getPublicKey,
-        submitPublicKey,
+        getSignerRequest,
         getRecipientRequest,
     } = useContractInteraction();
 
@@ -82,13 +81,14 @@ export function DefaultTable() {
 
     const handleGetPublicKey = async () => {
         if (!targetAddressGetPK) return;
-        const success = await getPublicKey(targetAddressGetPK);
-        const publicKey = success;
+        const result = await getSignerRequest(targetAddressGetPK);
+        console.log(result.requests);
+        const publicKey = result.publicKey;
 
         setTableData((prev) => ({ ...prev, publicKey }));
         setTableData((prev) => ({
             ...prev,
-            requestStatusGetPK: publicKey ? "Successful call" : "Call failed",
+            requestStatusGetPK: result.fulfilled ? "Submitted" : "Pending",
         }));
 
         setData((prevData) => ({
@@ -104,21 +104,6 @@ export function DefaultTable() {
         setTableData((prev) => ({
             ...prev,
             requestStatusRequestPK: result.success
-                ? <a
-                    href={result.blockExplorerUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >View in block explorer</a>
-                : "Request failed",
-        }));
-    };
-
-    const handleSubmitPublicKey = async () => {
-        if (!targetSubmitPK) return;
-        const result = await submitPublicKey("0xE2a7027C0DCcF4F322e0e792765038902ce4500e", targetSubmitPK);
-        setTableData((prev) => ({
-            ...prev,
-            requestStatusSubmitPK: result.success
                 ? <a
                     href={result.blockExplorerUrl}
                     rel="noopener noreferrer"

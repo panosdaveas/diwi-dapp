@@ -37,7 +37,12 @@ export function RecipientTable() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-       
+    useEffect(() => {
+        handlePollPublicKeyRequests();
+        // Poll every 30 seconds
+        const interval = setInterval(handlePollPublicKeyRequests, 30000);
+        return () => clearInterval(interval);
+      }, []); 
 
     const {
         loading,
@@ -47,7 +52,6 @@ export function RecipientTable() {
         pollForMessages,
         publicKeySubmitted,
         getRecipientRequest,
-        getRecipientRequests,
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({
@@ -62,7 +66,7 @@ export function RecipientTable() {
 
     const handleSubmitPublicKey = async () => {
         if (!targetSubmitPK) return;
-        const check = await publicKeySubmitted(tableData.requestAddressFrom, walletInfo.address);
+        // const check = await publicKeySubmitted(tableData.requestAddressFrom, walletInfo.address);
         const result = await submitPublicKey(tableData.requestAddressFrom, targetSubmitPK);
         setTableData((prev) => ({
             ...prev,
@@ -77,21 +81,17 @@ export function RecipientTable() {
     };
 
     const handlePollPublicKeyRequests = async () => {
-        const requests = await pollForPublicKeyRequests();
-        setTableData((prev) => ({
-            ...prev,
-            requestNum: requests.length > 0 ? "1" : "-",
-            requestTxHash: requests.length > 0 ? requests[requests.length - 1].transactionHash : "-",
-            requestMessage: requests.length > 0 ? requests[requests.length - 1].message : "-",
-            requestAddressFrom: requests.length > 0 ? requests[requests.length - 1].from : "-",
-            blockExplorerUrl: requests.length > 0 ? <a
-                href={requests[requests.length - 1].blockExplorerUrl}
-                rel="noopener noreferrer"
-                target="_blank"
-            >View in block explorer</a>
-                : "Request failed",
-        }));
-    };
+        const request = await pollForPublicKeyRequests();
+        if (request) {
+          setTableData({
+            requestAddressFrom: request.from || '-',
+            requestTxHash: request.transactionHash || '-',
+            requestMessage: request.message || '-',
+            blockExplorerUrl: request.blockExplorerUrl,
+            requestStatusSubmitPK: request.fulfilled ? 'Submitted' : 'Pending'
+          });
+        }
+      };
 
     const TABLE_HEAD = ["From", "", "TxHash", "Status", "Method", "Public Key", "Status"];
 
