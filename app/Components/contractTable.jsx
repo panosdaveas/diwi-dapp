@@ -82,7 +82,6 @@ export function DefaultTable() {
     const handleGetPublicKey = async () => {
         if (!targetAddressGetPK) return;
         const result = await getSignerRequest(targetAddressGetPK);
-        console.log(result.requests);
         const publicKey = result.publicKey;
 
         setTableData((prev) => ({ ...prev, publicKey }));

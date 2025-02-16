@@ -240,7 +240,7 @@ export function useContractInteraction() {
   // Event listeners for real-time updates
   const listenToEvents = async () => {
     if (!contract) return;
-    
+
     contract.on("PublicKeyRequested", (from, to, message) => {
       console.log("Public Key Requested:", { from, to, message });
     });
@@ -264,7 +264,7 @@ export function useContractInteraction() {
     setError(null);
     try {
       const wills = await contract.getAllWills();
-      
+
       // Format the wills data
       const formattedWills = wills.map(will => ({
         blockNumber: will.blockNumber.toString(), // Convert BigNumber to string
@@ -309,55 +309,105 @@ export function useContractInteraction() {
     }
   };
 
-const pollForPublicKeyRequests = async () => {
-  if (!contract) return;
-  setLoading(true);
-  setError(null);
-  try {
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    
-    // Get the request details
-    const result = await contract.getRecipientRequest(signer.address);
-    
-    // Get block number for additional details
-    const blockNumber = await provider.getBlockNumber();
-    
-    // Format the request with additional metadata
-    const formattedRequest = {
-      exists: result[0],
-      fulfilled: result[1],
-      message: result[2],
-      publicKey: result[3],
-      blockNumber: blockNumber,
-      // We'll get this from events for the transaction hash
-      transactionHash: '-',
-      blockExplorerUrl: '-'
-    };
+  const pollForPublicKeyRequests = async () => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
 
-    // If the request exists, get the transaction details from events
-    if (result[0]) {
-      const toBlock = blockNumber;
-      const fromBlock = toBlock - 2000; // Look back 2000 blocks
-      const filter = contract.filters.PublicKeyRequested(null, signer.address);
-      const events = await contract.queryFilter(filter, fromBlock, toBlock);
-      
-      if (events.length > 0) {
-        const latestEvent = events[events.length - 1];
-        formattedRequest.transactionHash = latestEvent.transactionHash;
-        formattedRequest.blockExplorerUrl = getBlockExplorerUrl(chainId, latestEvent.transactionHash);
-        formattedRequest.from = latestEvent.args.from;
+      // Get the request details
+      const result = await contract.getRecipientRequest(signer.address);
+
+      // Get block number for additional details
+      const blockNumber = await provider.getBlockNumber();
+
+      // Format the request with additional metadata
+      const formattedRequest = {
+        exists: result[0],
+        fulfilled: result[1],
+        message: result[2],
+        publicKey: result[3],
+        blockNumber: blockNumber,
+        // We'll get this from events for the transaction hash
+        transactionHash: '-',
+        blockExplorerUrl: '-'
+      };
+
+      // If the request exists, get the transaction details from events
+      if (result[0]) {
+        const toBlock = blockNumber;
+        const fromBlock = toBlock - 2000; // Look back 2000 blocks
+        const filter = contract.filters.PublicKeyRequested(null, signer.address);
+        const events = await contract.queryFilter(filter, fromBlock, toBlock);
+
+        if (events.length > 0) {
+          const latestEvent = events[events.length - 1];
+          formattedRequest.transactionHash = latestEvent.transactionHash;
+          formattedRequest.blockExplorerUrl = getBlockExplorerUrl(chainId, latestEvent.transactionHash);
+          formattedRequest.from = latestEvent.args.from;
+        }
       }
-    }
 
-    return formattedRequest;
-  } catch (err) {
-    setError("Error getting recipient requests: " + err.message);
-    return null;
-  } finally {
-    setLoading(false);
-  }
-};
+      return formattedRequest;
+    } catch (err) {
+      setError("Error getting recipient requests: " + err.message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const pollForPublicKeySubmissions = async () => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+
+      // Get the request details
+      const result = await contract.getSignerRequest(signer.address);
+
+      // Get block number for additional details
+      const blockNumber = await provider.getBlockNumber();
+
+      // Format the request with additional metadata
+      const formattedRequest = {
+        exists: result[0],
+        fulfilled: result[1],
+        message: result[2],
+        publicKey: result[3],
+        blockNumber: blockNumber,
+        // We'll get this from events for the transaction hash
+        transactionHash: '-',
+        blockExplorerUrl: '-'
+      };
+
+      // If the request exists, get the transaction details from events
+      if (result[0]) {
+        const toBlock = blockNumber;
+        const fromBlock = toBlock - 2000; // Look back 2000 blocks
+        const filter = contract.filters.PublicKeySubmitted(null, signer.address);
+        const events = await contract.queryFilter(filter, fromBlock, toBlock);
+
+        if (events.length > 0) {
+          const latestEvent = events[events.length - 1];
+          formattedRequest.transactionHash = latestEvent.transactionHash;
+          formattedRequest.blockExplorerUrl = getBlockExplorerUrl(chainId, latestEvent.transactionHash);
+          formattedRequest.from = latestEvent.args.from;
+        }
+      }
+
+      return formattedRequest;
+    } catch (err) {
+      setError("Error getting public key submissions: " + err.message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return {
@@ -376,5 +426,6 @@ const pollForPublicKeyRequests = async () => {
     getWillsByRecipient,
     listenToEvents,
     pollForPublicKeyRequests,
+    pollForPublicKeySubmissions, // Add the new method to the return object
   };
 }
