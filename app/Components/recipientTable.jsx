@@ -35,8 +35,7 @@ export function RecipientTable() {
         loading,
         error,
         submitPublicKey,
-        pollForPublicKeyRequests,
-        pollForMessages
+        getWillsByRecipient
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({
@@ -76,8 +75,8 @@ export function RecipientTable() {
     };
 
     const handlePollPublicKeyRequests = async () => {
-        const request = await pollForPublicKeyRequests();
-        if (request) {
+        const requests = await getWillsByRecipient(walletInfo.address);
+        if (requests) {
             setTableData({
                 requestAddressFrom: request.from || '-',
                 requestTxHash: request.transactionHash || '-',
@@ -196,9 +195,9 @@ export function RecipientTable() {
                 </table>
             </CardBody>
             <CardFooter className="flex w-full justify-between">
-                <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
+                {/* <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
                     Refresh Requests
-                </Button>
+                </Button> */}
             </CardFooter>
         </Card>
     );
