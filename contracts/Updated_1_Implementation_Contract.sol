@@ -105,20 +105,16 @@ contract DiwiImplementation is DiwiStorage {
 
     // Submit a public key to a signer
     function submitPublicKey(
-        bytes32 uniqueId,
-        string memory publicKey
-    ) public
-        onlyRecipient(getWillByUniqueId(uniqueId).recipient)
-        requestExists(uniqueId)
+        string memory publicKey,
+        bytes32 uniqueId
+    ) public view
+        onlyRecipient(msg.sender)
     {
-        require(bytes(publicKey).length > 0, "Public key cannot be empty");
-        for (uint i = 0; i < digitalWills.length; i++) {
-            if (digitalWills[i].uniqueId == uniqueId) {
-            digitalWills[i].publicKey = publicKey;
-            digitalWills[i].fulfilled = true;
-            break;
-            }
-        }
+            require(bytes(publicKey).length > 0, "Public key cannot be empty");
+            DigitalWill memory currentWill = getWillByUniqueId(uniqueId);
+
+            currentWill.publicKey = publicKey;
+            currentWill.fulfilled = true;
     }
 
     function sendWillToRecipient(
@@ -126,7 +122,7 @@ contract DiwiImplementation is DiwiStorage {
         string memory message
     )
         public
-        onlySigner(getWillByUniqueId(uniqueId).signer)
+        onlySigner(msg.sender)
         requestExists(uniqueId)
         requestFulfilled(uniqueId)
     {
@@ -134,23 +130,19 @@ contract DiwiImplementation is DiwiStorage {
 
         bytes32 messageHash = keccak256(bytes(message));
 
-        uint i;
-        for (i = 0; i < digitalWills.length; i++) {
-            if (digitalWills[i].uniqueId == uniqueId) {
-            digitalWills[i].blockNumber = block.number;
-            digitalWills[i].messageHash = messageHash;
-            break;
-            }
-        }
+        DigitalWill memory currentWill = getWillByUniqueId(uniqueId);
+
+        currentWill.messageHash = messageHash;  
+        currentWill.blockNumber = block.number;
 
         // Emit the full message in the event
         emit MessageSent(
             msg.sender,
-            digitalWills[i].recipient,
-            digitalWills[i].blockNumber,
-            digitalWills[i].publicKey,
-            digitalWills[i].message, // Full message in event
-            digitalWills[i].messageHash // Hash for verification
+            currentWill.recipient,
+            currentWill.blockNumber,
+            currentWill.publicKey,
+            message, // Full message in event
+            messageHash // Hash for verification
         );
     }
 

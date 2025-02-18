@@ -10,7 +10,7 @@ import {
 import { useContext } from "react";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
-import { RecipientTable } from "./recipientTable";
+import { RecipientTable } from "./RecipientTable";
 
 export function RecipientDashboard() {
   const { data, setData } = useContext(CustomContext);
@@ -49,11 +49,11 @@ export function RecipientDashboard() {
             //   disabled={data.tlEncrypted ? true : false}
             />
             <Textarea
-            //   readOnly={true}
+              //   readOnly={true}
               label="Encrypted message"
               name="displayMessage"
               value={data.displayMessage}
-            //   value=""
+              //   value=""
               onChange={handleInputChange}
               rows={7}
               className="text-content"
@@ -66,12 +66,12 @@ export function RecipientDashboard() {
             <Button variant="text" color="gray" onClick={handleClear} className="text-content">
               Clear
             </Button>
-                      <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
-                          Requests
-                      </Button>
-              <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
-                Decrypt
-              </Button>
+            <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
+              Requests
+            </Button>
+            <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
+              Decrypt
+            </Button>
           </div>
         </CardFooter>
       </Card>

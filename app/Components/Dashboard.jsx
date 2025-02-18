@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 import { CardLeftSteps } from "./cardLeft";
 import { CardRightSteps } from "./cardRight";
-import { DefaultTable } from "./contractTable";
+import { SignerTable } from "./SignerTable";
 import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
@@ -92,7 +92,7 @@ const DashboardLayout = ({ children }) => {
                             <div className="col-span-full" >
                                 <div className="p-4">
                                     {/* <CardTest /> */}
-                                    <DefaultTable />
+                                    <SignerTable />
                                 </div>
                             </div>
                             {/* <div className="col-span-full px-6">

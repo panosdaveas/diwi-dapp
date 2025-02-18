@@ -1,4 +1,5 @@
 import { CustomContext } from "@/app/Context/context";
+import { useWallet } from "@/app/Context/WalletContext";
 import {
     card,
     cardBody,
@@ -11,27 +12,24 @@ import {
 } from "@/app/scripts/classesCustomization";
 import { useContractInteraction } from "@/app/scripts/interact";
 import {
+    Button,
     Card,
     CardBody,
+    CardFooter,
     CardHeader,
     Input,
     Spinner,
-    Typography
+    Typography,
+    Textarea
 } from "@material-tailwind/react";
 import { useContext, useEffect, useState } from "react";
 import { ClipboardDefault } from "./clipboard";
 import { TruncatedAddress } from "./truncatedText";
 
-export function DefaultTable() {
-
+export function SignerTable() {
     const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+    const [message, setMessage] = useState("");
+    const { data, setData } = useContext(CustomContext);
 
     const {
         loading,
@@ -40,7 +38,8 @@ export function DefaultTable() {
         fetchContract,
         requestPublicKey,
         getSignerRequest,
-        getRecipientRequest,
+        verifyMessage,
+        sendMessageToRecipient
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({
@@ -48,67 +47,65 @@ export function DefaultTable() {
         publicKey: "",
         contractAddress: "",
         requestStatus: "",
+        messageHash: "",
+        encryptedMessage: ""
     });
 
-    const { data, setData } = useContext(CustomContext);
     const [targetAddress, setTargetAddress] = useState("");
     const [targetAddressGetPK, setTargetAddressGetPK] = useState("");
-    const [targetSubmitPK, setTargetSubmitPK] = useState("");
 
-    const TABLE_HEAD = ["Function", "Return", "", "Status"];
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-    const handleFetchOwner = async () => {
-        // const owner = walletInfo.address;
-        const owner = await fetchOwner();
-        setTableData((prev) => ({ ...prev, owner }));
-    };
+    const TABLE_HEAD = ["Function", "Return", "", "Status", "Message Hash"];
 
     const handleFetchContract = async () => {
         const result = await fetchContract();
-        const contractAddress = result.contractAddress;
-        setTableData((prev) => ({ ...prev, contractAddress }));
-        setTableData((prev) => ({
+        setTableData(prev => ({
             ...prev,
-            requestStatusRequestContract: result.success
-                ? <a
-                    href={result.blockExplorerUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >View in block explorer</a>
-                : "Request failed",
+            contractAddress: result.contractAddress,
+            requestStatusRequestContract: result.success ?
+                <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">
+                    View in block explorer
+                </a> :
+                "Request failed"
+        }));
+    };
+
+    const handleRequestPublicKey = async () => {
+        if (!targetAddress || !message) return;
+        const result = await requestPublicKey(targetAddress, message);
+        const messageHash = await verifyMessage(message);
+
+        setTableData(prev => ({
+            ...prev,
+            messageHash,
+            requestStatusRequestPK: result.success ?
+                <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">
+                    View in block explorer
+                </a> :
+                "Request failed"
         }));
     };
 
     const handleGetPublicKey = async () => {
         if (!targetAddressGetPK) return;
         const result = await getSignerRequest(targetAddressGetPK);
-        const publicKey = result.publicKey;
 
-        setTableData((prev) => ({ ...prev, publicKey }));
-        setTableData((prev) => ({
+        setTableData(prev => ({
             ...prev,
-            requestStatusGetPK: result.fulfilled ? "Submitted" : "Pending",
+            publicKey: result.publicKey,
+            requestStatusGetPK: result.fulfilled ? "Submitted" : "Pending"
         }));
 
-        setData((prevData) => ({
-            ...prevData,
-            publicKey: publicKey,
-            addressRecipient: targetAddressGetPK,
-        }));
-    };
-
-    const handleRequestPublicKey = async () => {
-        if (!targetAddress) return;
-        const result = await requestPublicKey(targetAddress, "Requesting your public key");
-        setTableData((prev) => ({
+        setData(prev => ({
             ...prev,
-            requestStatusRequestPK: result.success
-                ? <a
-                    href={result.blockExplorerUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >View in block explorer</a>
-                : "Request failed",
+            publicKey: result.publicKey,
+            addressRecipient: targetAddressGetPK
         }));
     };
 
@@ -116,75 +113,66 @@ export function DefaultTable() {
         {
             func: handleFetchContract,
             name: "Fetch contract",
-            result: < TruncatedAddress address={tableData.contractAddress || ""} />,
+            result: <TruncatedAddress address={tableData.contractAddress || ""} />,
             clipboard: tableData.contractAddress,
             status: tableData.requestStatusRequestContract || "-",
             disabled: loading
         },
         {
-            func: handleFetchOwner,
-            name: "Fetch owner",
-            result: < TruncatedAddress address={tableData.owner || ""} />,
-            clipboard: tableData.owner,
-            status: "",
-            disabled: loading
-        },
-        {
             func: handleRequestPublicKey,
             name: "Request Public Key",
-            result: <Input
-                variant="standard"
-                placeholder="Enter target address"
-                label="Target Address"
-                value={targetAddress}
-                onChange={(e) => setTargetAddress(e.target.value)}
-                className="text-content border-none"
-                labelProps={{
-                    className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content",
-                }}
-            />,
+            result: (
+                <div className="flex flex-col gap-2">
+                    <Input
+                        variant="standard"
+                        placeholder="Enter target address"
+                        label="Target Address"
+                        value={targetAddress}
+                        onChange={(e) => setTargetAddress(e.target.value)}
+                        className="text-content border-none"
+                        labelProps={{
+                            className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
+                        }}
+                    />
+                    <Textarea
+                        variant="standard"
+                        placeholder="Enter your message"
+                        label="Message"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        className="text-content border-none"
+                        labelProps={{
+                            className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
+                        }}
+                    />
+                </div>
+            ),
             clipboard: targetAddress,
             status: tableData.requestStatusRequestPK || "-",
-            disabled: loading || !targetAddress
+            messageHash: <TruncatedAddress address={tableData.messageHash || ""} />,
+            disabled: loading || !targetAddress || !message
         },
-        // {
-        //     func: handleSubmitPublicKey,
-        //     name: "Submit Public Key",
-        //     result: <Input
-        //         variant="standard"
-        //         placeholder="Enter your public key"
-        //         label="Public Key"
-        //         value={targetSubmitPK}
-        //         onChange={(e) => setTargetSubmitPK(e.target.value)}
-        //         className="text-content border-none"
-        //         labelProps={{
-        //             className: "before:content-none after:content-none",
-        //         }}
-        //     />,
-        //     clipboard: targetSubmitPK,
-        //     status: tableData.requestStatusSubmitPK || "-",
-        //     disabled: loading || !targetSubmitPK
-        // },
         {
             func: handleGetPublicKey,
             name: "Get Public Key",
-            result: <Input
-                variant="standard"
-                placeholder="Enter target address"
-                label="Target Address"
-                value={targetAddressGetPK}
-                onChange={(e) => setTargetAddressGetPK(e.target.value)}
-                className="text-content border-none"
-                labelProps={{
-                    className: "before:content-none after:content-none peer-placeholder-shown:text-content",
-                }}
-            />,
+            result: (
+                <Input
+                    variant="standard"
+                    placeholder="Enter target address"
+                    label="Target Address"
+                    value={targetAddressGetPK}
+                    onChange={(e) => setTargetAddressGetPK(e.target.value)}
+                    className="text-content border-none"
+                    labelProps={{
+                        className: "before:content-none after:content-none peer-placeholder-shown:text-content"
+                    }}
+                />
+            ),
             clipboard: targetAddressGetPK,
             status: tableData.requestStatusGetPK || "-",
             disabled: loading || !targetAddressGetPK
-        },
+        }
     ];
-
 
     return (
         <Card className={card}>
@@ -194,7 +182,7 @@ export function DefaultTable() {
                         Signer Dashboard
                     </Typography>
                     <Typography>
-                        Here you can see the data of the contract and the public keys of the recipients.
+                        Request and manage recipient public keys
                     </Typography>
                 </div>
             </CardHeader>
@@ -203,14 +191,8 @@ export function DefaultTable() {
                     <thead>
                         <tr>
                             {TABLE_HEAD.map((head) => (
-                                <th
-                                    key={head}
-                                    className={tdHead}
-                                >
-                                    <Typography
-                                        variant="small"
-                                        className="font-bold leading-none opacity-100"
-                                    >
+                                <th key={head} className={tdHead}>
+                                    <Typography variant="small" className="font-bold leading-none opacity-100">
                                         {head}
                                     </Typography>
                                 </th>
@@ -218,7 +200,7 @@ export function DefaultTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {TABLE_ROWS.map(({ func, name, result, clipboard, status, disabled }, index) => {
+                        {TABLE_ROWS.map(({ func, name, result, clipboard, status, disabled, messageHash }, index) => {
                             const isLast = index === TABLE_ROWS.length - 1;
                             const tdClass = isLast ? tdLast : td;
                             return (
@@ -232,7 +214,7 @@ export function DefaultTable() {
                                             className={`font-bold textTransform flex items-center gap-2 ${disabled ? "text-gray-500" : "text-content"}`}
                                             onClick={func}
                                         >
-                                            {loading ? <Spinner className="h-4 w-4" /> : name} 
+                                            {loading ? <Spinner className="h-4 w-4" /> : name}
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -249,21 +231,17 @@ export function DefaultTable() {
                                             </svg>
                                         </Typography>
                                     </td>
-                                    <td className={tdClass}>
-                                        {result}
-                                    </td>
+                                    <td className={tdClass}>{result}</td>
                                     <td className={tdClass}>
                                         <ClipboardDefault content={clipboard} />
                                     </td>
                                     <td className={tdClass}>
-                                        <Typography
-                                            as="a"
-                                            href="#"
-                                            variant="small"
-                                            className="font-normal"
-                                        >
+                                        <Typography variant="small" className="font-normal">
                                             {status}
                                         </Typography>
+                                    </td>
+                                    <td className={tdClass}>
+                                        {messageHash}
                                     </td>
                                 </tr>
                             );

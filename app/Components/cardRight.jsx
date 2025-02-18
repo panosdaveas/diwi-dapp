@@ -10,7 +10,7 @@ import {
 import { useContext } from "react";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
-import { RecipientTable } from "./recipientTable";
+import { RecipientTable } from "./RecipientTable";
 
 export function CardRightSteps() {
   const { data, setData } = useContext(CustomContext);
@@ -60,9 +60,9 @@ export function CardRightSteps() {
             <Button variant="text" color="gray" onClick={handleClear} className="text-content">
               Clear
             </Button>
-              <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
-                Decrypt
-              </Button>
+            <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
+              Decrypt
+            </Button>
           </div>
         </CardFooter>
       </Card>

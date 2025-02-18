@@ -1,4 +1,5 @@
 import { CustomContext } from "@/app/Context/context";
+import { useWallet } from "@/app/Context/WalletContext";
 import {
     card,
     cardBody,
@@ -19,106 +20,101 @@ import {
     Input,
     Spinner,
     Typography,
+    Textarea
 } from "@material-tailwind/react";
 import { useContext, useEffect, useState } from "react";
-import { useWallet } from "../Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { TruncatedAddress } from "./truncatedText";
 
 export function RecipientTable() {
-
     const { walletInfo } = useWallet();
     const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768);
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    useEffect(() => {
-        handlePollPublicKeyRequests();
-        // Poll every 30 seconds
-        const interval = setInterval(handlePollPublicKeyRequests, 30000);
-        return () => clearInterval(interval);
-      }, []); 
+    const [targetSubmitPK, setTargetSubmitPK] = useState("");
 
     const {
         loading,
         error,
         submitPublicKey,
         pollForPublicKeyRequests,
-        pollForMessages,
-        publicKeySubmitted,
-        getRecipientRequest,
+        pollForMessages
     } = useContractInteraction();
 
     const [tableData, setTableData] = useState({
-        owner: "",
-        publicKey: "",
-        contractAddress: "",
-        requestStatus: "",
+        requestAddressFrom: "",
+        requestTxHash: "",
+        requestMessage: "",
+        blockExplorerUrl: "",
+        requestStatusSubmitPK: ""
     });
 
-    const { data, setData } = useContext(CustomContext);
-    const [targetSubmitPK, setTargetSubmitPK] = useState("");
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        handleResize();
+        window.addEventListener("resize", handleResize);
+
+        // Initial poll and setup interval
+        handlePollPublicKeyRequests();
+        const interval = setInterval(handlePollPublicKeyRequests, 30000);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+            clearInterval(interval);
+        };
+    }, []);
 
     const handleSubmitPublicKey = async () => {
         if (!targetSubmitPK) return;
-        // const check = await publicKeySubmitted(tableData.requestAddressFrom, walletInfo.address);
         const result = await submitPublicKey(tableData.requestAddressFrom, targetSubmitPK);
-        setTableData((prev) => ({
+        setTableData(prev => ({
             ...prev,
-            requestStatusSubmitPK: result.success
-                ? <a
-                    href={result.blockExplorerUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >View in block explorer</a>
-                : "Request failed",
+            requestStatusSubmitPK: result.success ?
+                <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">
+                    View in block explorer
+                </a> :
+                "Request failed"
         }));
     };
 
     const handlePollPublicKeyRequests = async () => {
         const request = await pollForPublicKeyRequests();
         if (request) {
-          setTableData({
-            requestAddressFrom: request.from || '-',
-            requestTxHash: request.transactionHash || '-',
-            requestMessage: request.message || '-',
-            blockExplorerUrl: request.blockExplorerUrl,
-            requestStatusSubmitPK: request.fulfilled ? 'Submitted' : 'Pending'
-          });
+            setTableData({
+                requestAddressFrom: request.from || '-',
+                requestTxHash: request.transactionHash || '-',
+                requestMessage: request.message || '-',
+                blockExplorerUrl: request.blockExplorerUrl,
+                requestStatusSubmitPK: request.fulfilled ? 'Submitted' : 'Pending'
+            });
         }
-      };
+    };
 
     const TABLE_HEAD = ["From", "", "TxHash", "Status", "Method", "Public Key", "Status"];
 
     const TABLE_ROWS = [
         {
-            from: < TruncatedAddress address={tableData.requestAddressFrom || ""} />,
+            from: <TruncatedAddress address={tableData.requestAddressFrom || ""} />,
             clipboard: tableData.requestAddressFrom,
-            txHash: < TruncatedAddress address={tableData.requestTxHash || ""} />,
+            txHash: <TruncatedAddress address={tableData.requestTxHash || ""} />,
             status: tableData.blockExplorerUrl,
             func: handleSubmitPublicKey,
             method: "Submit Public Key",
-            pk: <Input
-                variant="standard"
-                placeholder="Enter your public key"
-                label="Public Key"
-                value={targetSubmitPK}
-                onChange={(e) => setTargetSubmitPK(e.target.value)}
-                className="text-content border-none"
-                labelProps={{
-                    className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content",
-                }}
-            />,
+            pk: (
+                <Input
+                    variant="standard"
+                    placeholder="Enter your public key"
+                    label="Public Key"
+                    value={targetSubmitPK}
+                    onChange={(e) => setTargetSubmitPK(e.target.value)}
+                    className="text-content border-none"
+                    labelProps={{
+                        className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
+                    }}
+                />
+            ),
             disabled: loading || !targetSubmitPK,
-            statusSubmit: tableData.requestStatusSubmitPK || "-",
-        },
+            statusSubmit: tableData.requestStatusSubmitPK || "-"
+        }
     ];
-
 
     return (
         <Card className={card}>
@@ -128,24 +124,17 @@ export function RecipientTable() {
                         Recipient Dashboard
                     </Typography>
                     <Typography>
-                        Here you can see the data of the contract and the public keys of the recipients.
+                        Manage public key requests and messages
                     </Typography>
-
                 </div>
             </CardHeader>
             <CardBody className={cardBody}>
-                <table className={table} enableRowNumbers="true">
+                <table className={table}>
                     <thead>
                         <tr>
                             {TABLE_HEAD.map((head) => (
-                                <th
-                                    key={head}
-                                    className={tdHead}
-                                >
-                                    <Typography
-                                        variant="small"
-                                        className="font-bold leading-none opacity-100"
-                                    >
+                                <th key={head} className={tdHead}>
+                                    <Typography variant="small" className="font-bold leading-none opacity-100">
                                         {head}
                                     </Typography>
                                 </th>
@@ -157,23 +146,14 @@ export function RecipientTable() {
                             const isLast = index === TABLE_ROWS.length - 1;
                             const tdClass = isLast ? tdLast : td;
                             return (
-                                <tr key={from} className={tr}>
-                                    <td className={tdClass}>
-                                        {from}
-                                    </td>
+                                <tr key={index} className={tr}>
+                                    <td className={tdClass}>{from}</td>
                                     <td className={tdClass}>
                                         <ClipboardDefault content={clipboard} />
                                     </td>
+                                    <td className={tdClass}>{txHash}</td>
                                     <td className={tdClass}>
-                                        {txHash}
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Typography
-                                            as="a"
-                                            href="#"
-                                            variant="small"
-                                            className="font-normal"
-                                        >
+                                        <Typography variant="small" className="font-normal">
                                             {status}
                                         </Typography>
                                     </td>
@@ -203,16 +183,9 @@ export function RecipientTable() {
                                             </svg>
                                         </Typography>
                                     </td>
+                                    <td className={tdClass}>{pk}</td>
                                     <td className={tdClass}>
-                                        {pk}
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Typography
-                                            as="a"
-                                            href="#"
-                                            variant="small"
-                                            className="font-normal"
-                                        >
+                                        <Typography variant="small" className="font-normal">
                                             {statusSubmit}
                                         </Typography>
                                     </td>
@@ -223,10 +196,8 @@ export function RecipientTable() {
                 </table>
             </CardBody>
             <CardFooter className="flex w-full justify-between">
-                <Button
-                    variant="gradient"
-                    onClick={handlePollPublicKeyRequests}>
-                    Requests
+                <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
+                    Refresh Requests
                 </Button>
             </CardFooter>
         </Card>

@@ -5,10 +5,7 @@ import { Configuration } from "../config";
 import { getBlockExplorerUrl, getContractExplorerUrl } from "./blockExplorers";
 import { contractCurrentABI } from "./contractABI";
 
-// Contract ABI
 const contractABI = contractCurrentABI;
-
-// Get deployed contract address
 const contractAddress = Configuration().contractAddress;
 
 export function useContractInteraction() {
@@ -37,6 +34,18 @@ export function useContractInteraction() {
     };
     setupContract();
   }, []);
+
+  // New function to verify a message against its hash
+  const verifyMessage = async (message, storedHash) => {
+    if (!contract) return false;
+    try {
+      const isValid = await contract.verifyMessage(message, storedHash);
+      return isValid;
+    } catch (err) {
+      setError("Error verifying message: " + err.message);
+      return false;
+    }
+  };
 
   //Function to fetch the owner of the contract
   const fetchOwner = async () => {
@@ -102,12 +111,12 @@ export function useContractInteraction() {
     }
   };
 
-  const submitPublicKey = async (signerAddress, publicKey) => {
+  const submitPublicKey = async (publicKey, uniqueId) => {
     if (!contract) return;
     setLoading(true);
     setError(null);
     try {
-      const tx = await contract.submitPublicKey(signerAddress, publicKey);
+      const tx = await contract.submitPublicKey(publicKey, uniqueId);
       const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
       setLastTxHash(tx.hash);
       await tx.wait();
@@ -127,19 +136,36 @@ export function useContractInteraction() {
     }
   };
 
-  const sendMessageToRecipient = async (recipientAddress, message) => {
+  const sendWillToRecipient = async (uniqueId, message) => {
     if (!contract) return;
     setLoading(true);
     setError(null);
     try {
-      const tx = await contract.sendMessageToRecipient(recipientAddress, message);
+      const tx = await contract.sendWillToRecipient(uniqueId, message);
       const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
       setLastTxHash(tx.hash);
-      await tx.wait();
+
+      // Wait for transaction and get receipt for event data
+      const receipt = await tx.wait();
+
+      // Find MessageSent event in the receipt
+      const event = receipt.logs
+        .map((log) => {
+          try {
+            return contract.interface.parseLog(log);
+          } catch (e) {
+            return null;
+          }
+        })
+        .find((event) => event && event.name === "MessageSent");
+
+      const messageHash = event ? event.args.messageHash : null;
+
       return {
         success: true,
         txHash: tx.hash,
         blockExplorerUrl: explorerUrl,
+        messageHash: messageHash,
       };
     } catch (err) {
       setError("Error sending message: " + err.message);
@@ -152,61 +178,19 @@ export function useContractInteraction() {
     }
   };
 
-  const getSignerRequest = async (recipientAddress) => {
-    if (!contract) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await contract.getSignerRequests(recipientAddress);
-      return {
-        exists: result[0],
-        fulfilled: result[1],
-        message: result[2],
-        publicKey: result[3]
-      };
-    } catch (err) {
-      setError("Error getting signer request: " + err.message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getRecipientRequest = async (signerAddress) => {
-    if (!contract) return;
-    setLoading(true);
-    setError(null);
-    try {
-      // const provider = new ethers.BrowserProvider(window.ethereum);
-      // const signer = await provider.getSigner();
-      const result = await contract.getRecipientRequest(signerAddress);
-      console.log(result);
-      return {
-        exists: result[0],
-        fulfilled: result[1],
-        message: result[2],
-        publicKey: result[3]
-      };
-    } catch (err) {
-      setError("Error getting recipient request: " + err.message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Modified to include message hash in return data
   const getWillsBySigner = async (signerAddress) => {
     if (!contract) return;
     setLoading(true);
     setError(null);
     try {
       const wills = await contract.getWillsBySigner(signerAddress);
-      return wills.map(will => ({
+      return wills.map((will) => ({
         blockNumber: will.blockNumber,
         signer: will.signer,
         recipient: will.recipient,
         publicKey: will.publicKey,
-        message: will.message
+        messageHash: will.messageHash, // New field
       }));
     } catch (err) {
       setError("Error getting wills by signer: " + err.message);
@@ -216,18 +200,19 @@ export function useContractInteraction() {
     }
   };
 
+  // Modified to include message hash in return data
   const getWillsByRecipient = async (recipientAddress) => {
     if (!contract) return;
     setLoading(true);
     setError(null);
     try {
       const wills = await contract.getWillsByRecipient(recipientAddress);
-      return wills.map(will => ({
+      return wills.map((will) => ({
         blockNumber: will.blockNumber,
         signer: will.signer,
         recipient: will.recipient,
         publicKey: will.publicKey,
-        message: will.message
+        messageHash: will.messageHash, // New field
       }));
     } catch (err) {
       setError("Error getting wills by recipient: " + err.message);
@@ -237,7 +222,6 @@ export function useContractInteraction() {
     }
   };
 
-  // Event listeners for real-time updates
   const listenToEvents = async () => {
     if (!contract) return;
 
@@ -249,9 +233,20 @@ export function useContractInteraction() {
       console.log("Public Key Submitted:", { from, to, publicKey });
     });
 
-    contract.on("MessageSent", (from, to, will) => {
-      console.log("Message Sent:", { from, to, will });
-    });
+    // Updated MessageSent event listener
+    contract.on(
+      "MessageSent",
+      (from, to, blockNumber, publicKey, message, messageHash) => {
+        console.log("Message Sent:", {
+          from,
+          to,
+          blockNumber: blockNumber.toString(),
+          publicKey,
+          message,
+          messageHash,
+        });
+      }
+    );
 
     return () => {
       contract.removeAllListeners();
@@ -266,12 +261,12 @@ export function useContractInteraction() {
       const wills = await contract.getAllWills();
 
       // Format the wills data
-      const formattedWills = wills.map(will => ({
+      const formattedWills = wills.map((will) => ({
         blockNumber: will.blockNumber.toString(), // Convert BigNumber to string
         signer: will.signer,
         recipient: will.recipient,
         publicKey: will.publicKey,
-        message: will.message
+        messageHash: will.messageHash,
       }));
 
       // Create a result object with metadata
@@ -279,7 +274,7 @@ export function useContractInteraction() {
         timestamp: new Date().toISOString(),
         contractAddress: contractAddress,
         totalWills: formattedWills.length,
-        wills: formattedWills
+        wills: formattedWills,
       };
 
       // Create a JSON string with formatting
@@ -302,113 +297,12 @@ export function useContractInteraction() {
       setError("Error getting all wills: " + err.message);
       return {
         data: [],
-        jsonUrl: null
+        jsonUrl: null,
       };
     } finally {
       setLoading(false);
     }
   };
-
-  const pollForPublicKeyRequests = async () => {
-    if (!contract) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      // Get the request details
-      const result = await contract.getRecipientRequest(signer.address);
-
-      // Get block number for additional details
-      const blockNumber = await provider.getBlockNumber();
-
-      // Format the request with additional metadata
-      const formattedRequest = {
-        exists: result[0],
-        fulfilled: result[1],
-        message: result[2],
-        publicKey: result[3],
-        blockNumber: blockNumber,
-        // We'll get this from events for the transaction hash
-        transactionHash: '-',
-        blockExplorerUrl: '-'
-      };
-
-      // If the request exists, get the transaction details from events
-      if (result[0]) {
-        const toBlock = blockNumber;
-        const fromBlock = toBlock - 2000; // Look back 2000 blocks
-        const filter = contract.filters.PublicKeyRequested(null, signer.address);
-        const events = await contract.queryFilter(filter, fromBlock, toBlock);
-
-        if (events.length > 0) {
-          const latestEvent = events[events.length - 1];
-          formattedRequest.transactionHash = latestEvent.transactionHash;
-          formattedRequest.blockExplorerUrl = getBlockExplorerUrl(chainId, latestEvent.transactionHash);
-          formattedRequest.from = latestEvent.args.from;
-        }
-      }
-
-      return formattedRequest;
-    } catch (err) {
-      setError("Error getting recipient requests: " + err.message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const pollForPublicKeySubmissions = async () => {
-    if (!contract) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      // Get the request details
-      const result = await contract.getSignerRequest(signer.address);
-
-      // Get block number for additional details
-      const blockNumber = await provider.getBlockNumber();
-
-      // Format the request with additional metadata
-      const formattedRequest = {
-        exists: result[0],
-        fulfilled: result[1],
-        message: result[2],
-        publicKey: result[3],
-        blockNumber: blockNumber,
-        // We'll get this from events for the transaction hash
-        transactionHash: '-',
-        blockExplorerUrl: '-'
-      };
-
-      // If the request exists, get the transaction details from events
-      if (result[0]) {
-        const toBlock = blockNumber;
-        const fromBlock = toBlock - 2000; // Look back 2000 blocks
-        const filter = contract.filters.PublicKeySubmitted(null, signer.address);
-        const events = await contract.queryFilter(filter, fromBlock, toBlock);
-
-        if (events.length > 0) {
-          const latestEvent = events[events.length - 1];
-          formattedRequest.transactionHash = latestEvent.transactionHash;
-          formattedRequest.blockExplorerUrl = getBlockExplorerUrl(chainId, latestEvent.transactionHash);
-          formattedRequest.from = latestEvent.args.from;
-        }
-      }
-
-      return formattedRequest;
-    } catch (err) {
-      setError("Error getting public key submissions: " + err.message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   return {
     loading,
@@ -418,14 +312,11 @@ export function useContractInteraction() {
     fetchContract,
     requestPublicKey,
     submitPublicKey,
-    sendMessageToRecipient,
-    getSignerRequest,
-    getRecipientRequest,
+    sendWillToRecipient,
     getAllWills,
     getWillsBySigner,
     getWillsByRecipient,
     listenToEvents,
-    pollForPublicKeyRequests,
-    pollForPublicKeySubmissions, // Add the new method to the return object
+    verifyMessage, // New function
   };
 }
