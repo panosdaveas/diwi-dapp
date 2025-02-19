@@ -1,4 +1,4 @@
-import { ethers, id } from "ethers";
+import { ethers, utils } from "ethers";
 import { useEffect, useState } from "react";
 import { useChainId } from "wagmi";
 import { Configuration } from "../config";
@@ -111,12 +111,12 @@ export function useContractInteraction() {
     }
   };
 
-  const submitPublicKey = async (publicKey, uniqueId) => {
+  const submitPublicKey = async (uniqueId, publicKey) => {
     if (!contract) return;
     setLoading(true);
     setError(null);
     try {
-      const tx = await contract.submitPublicKey(publicKey, uniqueId);
+      const tx = await contract.submitPublicKey(uniqueId, publicKey);
       const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
       setLastTxHash(tx.hash);
       await tx.wait();
@@ -178,7 +178,7 @@ export function useContractInteraction() {
     }
   };
 
-  // Get wills by signer
+  // Modified to include message hash in return data
   const getWillsBySigner = async (signerAddress) => {
     if (!contract) return;
     setLoading(true);
@@ -186,15 +186,11 @@ export function useContractInteraction() {
     try {
       const wills = await contract.getWillsBySigner(signerAddress);
       return wills.map((will) => ({
-        id: will.id,
-        signer: will.signer,
-        recipient: will.recipient,
-        exists: will.exists,
-        fulfilled: will.fulfilled,
         blockNumber: will.blockNumber,
         signer: will.signer,
         recipient: will.recipient,
-        messageHash: will.messageHash,
+        publicKey: will.publicKey,
+        messageHash: will.messageHash, // New field
       }));
     } catch (err) {
       setError("Error getting wills by signer: " + err.message);
@@ -204,8 +200,7 @@ export function useContractInteraction() {
     }
   };
 
-
-  // Get wills by recipient
+  // Modified to include message hash in return data
   const getWillsByRecipient = async (recipientAddress) => {
     if (!contract) return;
     setLoading(true);
@@ -213,15 +208,13 @@ export function useContractInteraction() {
     try {
       const wills = await contract.getWillsByRecipient(recipientAddress);
       return wills.map((will) => ({
-        id: will.id,
-        signer: will.signer,
-        recipient: will.recipient,
-        exists: will.exists,
-        fulfilled: will.fulfilled,
+        uniqueId: will.uniqueId,
         blockNumber: will.blockNumber,
         signer: will.signer,
         recipient: will.recipient,
-        messageHash: will.messageHash,
+        publicKey: will.publicKey,
+        fulfilled: will.fulfilled,
+        messageHash: will.messageHash, // New field
       }));
     } catch (err) {
       setError("Error getting wills by recipient: " + err.message);
@@ -229,6 +222,37 @@ export function useContractInteraction() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const listenToEvents = async () => {
+    if (!contract) return;
+
+    contract.on("PublicKeyRequested", (from, to, message) => {
+      console.log("Public Key Requested:", { from, to, message });
+    });
+
+    contract.on("PublicKeySubmitted", (from, to, publicKey) => {
+      console.log("Public Key Submitted:", { from, to, publicKey });
+    });
+
+    // Updated MessageSent event listener
+    contract.on(
+      "MessageSent",
+      (from, to, blockNumber, publicKey, message, messageHash) => {
+        console.log("Message Sent:", {
+          from,
+          to,
+          blockNumber: blockNumber.toString(),
+          publicKey,
+          message,
+          messageHash,
+        });
+      }
+    );
+
+    return () => {
+      contract.removeAllListeners();
+    };
   };
 
   const getAllWills = async () => {
@@ -240,14 +264,10 @@ export function useContractInteraction() {
 
       // Format the wills data
       const formattedWills = wills.map((will) => ({
-        id: will.id,
+        blockNumber: will.blockNumber.toString(), // Convert BigNumber to string
         signer: will.signer,
         recipient: will.recipient,
-        exists: will.exists,
-        fulfilled: will.fulfilled,
-        blockNumber: will.blockNumber,
-        signer: will.signer,
-        recipient: will.recipient,
+        publicKey: will.publicKey,
         messageHash: will.messageHash,
       }));
 
@@ -298,6 +318,7 @@ export function useContractInteraction() {
     getAllWills,
     getWillsBySigner,
     getWillsByRecipient,
+    listenToEvents,
     verifyMessage, // New function
   };
 }

@@ -1,5 +1,3 @@
-import { CustomContext } from "@/app/Context/context";
-import { useWallet } from "@/app/Context/WalletContext";
 import {
     card,
     cardBody,
@@ -20,16 +18,30 @@ import {
     Input,
     Spinner,
     Typography,
-    Textarea
+    Badge,
+    Alert,
+    Chip,
+    Tooltip,
+    IconButton,
+    Accordion,
+    AccordionHeader,
+    AccordionBody,
 } from "@material-tailwind/react";
+import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
+import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
+import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
-import { TruncatedAddress } from "./truncatedText";
+import { ethers } from "ethers";
 
 export function RecipientTable() {
     const { walletInfo } = useWallet();
     const [isMobile, setIsMobile] = useState(false);
     const [targetSubmitPK, setTargetSubmitPK] = useState("");
+    const [value, copy] = useCopyToClipboard();
+    const [copied, setCopied] = useState(false);
+    const [open, setOpen] = useState(0);
+    const handleOpen = (value) => setOpen(open === value ? 0 : value);
 
     const {
         loading,
@@ -38,82 +50,54 @@ export function RecipientTable() {
         getWillsByRecipient
     } = useContractInteraction();
 
-    const [tableData, setTableData] = useState({
-        requestAddressFrom: "",
-        requestTxHash: "",
-        requestMessage: "",
-        blockExplorerUrl: "",
-        requestStatusSubmitPK: ""
-    });
+    const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         handleResize();
         window.addEventListener("resize", handleResize);
-
-        // Initial poll and setup interval
-        handlePollPublicKeyRequests();
-        const interval = setInterval(handlePollPublicKeyRequests, 30000);
-
-        return () => {
-            window.removeEventListener("resize", handleResize);
-            clearInterval(interval);
-        };
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const handleSubmitPublicKey = async () => {
-        if (!targetSubmitPK) return;
-        const result = await submitPublicKey(tableData.requestAddressFrom, targetSubmitPK);
-        setTableData(prev => ({
-            ...prev,
-            requestStatusSubmitPK: result.success ?
-                <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">
-                    View in block explorer
-                </a> :
-                "Request failed"
-        }));
+    const truncate = (str, length = 10) => {
+        if (str.length <= length) return str;
+        const partLength = Math.floor(length / 2);
+        return `${str.slice(0, partLength)}...${str.slice(-partLength)}`;
+    };
+
+    const handleSubmitPublicKey = async (uniqueId) => {
+        const result = await submitPublicKey(uniqueId, targetSubmitPK);
+        console.log(result);
+        setTableData(prev =>
+            prev.map(row =>
+                row.uniqueId === uniqueId
+                    ? {
+                        ...row,
+                        requestStatusSubmitPK: result.success
+                            ? <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">View in block explorer</a>
+                            : "Request failed"
+                    }
+                    : row
+            )
+        );
     };
 
     const handlePollPublicKeyRequests = async () => {
         const requests = await getWillsByRecipient(walletInfo.address);
-        if (requests) {
-            setTableData({
-                requestAddressFrom: request.from || '-',
-                requestTxHash: request.transactionHash || '-',
-                requestMessage: request.message || '-',
-                blockExplorerUrl: request.blockExplorerUrl,
-                requestStatusSubmitPK: request.fulfilled ? 'Submitted' : 'Pending'
-            });
+        if (requests && requests.length > 0) {
+            const formattedRequests = requests.map(request => ({
+                uniqueId: request.uniqueId || '-',
+                signer: request.signer || '-',
+                fulfilled: request.fulfilled ? 'Fulfilled' : 'Pending',
+                publicKey: request.publicKey || '-',
+                blockNumber: request.blockNumber ? request.blockNumber.toString() : '-',
+                messageHash: request.messageHash || '-',
+            }));
+            setTableData(formattedRequests);
         }
     };
 
-    const TABLE_HEAD = ["From", "", "TxHash", "Status", "Method", "Public Key", "Status"];
-
-    const TABLE_ROWS = [
-        {
-            from: <TruncatedAddress address={tableData.requestAddressFrom || ""} />,
-            clipboard: tableData.requestAddressFrom,
-            txHash: <TruncatedAddress address={tableData.requestTxHash || ""} />,
-            status: tableData.blockExplorerUrl,
-            func: handleSubmitPublicKey,
-            method: "Submit Public Key",
-            pk: (
-                <Input
-                    variant="standard"
-                    placeholder="Enter your public key"
-                    label="Public Key"
-                    value={targetSubmitPK}
-                    onChange={(e) => setTargetSubmitPK(e.target.value)}
-                    className="text-content border-none"
-                    labelProps={{
-                        className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
-                    }}
-                />
-            ),
-            disabled: loading || !targetSubmitPK,
-            statusSubmit: tableData.requestStatusSubmitPK || "-"
-        }
-    ];
+    const TABLE_HEAD = ["Id", "From", "Status", "Method", "Public Key", "Block Number", "msgHash", ""];
 
     return (
         <Card className={card}>
@@ -141,31 +125,45 @@ export function RecipientTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {TABLE_ROWS.map(({ from, txHash, clipboard, status, disabled, method, func, pk, statusSubmit }, index) => {
-                            const isLast = index === TABLE_ROWS.length - 1;
+                        {tableData.map(({ uniqueId, signer, fulfilled, publicKey, blockNumber, messageHash }, index) => {
+                            const isLast = index === tableData.length - 1;
                             const tdClass = isLast ? tdLast : td;
                             return (
                                 <tr key={index} className={tr}>
-                                    <td className={tdClass}>{from}</td>
-                                    <td className={tdClass}>
-                                        <ClipboardDefault content={clipboard} />
+                                    <td className={tdClass}
+                                        onMouseLeave={() => setCopied(false)}
+                                        onClick={() => {
+                                            copy(uniqueId);
+                                            setCopied(true);
+                                        }}
+                                    >
+                                        {truncate(uniqueId, 8)}
                                     </td>
-                                    <td className={tdClass}>{txHash}</td>
-                                    <td className={tdClass}>
-                                        <Typography variant="small" className="font-normal">
-                                            {status}
-                                        </Typography>
+                                    <td className={tdClass}
+                                        onMouseLeave={() => setCopied(false)}
+                                        onClick={() => {
+                                            copy(signer);
+                                            setCopied(true);
+                                        }}
+                                    >
+                                        {truncate(signer, 8)}
                                     </td>
                                     <td className={tdClass}>
-                                        <Typography
-                                            as="a"
-                                            href="#"
-                                            variant="small"
-                                            disabled={disabled}
-                                            className={`font-bold textTransform flex items-center gap-2 ${disabled ? "text-gray-500" : "text-content"}`}
-                                            onClick={func}
+                                        <Chip variant="ghost" size="sm" value={fulfilled} color={fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
+                                            {/* {fulfilled} */}
+                                        </Chip>
+                                    </td>
+                                    <td className={tdClass}>
+                                        <Button
+                                            // as="a"
+                                            // href="#"
+                                            variant="gradient"
+                                            size="sm"
+                                            disabled={loading || !publicKey || fulfilled === "Fulfilled" || !targetSubmitPK}
+                                            className={`flex items-center gap-2 ${loading || !publicKey || fulfilled === "Fulfilled" || !targetSubmitPK ? "cursor-not-allowed" : ""}`}
+                                            onClick={() => handleSubmitPublicKey(uniqueId)}
                                         >
-                                            {loading ? <Spinner className="h-4 w-4" /> : method}
+                                            {loading ? <Spinner className="h-4 w-4" /> : "Submit Public Key"}
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -180,14 +178,60 @@ export function RecipientTable() {
                                                     d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
                                                 />
                                             </svg>
-                                        </Typography>
+                                        </Button>
                                     </td>
-                                    <td className={tdClass}>{pk}</td>
-                                    <td className={tdClass}>
-                                        <Typography variant="small" className="font-normal">
-                                            {statusSubmit}
-                                        </Typography>
+                                    <td className={tdClass}
+                                        onMouseLeave={() => setCopied(false)}
+                                        onClick={() => {
+                                            copy(publicKey);
+                                            setCopied(true);
+                                        }}
+                                    >
+                                        {fulfilled === "Fulfilled" ? (
+                                            truncate(publicKey, 8)
+                                        ) : (
+                                            <Input
+                                                variant="standard"
+                                                placeholder="Enter your public key"
+                                                label="Public Key"
+                                                value={targetSubmitPK}
+                                                onChange={(e) => setTargetSubmitPK(e.target.value)}
+                                                className="text-content border-none"
+                                                labelProps={{
+                                                    className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
+                                                }}
+                                            />
+                                        )}
                                     </td>
+                                    <td className={tdClass}
+                                        onMouseLeave={() => setCopied(false)}
+                                        onClick={() => {
+                                            copy(blockNumber);
+                                            setCopied(true);
+                                        }}
+                                    >
+                                        {truncate(blockNumber, 8)}</td>
+                                    <td className={tdClass}
+                                        onMouseLeave={() => setCopied(false)}
+                                        onClick={() => {
+                                            copy(messageHash);
+                                            setCopied(true);
+                                        }}
+                                    >
+                                        {truncate(messageHash, 8)}
+                                    </td>
+                                    <td>
+                                        <Tooltip content="Open Will">
+                                            <IconButton variant="text"
+                                            // onClick={() => handleOpen(1)}
+                                            >
+                                                <LockClosedIcon className="h-4 w-4" />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </td>
+                                    {/* <td className={tdClass}>
+                                        <ClipboardDefault content={messageHash} />
+                                    </td> */}
                                 </tr>
                             );
                         })}
@@ -195,9 +239,11 @@ export function RecipientTable() {
                 </table>
             </CardBody>
             <CardFooter className="flex w-full justify-between">
-                {/* <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
-                    Refresh Requests
-                </Button> */}
+                <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>
+                    <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
+                        Requests
+                    </Button>
+                </Badge>
             </CardFooter>
         </Card>
     );
