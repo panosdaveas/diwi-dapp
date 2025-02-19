@@ -23,16 +23,16 @@ import {
     Chip,
     Tooltip,
     IconButton,
-    Accordion,
-    AccordionHeader,
-    AccordionBody,
+    Collapse,
+    Textarea,
 } from "@material-tailwind/react";
 import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
-import { ethers } from "ethers";
+import { handleScripts } from "../scripts/handles";
+import { CustomContext } from "@/app/Context/context";
 
 export function RecipientTable() {
     const { walletInfo } = useWallet();
@@ -40,8 +40,9 @@ export function RecipientTable() {
     const [targetSubmitPK, setTargetSubmitPK] = useState("");
     const [value, copy] = useCopyToClipboard();
     const [copied, setCopied] = useState(false);
-    const [open, setOpen] = useState(0);
-    const handleOpen = (value) => setOpen(open === value ? 0 : value);
+    const [open, setOpen] = useState(false);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const toggleOpen = () => setOpen((cur) => !cur);
 
     const {
         loading,
@@ -50,7 +51,16 @@ export function RecipientTable() {
         getWillsByRecipient
     } = useContractInteraction();
 
+    const {
+        handleAsymmetricDecryption,
+        handleTimeLockDecryption,
+        handleInputChange,
+        handleDecrypt,
+        handleRequests,
+    } = handleScripts();
+
     const [tableData, setTableData] = useState([]);
+    const { data, setData } = useContext(CustomContext);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -97,6 +107,11 @@ export function RecipientTable() {
         }
     };
 
+    const handleIconButtonClick = (row) => {
+        setSelectedRow(row);
+        toggleOpen();
+    };
+
     const TABLE_HEAD = ["Id", "From", "Status", "Method", "Public Key", "Block Number", "msgHash", ""];
 
     return (
@@ -125,7 +140,7 @@ export function RecipientTable() {
                         </tr>
                     </thead>
                     <tbody>
-                        {tableData.map(({ uniqueId, signer, fulfilled, publicKey, blockNumber, messageHash }, index) => {
+                        {tableData.map((row, index) => {
                             const isLast = index === tableData.length - 1;
                             const tdClass = isLast ? tdLast : td;
                             return (
@@ -133,35 +148,39 @@ export function RecipientTable() {
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(uniqueId);
+                                            copy(row.uniqueId);
                                             setCopied(true);
                                         }}
                                     >
-                                        {truncate(uniqueId, 8)}
+                                        <Typography
+                                            variant="small">
+                                            {truncate(row.uniqueId, 8)}
+                                        </Typography>
                                     </td>
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(signer);
+                                            copy(row.signer);
                                             setCopied(true);
                                         }}
                                     >
-                                        {truncate(signer, 8)}
+                                        <Typography
+                                            variant="small">
+                                            {truncate(row.signer, 8)}
+                                        </Typography>
                                     </td>
                                     <td className={tdClass}>
-                                        <Chip variant="ghost" size="sm" value={fulfilled} color={fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
-                                            {/* {fulfilled} */}
+                                        <Chip variant="ghost" size="sm" value={row.fulfilled} color={row.fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
+                                            {/* {row.fulfilled} */}
                                         </Chip>
                                     </td>
                                     <td className={tdClass}>
                                         <Button
-                                            // as="a"
-                                            // href="#"
                                             variant="gradient"
                                             size="sm"
-                                            disabled={loading || !publicKey || fulfilled === "Fulfilled" || !targetSubmitPK}
-                                            className={`flex items-center gap-2 ${loading || !publicKey || fulfilled === "Fulfilled" || !targetSubmitPK ? "cursor-not-allowed" : ""}`}
-                                            onClick={() => handleSubmitPublicKey(uniqueId)}
+                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !targetSubmitPK}
+                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !targetSubmitPK ? "cursor-not-allowed" : ""}`}
+                                            onClick={() => handleSubmitPublicKey(row.uniqueId)}
                                         >
                                             {loading ? <Spinner className="h-4 w-4" /> : "Submit Public Key"}
                                             <svg
@@ -183,12 +202,15 @@ export function RecipientTable() {
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(publicKey);
+                                            copy(row.publicKey);
                                             setCopied(true);
                                         }}
                                     >
-                                        {fulfilled === "Fulfilled" ? (
-                                            truncate(publicKey, 8)
+                                        {row.fulfilled === "Fulfilled" ? (
+                                            <Typography
+                                                variant="small">
+                                                {truncate(row.publicKey, 8)}
+                                            </Typography>
                                         ) : (
                                             <Input
                                                 variant="standard"
@@ -206,37 +228,78 @@ export function RecipientTable() {
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(blockNumber);
+                                            copy(row.blockNumber);
                                             setCopied(true);
                                         }}
                                     >
-                                        {truncate(blockNumber, 8)}</td>
+                                        <Typography
+                                            variant="small">
+                                            {truncate(row.blockNumber, 8)}
+                                        </Typography>
+                                    </td>
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(messageHash);
+                                            copy(row.messageHash);
                                             setCopied(true);
                                         }}
                                     >
-                                        {truncate(messageHash, 8)}
+                                        <Typography
+                                            variant="small">
+                                            {truncate(row.messageHash, 8)}
+                                        </Typography>
                                     </td>
                                     <td>
                                         <Tooltip content="Open Will">
                                             <IconButton variant="text"
-                                            // onClick={() => handleOpen(1)}
+                                                onClick={() => handleIconButtonClick(row)}
                                             >
-                                                <LockClosedIcon className="h-4 w-4" />
+                                                {selectedRow === row && open ? <LockOpenIcon className="h-4 w-4" /> : <LockClosedIcon className="h-4 w-4" />}
                                             </IconButton>
                                         </Tooltip>
                                     </td>
-                                    {/* <td className={tdClass}>
-                                        <ClipboardDefault content={messageHash} />
-                                    </td> */}
                                 </tr>
                             );
                         })}
                     </tbody>
                 </table>
+                <Collapse open={open}>
+                    {selectedRow && (
+                        <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+                            <CardBody>
+                                <div className="grid gap-6">
+                                    <Input
+                                        label="Private Key"
+                                        name="privateKey"
+                                        value={data.privateKey}
+                                        onChange={handleInputChange}
+                                        className="text-content overflow-hidden overflow-ellipsis"
+                                        labelProps={{ className: "peer-placeholder-shown:text-content" }}
+                                    />
+                                    <Textarea
+                                        readOnly={true}
+                                        label="Encrypted message"
+                                        name="displayMessage"
+                                        value={selectedRow.messageHash}
+                                        rows={7}
+                                        className="text-content"
+                                    />
+                                </div>
+                            </CardBody>
+                            <CardFooter className="flex w-full justify-between">
+                                <ClipboardDefault content={data.displayMessage} />
+                                <div className="flex gap-2">
+                                    {/* <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
+                                        Requests
+                                    </Button> */}
+                                    <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
+                                        Decrypt
+                                    </Button>
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    )}
+                </Collapse>
             </CardBody>
             <CardFooter className="flex w-full justify-between">
                 <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>

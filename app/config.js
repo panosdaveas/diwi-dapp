@@ -20,4 +20,4 @@ export function Configuration() {
 //0xa4151AaBCD0E3bFF1e4Df21d4BD381729B0D74F6
 
 //Chain testnet:
-//https://testnet.snowtrace.io
+//https://testnet.snowtrace.io/address/0xa4151AaBCD0E3bFF1e4Df21d4BD381729B0D74F6/contract/43113/readContract?chainid=43113

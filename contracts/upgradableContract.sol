@@ -152,6 +152,7 @@ contract DiwiImplementation is DiwiStorage {
             digitalWills[i].message, // Full message in event
             digitalWills[i].messageHash // Hash for verification
         );
+
     }
 
     // Helper function to verify a message matches a stored hash
