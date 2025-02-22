@@ -9,7 +9,7 @@ export function handleScripts() {
   const { data, setData } = useContext(CustomContext);
   const {
     sendMessageToRecipient,
-    getRecipientRequest,
+    sendWillToRecipient,
   } = useContractInteraction();
 
   const handleInputChange = (e) => {
@@ -101,6 +101,16 @@ export function handleScripts() {
     
   };
 
+  const handleEncryptWill = async (uniqueId, publicKey, message) => {
+    const encrypted = await encryptWithPublicKey(publicKey, message);
+    try {
+      const result = await timeLockEncryption(data.dateTime, encrypted);
+      const emitMessage = await sendWillToRecipient(uniqueId, result.ciphertext);
+    } catch (error) {
+      console.error("Error during encryption:", error);
+    }
+  };
+
   const handleDecrypt = async () => {
       await handleTimeLockDecryption();
       handleAsymmetricDecryption();
@@ -171,5 +181,6 @@ export function handleScripts() {
     handleClearInputSigner,
     handlePollMessages,
     handleRequests,
+    handleEncryptWill,
   };
 }

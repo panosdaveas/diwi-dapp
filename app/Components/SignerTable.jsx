@@ -37,7 +37,6 @@ export function SignerTable() {
         fetchOwner,
         fetchContract,
         requestPublicKey,
-        getSignerRequest,
         verifyMessage,
         sendMessageToRecipient
     } = useContractInteraction();
@@ -111,14 +110,6 @@ export function SignerTable() {
 
     const TABLE_ROWS = [
         {
-            func: handleFetchContract,
-            name: "Fetch contract",
-            result: <TruncatedAddress address={tableData.contractAddress || ""} />,
-            clipboard: tableData.contractAddress,
-            status: tableData.requestStatusRequestContract || "-",
-            disabled: loading
-        },
-        {
             func: handleRequestPublicKey,
             name: "Request Public Key",
             result: (
@@ -152,26 +143,6 @@ export function SignerTable() {
             messageHash: <TruncatedAddress address={tableData.messageHash || ""} />,
             disabled: loading || !targetAddress || !message
         },
-        {
-            func: handleGetPublicKey,
-            name: "Get Public Key",
-            result: (
-                <Input
-                    variant="standard"
-                    placeholder="Enter target address"
-                    label="Target Address"
-                    value={targetAddressGetPK}
-                    onChange={(e) => setTargetAddressGetPK(e.target.value)}
-                    className="text-content border-none"
-                    labelProps={{
-                        className: "before:content-none after:content-none peer-placeholder-shown:text-content"
-                    }}
-                />
-            ),
-            clipboard: targetAddressGetPK,
-            status: tableData.requestStatusGetPK || "-",
-            disabled: loading || !targetAddressGetPK
-        }
     ];
 
     return (

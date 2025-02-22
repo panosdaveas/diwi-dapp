@@ -9,18 +9,17 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
-import { CardLeftSteps } from "./cardLeft";
-import { CardRightSteps } from "./cardRight";
 import { SignerTable } from "./SignerTable";
+import { SignersTable } from "./SignersTable";
 import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { ThemeToggle } from "./themeToggle";
 import { DynamicLogo } from "./dynamicLogo";
-import { CardTest } from "./card-test";
 import { SignerDashboard } from "./signerDashboard";
 import { RecipientDashboard } from "./recipientDashboard";
+import { RecipientTable } from "./RecipientTable";
 
 const DashboardLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
@@ -91,7 +90,6 @@ const DashboardLayout = ({ children }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div className="col-span-full" >
                                 <div className="p-4">
-                                    {/* <CardTest /> */}
                                     <SignerTable />
                                 </div>
                             </div>
@@ -99,28 +97,13 @@ const DashboardLayout = ({ children }) => {
                                 <StepperWithContent />
                             </div> */}
                             <div className="col-span-full p-4" >
-                                <SignerDashboard />
+                                {/* <SignerDashboard /> */}
+                                <SignersTable />
                                 </div>
                             <div className="col-span-full p-4" >
-                                <RecipientDashboard />
+                                {/* <RecipientDashboard /> */}
+                                <RecipientTable />
                                 </div>
-                            {/* <div className="col-span-full grid md:grid-cols-2 gap-4 px-4"> */}
-                                {/* <CardLeftSteps /> */}
-                                {/* <CardRightSteps /> */}
-                            {/* </div> */}
-                            {/* <Card className="col-span-1 md:col-span-2 lg:col-span-3 p-6 overflow-hidden border-b border-t border-border1 shadow-none"> */}
-                                {/* <Skeleton /> */}
-                                {/* Add performance overview content here */}
-                            {/* </Card> */}
-                            {/* <div className="col-span-1 space-y-6"> */}
-                                {/* <div className="p-6 border-b border-r border-t border-border1"> */}
-                                    {/* <Skeleton /> */}
-                                {/* </div> */}
-                                {/* <Card className="p-6"> */}
-                                    {/* <Skeleton /> */}
-                                {/* </Card> */}
-                            {/* </div> */}
-                            {/* Your grid content */}
                         </div>
                     </div>
                 </main>

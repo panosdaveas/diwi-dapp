@@ -1,4 +1,5 @@
-import { ethers, utils } from "ethers";
+// import { ethers, utils } from "ethers";
+const ethers = require("ethers");
 import { useEffect, useState } from "react";
 import { useChainId } from "wagmi";
 import { Configuration } from "../config";
@@ -136,6 +137,32 @@ export function useContractInteraction() {
     }
   };
 
+  // store the transaction hash in the will
+  const storeTxHash = async (uniqueId, txHash) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const tx = await contract.storeTxHash(uniqueId, txHash);
+      const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
+      setLastTxHash(tx.hash);
+      await tx.wait();
+      return {
+        success: true,
+        txHash: tx.hash,
+        blockExplorerUrl: explorerUrl,
+      };
+    } catch (err) {
+      setError("Error storing transaction hash: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const sendWillToRecipient = async (uniqueId, message) => {
     if (!contract) return;
     setLoading(true);
@@ -147,6 +174,8 @@ export function useContractInteraction() {
 
       // Wait for transaction and get receipt for event data
       const receipt = await tx.wait();
+      await contract.storeTxHash(uniqueId, tx.hash);
+      console.log("Will", tx.hash)
 
       // Find MessageSent event in the receipt
       const event = receipt.logs
@@ -178,6 +207,62 @@ export function useContractInteraction() {
     }
   };
 
+  // Get message by transaction hash  (new function)
+  const getMessageByTxHash = async (txHash) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const receipt = await ethers.provider.getTransactionReceipt(txHash);
+      const event = receipt.logs
+        .map((log) => {
+          try {
+            return contract.interface.parseLog(log);
+          } catch (e) {
+            return null;
+          }
+        })
+        .find((event) => event && event.name === "MessageSent");
+
+      const message = event ? event.args.message : null;
+      return {
+        success: true,
+        message: message,
+      };
+    } catch (err) {
+      setError("Error getting message by transaction hash: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getMessageByUniqueId = async (uniqueId) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const will = await contract.getWillByUniqueId(uniqueId);
+      const result = await getMessageByTxHash(will.txHash);
+      const message = result.message;
+      return {
+        success: true,
+        message: message,
+      };
+    } catch (err) {
+      setError("Error getting message by uniqueId: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
+    } finally {
+      setLoading(false);
+    } 
+  };
+
   // Modified to include message hash in return data
   const getWillsBySigner = async (signerAddress) => {
     if (!contract) return;
@@ -186,11 +271,14 @@ export function useContractInteraction() {
     try {
       const wills = await contract.getWillsBySigner(signerAddress);
       return wills.map((will) => ({
+        uniqueId: will.uniqueId,
         blockNumber: will.blockNumber,
         signer: will.signer,
         recipient: will.recipient,
         publicKey: will.publicKey,
-        messageHash: will.messageHash, // New field
+        fulfilled: will.requestFulfilled,
+        messageHash: will.messageHash,
+        txHash: will.txHash,
       }));
     } catch (err) {
       setError("Error getting wills by signer: " + err.message);
@@ -213,8 +301,9 @@ export function useContractInteraction() {
         signer: will.signer,
         recipient: will.recipient,
         publicKey: will.publicKey,
-        fulfilled: will.fulfilled,
-        messageHash: will.messageHash, // New field
+        fulfilled: will.requestFulfilled,
+        messageHash: will.messageHash,
+        txHash: will.txHash,
       }));
     } catch (err) {
       setError("Error getting wills by recipient: " + err.message);
@@ -269,6 +358,7 @@ export function useContractInteraction() {
         recipient: will.recipient,
         publicKey: will.publicKey,
         messageHash: will.messageHash,
+        txHash: will.txHash,
       }));
 
       // Create a result object with metadata
@@ -319,6 +409,8 @@ export function useContractInteraction() {
     getWillsBySigner,
     getWillsByRecipient,
     listenToEvents,
-    verifyMessage, // New function
+    verifyMessage,
+    getMessageByTxHash,
+    getMessageByUniqueId,
   };
 }

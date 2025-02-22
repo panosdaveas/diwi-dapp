@@ -1,12 +1,12 @@
 import EthCrypto from "eth-crypto";
 import { Configuration } from "@/app/config";
 
-//encrypt with public key
+// Encrypt with public key
 export async function encryptWithPublicKey(publicKey, message) {
   try {
-    publicKey = stripHexPrefix(publicKey);
+    const formattedPublicKey = stripHexPrefix(publicKey);
     const encrypted = await EthCrypto.encryptWithPublicKey(
-      publicKey, // hex string
+      formattedPublicKey, // hex string
       message // plain text
     );
     return EthCrypto.cipher.stringify(encrypted);
@@ -15,13 +15,13 @@ export async function encryptWithPublicKey(publicKey, message) {
     throw error;
   }
 }
-//decrypt with private key
+
+// Decrypt with private key
 export async function decryptWithPrivateKey(privateKey, encrypted) {
   try {
-    // privateKey = Configuration().privateKey;
-    privateKey = stripHexPrefix(privateKey);
+    const formattedPrivateKey = stripHexPrefix(privateKey);
     const decrypted = await EthCrypto.decryptWithPrivateKey(
-      privateKey, // hex string
+      formattedPrivateKey, // hex string
       encrypted // encrypted text
     );
     return decrypted;
@@ -30,7 +30,8 @@ export async function decryptWithPrivateKey(privateKey, encrypted) {
     throw error;
   }
 }
-//generate key pair
+
+// Generate key pair
 export function generateKeyPair() {
   const identity = EthCrypto.createIdentity();
   console.log("publicKey:", identity.publicKey);
@@ -40,7 +41,8 @@ export function generateKeyPair() {
     privateKey: identity.privateKey,
   };
 }
-//strip the prefix "0x" from the public key if present
+
+// Strip the prefix "0x" from the public key if present
 const stripHexPrefix = (publicKey) => {
   return publicKey.startsWith("0x") ? publicKey.slice(2) : publicKey;
 };

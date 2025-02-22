@@ -26,18 +26,22 @@ import {
     Collapse,
     Textarea,
 } from "@material-tailwind/react";
-import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
+import { EnvelopeIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
 import { useCopyToClipboard } from "usehooks-ts";
+import { DateTimePicker } from "./dateTimePicker";
+import { TextareaCustom } from "./textarea";
 import { useContext, useEffect, useState } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
 
-export function RecipientTable() {
+export function SignersTable() {
     const { walletInfo } = useWallet();
     const [isMobile, setIsMobile] = useState(false);
     const [targetSubmitPK, setTargetSubmitPK] = useState("");
+    const [willMessage, setWillMessage] = useState("");
+    const [dateTime, setDateTime] = useState(new Date());
     const [value, copy] = useCopyToClipboard();
     const [copied, setCopied] = useState(false);
     const [open, setOpen] = useState(false);
@@ -48,15 +52,15 @@ export function RecipientTable() {
         loading,
         error,
         submitPublicKey,
-        getWillsByRecipient,
-        getMessageByTxHash,
+        getWillsBySigner,
         getMessageByUniqueId,
     } = useContractInteraction();
 
     const {
-        handleAsymmetricDecryption,
-        handleTimeLockDecryption,
+        handleEncrypt,
         handleInputChange,
+        handleDateTimeChange,
+        handleEncryptWill,
     } = handleScripts();
 
     const [tableData, setTableData] = useState([]);
@@ -75,36 +79,16 @@ export function RecipientTable() {
         return `${str.slice(0, partLength)}...${str.slice(-partLength)}`;
     };
 
-    const handleSubmitPublicKey = async (uniqueId) => {
-        const result = await submitPublicKey(uniqueId, targetSubmitPK);
-        console.log(result);
-        setTableData(prev =>
-            prev.map(row =>
-                row.uniqueId === uniqueId
-                    ? {
-                        ...row,
-                        requestStatusSubmitPK: result.success
-                            ? <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">View in block explorer</a>
-                            : "Request failed"
-                    }
-                    : row
-            )
-        );
-    };
-
-    const handleGetWillMessage = async() => {
-        const result = await getMessageByUniqueId(selectedRow.uniqueId);
-        // console.log(result);
-        const message = result.success ? result.message : "Failed to retrieve message";
-        setData({ ...data, displayMessage: message });
+    const handleSubmitWill = () => async () => {
+        await handleEncryptWill(selectedRow.uniqueId, selectedRow.publicKey, willMessage);
     };
 
     const handlePollPublicKeyRequests = async () => {
-        const requests = await getWillsByRecipient(walletInfo.address);
+        const requests = await getWillsBySigner(walletInfo.address);
         if (requests && requests.length > 0) {
             const formattedRequests = requests.map(request => ({
                 uniqueId: request.uniqueId || '-',
-                signer: request.signer || '-',
+                recipient: request.recipient || '-',
                 fulfilled: request.fulfilled ? 'Fulfilled' : 'Pending',
                 publicKey: request.publicKey || '-',
                 blockNumber: request.blockNumber ? request.blockNumber.toString() : '-',
@@ -118,24 +102,21 @@ export function RecipientTable() {
     const handleIconButtonClick = async (row) => {
         setSelectedRow(row);
         toggleOpen();
-        if (open) {
-            await handleGetWillMessage();
-        }
     };
 
-    const TABLE_HEAD = ["Id", "From", "Status", "Method", "Public Key", "Block Number", "msgHash", ""];
+    const TABLE_HEAD = ["Id", "To", "Status", "Public Key", "Block Number", "msgHash", ""];
 
     return (
 
-      <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
-        {/* <Card className={card}> */}
+        <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+            {/* <Card className={card}> */}
             <CardHeader className={cardHeader}>
                 <div>
                     <Typography variant="h5" className="mt-1 mb-4">
-                        Recipient Dashboard
+                        Signer Dashboard
                     </Typography>
                     <Typography>
-                        Manage public key requests and messages
+                        Make requests and send messages
                     </Typography>
                 </div>
             </CardHeader>
@@ -173,75 +154,35 @@ export function RecipientTable() {
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(row.signer);
+                                            copy(row.recipient);
                                             setCopied(true);
                                         }}
                                     >
                                         <Typography
                                             variant="small">
-                                            {truncate(row.signer, 8)}
+                                            {truncate(row.recipient, 8)}
                                         </Typography>
                                     </td>
                                     <td className={tdClass}>
                                         <Chip variant="ghost" size="sm" value={row.fulfilled} color={row.fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
-                                            {/* {row.fulfilled} */}
                                         </Chip>
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Button
-                                            variant="gradient"
-                                            size="sm"
-                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !targetSubmitPK}
-                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !targetSubmitPK ? "cursor-not-allowed" : ""}`}
-                                            onClick={() => handleSubmitPublicKey(row.uniqueId)}
-                                        >
-                                            {loading ? <Spinner className="h-4 w-4" /> : "Submit Public Key"}
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={2}
-                                                stroke="currentColor"
-                                                className="h-5 w-5"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                                                />
-                                            </svg>
-                                        </Button>
                                     </td>
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(row.publicKey);
+                                            copy(row.publicKey, 8);
                                             setCopied(true);
                                         }}
                                     >
-                                        {row.fulfilled === "Fulfilled" ? (
-                                            <Typography
-                                                variant="small">
-                                                {truncate(row.publicKey, 8)}
-                                            </Typography>
-                                        ) : (
-                                            <Input
-                                                variant="standard"
-                                                placeholder="Enter your public key"
-                                                label="Public Key"
-                                                value={targetSubmitPK}
-                                                onChange={(e) => setTargetSubmitPK(e.target.value)}
-                                                className="text-content border-none"
-                                                labelProps={{
-                                                    className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
-                                                }}
-                                            />
-                                        )}
+                                        <Typography
+                                            variant="small">
+                                            {truncate(row.publicKey, 8)}
+                                        </Typography>
                                     </td>
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(row.blockNumber);
+                                            copy(row.blockNumber, 8);
                                             setCopied(true);
                                         }}
                                     >
@@ -253,7 +194,7 @@ export function RecipientTable() {
                                     <td className={tdClass}
                                         onMouseLeave={() => setCopied(false)}
                                         onClick={() => {
-                                            copy(row.messageHash);
+                                            copy(row.messageHash, 8);
                                             setCopied(true);
                                         }}
                                     >
@@ -263,11 +204,11 @@ export function RecipientTable() {
                                         </Typography>
                                     </td>
                                     <td>
-                                        <Tooltip content="Open Will">
+                                        <Tooltip content="Send Will">
                                             <IconButton variant="text"
                                                 onClick={() => handleIconButtonClick(row)}
                                             >
-                                                {selectedRow === row && open ? <LockOpenIcon className="h-4 w-4" /> : <LockClosedIcon className="h-4 w-4" />}
+                                                {selectedRow === row && open ? <EnvelopeOpenIcon className="h-4 w-4" /> : <EnvelopeIcon className="h-4 w-4" />}
                                             </IconButton>
                                         </Tooltip>
                                     </td>
@@ -281,33 +222,25 @@ export function RecipientTable() {
                         <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
                             <CardBody>
                                 <div className="grid gap-6">
-                                    <Input
-                                        label="Private Key"
-                                        name="privateKey"
-                                        value={data.privateKey}
-                                        onChange={handleInputChange}
-                                        className="text-content overflow-hidden overflow-ellipsis"
-                                        labelProps={{ className: "peer-placeholder-shown:text-content" }}
+                                    <DateTimePicker
+                                        selectedDate={new Date()}
+                                        onChange={handleDateTimeChange}
+                                        // onChange={(e) => setDateTime(e.target.value)}
                                     />
-                                    <Textarea
-                                        readOnly={true}
-                                        label="Encrypted message"
+                                    <TextareaCustom
+                                        label="Will Message"
                                         name="displayMessage"
-                                        // value={handleGetWillMessage()}
-                                        value={data.displayMessage}
+                                        value={willMessage}
+                                        onChange={(e) => setWillMessage(e.target.value)}
                                         rows={7}
-                                        className="text-content"
                                     />
                                 </div>
                             </CardBody>
                             <CardFooter className="flex w-full justify-between">
                                 <ClipboardDefault content={data.displayMessage} />
                                 <div className="flex gap-2">
-                                    {/* <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
-                                        Requests
-                                    </Button> */}
-                                    <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
-                                        Decrypt
+                                    <Button variant="gradient" color="gray" onClick={handleSubmitWill()}>
+                                        Encrypt
                                     </Button>
                                 </div>
                             </CardFooter>

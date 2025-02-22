@@ -37,7 +37,7 @@ export function RecipientDashboard() {
       <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
         <RecipientTable />
         <div className="flex items-center justify-between"></div>
-        <CardBody>
+        {/* <CardBody>
           <div className="grid gap-6">
             <Input
               label="Private Key"
@@ -71,9 +71,9 @@ export function RecipientDashboard() {
             </Button>
             <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
               Decrypt
-            </Button>
-          </div>
-        </CardFooter>
+            </Button> */}
+          {/* </div> */}
+        {/* </CardFooter> */}
       </Card>
     </>
   );

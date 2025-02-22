@@ -10,11 +10,12 @@ contract DiwiStorage {
         address signer;
         address recipient;
         bool exists;
-        bool fulfilled;
+        bool requestFulfilled;
         string message;
         string publicKey;
         uint blockNumber;
         bytes32 messageHash; // Changed to store hash instead of full message
+        bytes32 txHash; // Added to store the transaction hash
     }
 
     // Array of all digital wills
@@ -58,7 +59,7 @@ contract DiwiImplementation is DiwiStorage {
 
     modifier requestFulfilled(bytes32 uniqueId) {
         require(
-            getWillByUniqueId(uniqueId).fulfilled,
+            getWillByUniqueId(uniqueId).requestFulfilled,
             "Public key not submitted yet"
         );
         _;
@@ -93,11 +94,12 @@ contract DiwiImplementation is DiwiStorage {
             signer: msg.sender,
             recipient: recipient,
             exists: true,
-            fulfilled: false,
+            requestFulfilled: false,
             message: message,
             publicKey: "",
             blockNumber: 0,
-            messageHash: 0
+            messageHash: 0,
+            txHash: 0
         });
 
         digitalWills.push(will);
@@ -115,7 +117,7 @@ contract DiwiImplementation is DiwiStorage {
         for (uint i = 0; i < digitalWills.length; i++) {
             if (digitalWills[i].uniqueId == uniqueId) {
             digitalWills[i].publicKey = publicKey;
-            digitalWills[i].fulfilled = true;
+            digitalWills[i].requestFulfilled = true;
             break;
             }
         }
@@ -153,6 +155,24 @@ contract DiwiImplementation is DiwiStorage {
             digitalWills[i].messageHash // Hash for verification
         );
 
+    }
+
+    // Added function to store the transaction hash
+    function storeTxHash(
+        bytes32 uniqueId,
+        bytes32 txHash
+    )
+        public
+        onlySigner(getWillByUniqueId(uniqueId).signer)
+        requestExists(uniqueId)
+        requestFulfilled(uniqueId)
+    {
+        for (uint i = 0; i < digitalWills.length; i++) {
+            if (digitalWills[i].uniqueId == uniqueId) {
+                digitalWills[i].txHash = txHash;
+                break;
+            }
+        }
     }
 
     // Helper function to verify a message matches a stored hash
@@ -216,7 +236,7 @@ contract DiwiImplementation is DiwiStorage {
 }
 
 // Proxy contract remains unchanged
-contract DiwiProxy {
+contract DiwiProxy is DiwiStorage{
     address public implementation;
     address public admin;
 
