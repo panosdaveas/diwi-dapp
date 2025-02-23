@@ -35,6 +35,7 @@ import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
+import { NewWillPopOver } from "./NewWillPopOver";
 
 export function SignersTable() {
     const { walletInfo } = useWallet();
@@ -61,6 +62,7 @@ export function SignersTable() {
         handleInputChange,
         handleDateTimeChange,
         handleEncryptWill,
+        handleNewWill,
     } = handleScripts();
 
     const [tableData, setTableData] = useState([]);
@@ -249,11 +251,17 @@ export function SignersTable() {
                 </Collapse>
             </CardBody>
             <CardFooter className="flex w-full justify-between">
+                <div className="flex gap-8">
                 <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>
                     <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
                         Requests
                     </Button>
                 </Badge>
+                    <NewWillPopOver />
+                    {/* <Button variant="gradient" onClick={handleNewWill}>
+                        New Will
+                    </Button> */}
+                </div>
             </CardFooter>
         </Card>
     );

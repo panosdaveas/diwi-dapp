@@ -42,6 +42,8 @@ export function RecipientTable() {
     const [copied, setCopied] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [tableData, setTableData] = useState([]);
+    const { data, setData } = useContext(CustomContext);
     const toggleOpen = () => setOpen((cur) => !cur);
 
     const {
@@ -57,10 +59,8 @@ export function RecipientTable() {
         handleAsymmetricDecryption,
         handleTimeLockDecryption,
         handleInputChange,
+        handleDecrypt,
     } = handleScripts();
-
-    const [tableData, setTableData] = useState([]);
-    const { data, setData } = useContext(CustomContext);
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -92,9 +92,8 @@ export function RecipientTable() {
         );
     };
 
-    const handleGetWillMessage = async() => {
-        const result = await getMessageByUniqueId(selectedRow.uniqueId);
-        // console.log(result);
+    const handleGetWillMessage = async(row) => {
+        const result = await getMessageByUniqueId(row.uniqueId);
         const message = result.success ? result.message : "Failed to retrieve message";
         setData({ ...data, displayMessage: message });
     };
@@ -118,9 +117,7 @@ export function RecipientTable() {
     const handleIconButtonClick = async (row) => {
         setSelectedRow(row);
         toggleOpen();
-        if (open) {
-            await handleGetWillMessage();
-        }
+        await handleGetWillMessage(row);
     };
 
     const TABLE_HEAD = ["Id", "From", "Status", "Method", "Public Key", "Block Number", "msgHash", ""];
@@ -306,7 +303,8 @@ export function RecipientTable() {
                                     {/* <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
                                         Requests
                                     </Button> */}
-                                    <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}>
+                                    {/* <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}> */}
+                                    <Button variant="gradient" color="gray" onClick={handleDecrypt}>
                                         Decrypt
                                     </Button>
                                 </div>

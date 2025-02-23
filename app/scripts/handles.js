@@ -105,6 +105,12 @@ export function handleScripts() {
     const encrypted = await encryptWithPublicKey(publicKey, message);
     try {
       const result = await timeLockEncryption(data.dateTime, encrypted);
+      setData((prevData) => ({
+        ...prevData,
+        message: result.ciphertext,
+        displayMessage: result.ciphertext,
+        tlEncrypted: "true",
+      }));
       const emitMessage = await sendWillToRecipient(uniqueId, result.ciphertext);
     } catch (error) {
       console.error("Error during encryption:", error);
@@ -112,12 +118,16 @@ export function handleScripts() {
   };
 
   const handleDecrypt = async () => {
+    try {
       await handleTimeLockDecryption();
-      handleAsymmetricDecryption();
+      await handleAsymmetricDecryption();
+    } catch (error) {
+      console.error("Error during decryption:", error);
+    }
   };
 
   const handleAsymmetricDecryption = async () => {
-    const message = await decryptWithPrivateKey(data.privateKey, data.message);
+    const message = await decryptWithPrivateKey(data.privateKey, data.displayMessage);
     setData((prevData) => ({
       ...prevData,
       displayMessage: message,
@@ -125,7 +135,7 @@ export function handleScripts() {
     }));
   };
 
-  const handleTimeLockDecryption = async () => {
+  const handleTimeLockDecryption = async () => { 
     try {
       const response = await fetch("./api/decrypt", {
         method: "POST",
@@ -169,6 +179,10 @@ export function handleScripts() {
     const requests= await getRecipientRequest();
 };
 
+const handleNewWill = async() => {
+  
+};
+
   return {
     handleAsymmetricDecryption,
     handleTimeLockDecryption,
@@ -182,5 +196,6 @@ export function handleScripts() {
     handlePollMessages,
     handleRequests,
     handleEncryptWill,
+    handleNewWill,
   };
 }

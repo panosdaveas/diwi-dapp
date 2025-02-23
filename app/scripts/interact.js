@@ -175,8 +175,6 @@ export function useContractInteraction() {
       // Wait for transaction and get receipt for event data
       const receipt = await tx.wait();
       await contract.storeTxHash(uniqueId, tx.hash);
-      console.log("Will", tx.hash)
-
       // Find MessageSent event in the receipt
       const event = receipt.logs
         .map((log) => {
@@ -213,18 +211,14 @@ export function useContractInteraction() {
     setLoading(true);
     setError(null);
     try {
-      const receipt = await ethers.provider.getTransactionReceipt(txHash);
-      const event = receipt.logs
-        .map((log) => {
-          try {
-            return contract.interface.parseLog(log);
-          } catch (e) {
-            return null;
-          }
-        })
-        .find((event) => event && event.name === "MessageSent");
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const tx = await provider.getTransaction(txHash);
+      const inputData = tx.data;
 
-      const message = event ? event.args.message : null;
+      // Decode the input data to get the message
+      const decodedData = contract.interface.decodeFunctionData("sendWillToRecipient", inputData);
+      const message = decodedData.message;
+
       return {
         success: true,
         message: message,

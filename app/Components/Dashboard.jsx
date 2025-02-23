@@ -88,11 +88,11 @@ const DashboardLayout = ({ children }) => {
                     <div className="container mx-auto">
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <div className="col-span-full" >
+                            {/* <div className="col-span-full" >
                                 <div className="p-4">
                                     <SignerTable />
                                 </div>
-                            </div>
+                            </div> */}
                             {/* <div className="col-span-full px-6">
                                 <StepperWithContent />
                             </div> */}
