@@ -2,23 +2,18 @@ import {
     Square3Stack3DIcon,
 } from "@heroicons/react/24/outline";
 import {
-    Card,
     Drawer,
     IconButton,
     Navbar,
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
-import { SignerTable } from "./SignerTable";
 import { SignersTable } from "./SignersTable";
 import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
-import { Skeleton } from "./skeleton";
 import { ConnectWalletButton } from "./walletButton";
 import { ThemeToggle } from "./themeToggle";
 import { DynamicLogo } from "./dynamicLogo";
-import { SignerDashboard } from "./signerDashboard";
-import { RecipientDashboard } from "./recipientDashboard";
 import { RecipientTable } from "./RecipientTable";
 
 const DashboardLayout = ({ children }) => {
@@ -97,11 +92,9 @@ const DashboardLayout = ({ children }) => {
                                 <StepperWithContent />
                             </div> */}
                             <div className="col-span-full p-4" >
-                                {/* <SignerDashboard /> */}
                                 <SignersTable />
                                 </div>
                             <div className="col-span-full p-4" >
-                                {/* <RecipientDashboard /> */}
                                 <RecipientTable />
                                 </div>
                         </div>
