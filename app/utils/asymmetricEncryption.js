@@ -2,7 +2,7 @@ import EthCrypto from "eth-crypto";
 import { Configuration } from "@/app/config";
 
 // Encrypt with public key
-export async function encryptWithPublicKey(publicKey, message) {
+export async function EncryptWithPublicKey(publicKey, message) {
   try {
     const formattedPublicKey = stripHexPrefix(publicKey);
     const encrypted = await EthCrypto.encryptWithPublicKey(

@@ -30,6 +30,7 @@
     "web3": "^4.16.0"
   },
   "devDependencies": {
+    "encoding": "^0.1.13",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17"
   }

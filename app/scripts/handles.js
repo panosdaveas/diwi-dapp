@@ -1,6 +1,6 @@
 import { CustomContext } from "@/app/Context/context";
 import { useContext } from "react";
-import { encryptWithPublicKey } from "../utils/asymmetricEncryption";
+import { EncryptWithPublicKey } from "../utils/asymmetricEncryption";
 import { timeLockEncryption } from "../utils/timeLockEncrypt";
 import { decryptWithPrivateKey } from "../utils/asymmetricEncryption";
 import { useContractInteraction } from "@/app/scripts/interact";
@@ -55,7 +55,7 @@ export function handleScripts() {
   };
 
   const handleAsymmetricEncryption = async () => {
-    const encrypted = await encryptWithPublicKey(
+    const encrypted = await EncryptWithPublicKey(
       data.publicKey,
       data.plaintext
     );
@@ -102,7 +102,7 @@ export function handleScripts() {
   };
 
   const handleEncryptWill = async (uniqueId, publicKey, message) => {
-    const encrypted = await encryptWithPublicKey(publicKey, message);
+    const encrypted = await EncryptWithPublicKey(publicKey, message);
     try {
       const result = await timeLockEncryption(data.dateTime, encrypted);
       setData((prevData) => ({
