@@ -19,14 +19,13 @@ import {
     Spinner,
     Typography,
     Badge,
-    Alert,
     Chip,
     Tooltip,
     IconButton,
     Collapse,
     Textarea,
 } from "@material-tailwind/react";
-import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
+import { LockClosedIcon, LockOpenIcon, ChatBubbleLeftEllipsisIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/solid";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
@@ -51,14 +50,10 @@ export function RecipientTable() {
         error,
         submitPublicKey,
         getWillsByRecipient,
-        getMessageByTxHash,
         getMessageByUniqueId,
     } = useContractInteraction();
 
     const {
-        handleAsymmetricDecryption,
-        handleTimeLockDecryption,
-        handleInputChange,
         handleDecrypt,
     } = handleScripts();
 
@@ -69,6 +64,22 @@ export function RecipientTable() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setData((prevData) => ({
+            ...prevData,
+            [name]: value,
+        }));
+    };
+
+    const handlePublicKeyChange = (uniqueId, value) => {
+        setTableData(prevData =>
+            prevData.map(row =>
+                row.uniqueId === uniqueId ? { ...row, publicKey: value } : row
+            )
+        );
+    };
+
     const truncate = (str, length = 10) => {
         if (str.length <= length) return str;
         const partLength = Math.floor(length / 2);
@@ -76,8 +87,9 @@ export function RecipientTable() {
     };
 
     const handleSubmitPublicKey = async (uniqueId) => {
-        const result = await submitPublicKey(uniqueId, targetSubmitPK);
-        console.log(result);
+        const publicKey = tableData.find(row => row.uniqueId === uniqueId).publicKey;
+        console.log(publicKey);
+        const result = await submitPublicKey(uniqueId, publicKey);
         setTableData(prev =>
             prev.map(row =>
                 row.uniqueId === uniqueId
@@ -92,7 +104,7 @@ export function RecipientTable() {
         );
     };
 
-    const handleGetWillMessage = async(row) => {
+    const handleGetWillMessage = async (row) => {
         const result = await getMessageByUniqueId(row.uniqueId);
         const message = result.success ? result.message : "Failed to retrieve message";
         setData({ ...data, displayMessage: message });
@@ -104,8 +116,9 @@ export function RecipientTable() {
             const formattedRequests = requests.map(request => ({
                 uniqueId: request.uniqueId || '-',
                 signer: request.signer || '-',
+                message: request.message || '-',
                 fulfilled: request.fulfilled ? 'Fulfilled' : 'Pending',
-                publicKey: request.publicKey || '-',
+                publicKey: request.publicKey || '',
                 blockNumber: request.blockNumber ? request.blockNumber.toString() : '-',
                 messageHash: request.messageHash || '-',
                 txHash: request.txHash || '-',
@@ -120,12 +133,12 @@ export function RecipientTable() {
         await handleGetWillMessage(row);
     };
 
-    const TABLE_HEAD = ["Id", "From", "Status", "Method", "Public Key", "Block Number", "msgHash", ""];
+    const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Block Number", ""];
 
     return (
 
-      <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
-        {/* <Card className={card}> */}
+        <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+            {/* <Card className={card}> */}
             <CardHeader className={cardHeader}>
                 <div>
                     <Typography variant="h5" className="mt-1 mb-4">
@@ -180,19 +193,27 @@ export function RecipientTable() {
                                         </Typography>
                                     </td>
                                     <td className={tdClass}>
+                                        <Tooltip content=
+                                            {<span>
+                                                {row.message}
+                                            </span>}
+                                        >
+                                            <ChatBubbleLeftEllipsisIcon />
+                                        </Tooltip>
+                                    </td>
+                                    <td className={tdClass}>
                                         <Chip variant="ghost" size="sm" value={row.fulfilled} color={row.fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
-                                            {/* {row.fulfilled} */}
                                         </Chip>
                                     </td>
                                     <td className={tdClass}>
                                         <Button
                                             variant="gradient"
                                             size="sm"
-                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !targetSubmitPK}
-                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !targetSubmitPK ? "cursor-not-allowed" : ""}`}
+                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey}
+                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey ? "cursor-not-allowed" : ""}`}
                                             onClick={() => handleSubmitPublicKey(row.uniqueId)}
                                         >
-                                            {loading ? <Spinner className="h-4 w-4" /> : "Submit Public Key"}
+                                            {loading ? <Spinner className="h-4 w-4" /> : "Submit"}
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 fill="none"
@@ -226,8 +247,8 @@ export function RecipientTable() {
                                                 variant="standard"
                                                 placeholder="Enter your public key"
                                                 label="Public Key"
-                                                value={targetSubmitPK}
-                                                onChange={(e) => setTargetSubmitPK(e.target.value)}
+                                                value={tableData.find(item => item.uniqueId === row.uniqueId)?.publicKey}
+                                                onChange={(e) => handlePublicKeyChange(row.uniqueId, e.target.value)}
                                                 className="text-content border-none"
                                                 labelProps={{
                                                     className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
@@ -247,19 +268,7 @@ export function RecipientTable() {
                                             {truncate(row.blockNumber, 8)}
                                         </Typography>
                                     </td>
-                                    <td className={tdClass}
-                                        onMouseLeave={() => setCopied(false)}
-                                        onClick={() => {
-                                            copy(row.messageHash);
-                                            setCopied(true);
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="small">
-                                            {truncate(row.messageHash, 8)}
-                                        </Typography>
-                                    </td>
-                                    <td>
+                                    <td className={tdClass}>
                                         <Tooltip content="Open Will">
                                             <IconButton variant="text"
                                                 onClick={() => handleIconButtonClick(row)}

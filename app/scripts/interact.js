@@ -294,6 +294,7 @@ export function useContractInteraction() {
         blockNumber: will.blockNumber,
         signer: will.signer,
         recipient: will.recipient,
+        message: will.message,
         publicKey: will.publicKey,
         fulfilled: will.requestFulfilled,
         messageHash: will.messageHash,
@@ -351,6 +352,7 @@ export function useContractInteraction() {
         signer: will.signer,
         recipient: will.recipient,
         publicKey: will.publicKey,
+        message: will.message,
         messageHash: will.messageHash,
         txHash: will.txHash,
       }));

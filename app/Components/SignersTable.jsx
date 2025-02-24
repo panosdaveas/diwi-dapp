@@ -36,6 +36,7 @@ import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
 import { NewWillPopOver } from "./NewWillPopOver";
+import { DialogDefault } from "./openDialog";
 
 export function SignersTable() {
     const { walletInfo } = useWallet();
@@ -205,7 +206,7 @@ export function SignersTable() {
                                             {truncate(row.messageHash, 8)}
                                         </Typography>
                                     </td>
-                                    <td>
+                                    <td className={tdClass}>
                                         <Tooltip content="Send Will">
                                             <IconButton variant="text"
                                                 onClick={() => handleIconButtonClick(row)}
@@ -257,7 +258,7 @@ export function SignersTable() {
                         Requests
                     </Button>
                 </Badge>
-                    <NewWillPopOver />
+                    <DialogDefault />
                     {/* <Button variant="gradient" onClick={handleNewWill}>
                         New Will
                     </Button> */}
