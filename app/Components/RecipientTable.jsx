@@ -41,6 +41,7 @@ export function RecipientTable() {
     const [copied, setCopied] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [publicKeys, setPublicKeys] = useState(["", "", ""]); // Initialize for each row
     const [tableData, setTableData] = useState([]);
     const { data, setData } = useContext(CustomContext);
     const toggleOpen = () => setOpen((cur) => !cur);
@@ -71,6 +72,13 @@ export function RecipientTable() {
             [name]: value,
         }));
     };
+
+    const handleInputChangePublicKey = (index, value) => {
+        const newPublicKeys = [...publicKeys];
+        newPublicKeys[index] = value;
+        setPublicKeys(newPublicKeys);
+    };
+
 
     const handlePublicKeyChange = (uniqueId, value) => {
         setTableData(prevData =>
@@ -231,15 +239,17 @@ export function RecipientTable() {
                                         </Button>
                                     </td>
                                     <td className={tdClass}
-                                        onMouseLeave={() => setCopied(false)}
-                                        onClick={() => {
-                                            copy(row.publicKey);
-                                            setCopied(true);
-                                        }}
+
                                     >
                                         {row.fulfilled === "Fulfilled" ? (
                                             <Typography
-                                                variant="small">
+                                                variant="small"
+                                                onMouseLeave={() => setCopied(false)}
+                                                onClick={() => {
+                                                    copy(row.publicKey);
+                                                    setCopied(true);
+                                                }}
+                                            >
                                                 {truncate(row.publicKey, 8)}
                                             </Typography>
                                         ) : (
@@ -247,8 +257,10 @@ export function RecipientTable() {
                                                 variant="standard"
                                                 placeholder="Enter your public key"
                                                 label="Public Key"
-                                                value={tableData.find(item => item.uniqueId === row.uniqueId)?.publicKey}
+                                                value={tableData.find(item => item.uniqueId === row.uniqueId)?.publicKey || ''}
                                                 onChange={(e) => handlePublicKeyChange(row.uniqueId, e.target.value)}
+                                                // value={publicKeys[index] || ""}
+                                                // onChange={(e) => handleInputChangePublicKey(index, e.target.value)}
                                                 className="text-content border-none"
                                                 labelProps={{
                                                     className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
