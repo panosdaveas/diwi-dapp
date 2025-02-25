@@ -25,7 +25,7 @@ import {
     Collapse,
     Textarea,
 } from "@material-tailwind/react";
-import { LockClosedIcon, LockOpenIcon, ChatBubbleLeftEllipsisIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/solid";
+import { LockClosedIcon, LockOpenIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/solid";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
@@ -36,12 +36,10 @@ import { CustomContext } from "@/app/Context/context";
 export function RecipientTable() {
     const { walletInfo } = useWallet();
     const [isMobile, setIsMobile] = useState(false);
-    const [targetSubmitPK, setTargetSubmitPK] = useState("");
     const [value, copy] = useCopyToClipboard();
     const [copied, setCopied] = useState(false);
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [publicKeys, setPublicKeys] = useState(["", "", ""]); // Initialize for each row
     const [tableData, setTableData] = useState([]);
     const { data, setData } = useContext(CustomContext);
     const toggleOpen = () => setOpen((cur) => !cur);
@@ -55,7 +53,9 @@ export function RecipientTable() {
     } = useContractInteraction();
 
     const {
-        handleDecrypt,
+        // handleDecrypt,
+        handleAsymmetricDecryption,
+        handleTimeLockDecryption,
     } = handleScripts();
 
     useEffect(() => {
@@ -72,13 +72,6 @@ export function RecipientTable() {
             [name]: value,
         }));
     };
-
-    const handleInputChangePublicKey = (index, value) => {
-        const newPublicKeys = [...publicKeys];
-        newPublicKeys[index] = value;
-        setPublicKeys(newPublicKeys);
-    };
-
 
     const handlePublicKeyChange = (uniqueId, value) => {
         setTableData(prevData =>
@@ -103,13 +96,14 @@ export function RecipientTable() {
                 row.uniqueId === uniqueId
                     ? {
                         ...row,
-                        requestStatusSubmitPK: result.success
+                        txStatus: result.success
                             ? <a href={result.blockExplorerUrl} target="_blank" rel="noopener noreferrer">View in block explorer</a>
                             : "Request failed"
                     }
                     : row
             )
         );
+        await handlePollPublicKeyRequests();
     };
 
     const handleGetWillMessage = async (row) => {
@@ -141,12 +135,29 @@ export function RecipientTable() {
         await handleGetWillMessage(row);
     };
 
+    const handleDecrypt = async (event) => {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const privateKey = formData.get("privateKey");
+        
+        await handleTimeLockDecryption(); // Ensure this completes first
+
+        try {
+          setData((prevData) => {
+            handleAsymmetricDecryption(privateKey, prevData); // Pass updated data
+            return prevData; // Return unchanged to avoid extra re-render
+          });
+        } catch (error) {
+          console.error("Decryption failed:", error);
+        }
+      };
+
     const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Block Number", ""];
 
     return (
 
         <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
-            {/* <Card className={card}> */}
             <CardHeader className={cardHeader}>
                 <div>
                     <Typography variant="h5" className="mt-1 mb-4">
@@ -259,8 +270,6 @@ export function RecipientTable() {
                                                 label="Public Key"
                                                 value={tableData.find(item => item.uniqueId === row.uniqueId)?.publicKey || ''}
                                                 onChange={(e) => handlePublicKeyChange(row.uniqueId, e.target.value)}
-                                                // value={publicKeys[index] || ""}
-                                                // onChange={(e) => handleInputChangePublicKey(index, e.target.value)}
                                                 className="text-content border-none"
                                                 labelProps={{
                                                     className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
@@ -297,13 +306,17 @@ export function RecipientTable() {
                 <Collapse open={open}>
                     {selectedRow && (
                         <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+                             <form onSubmit={handleDecrypt}>
                             <CardBody>
                                 <div className="grid gap-6">
+                                    
                                     <Input
                                         label="Private Key"
                                         name="privateKey"
-                                        value={data.privateKey}
-                                        onChange={handleInputChange}
+                                        type="password"
+                                        required
+                                        // value={data.privateKey}
+                                        // onChange={handleInputChange}
                                         className="text-content overflow-hidden overflow-ellipsis"
                                         labelProps={{ className: "peer-placeholder-shown:text-content" }}
                                     />
@@ -321,15 +334,12 @@ export function RecipientTable() {
                             <CardFooter className="flex w-full justify-between">
                                 <ClipboardDefault content={data.displayMessage} />
                                 <div className="flex gap-2">
-                                    {/* <Button variant="text" color="gray" onClick={handleRequests} className="text-content">
-                                        Requests
-                                    </Button> */}
-                                    {/* <Button variant="gradient" color="gray" onClick={data.tlEncrypted === "true" ? handleTimeLockDecryption : handleAsymmetricDecryption}> */}
-                                    <Button variant="gradient" color="gray" onClick={handleDecrypt}>
+                                    <Button type="submit" variant="gradient" color="gray">
                                         Decrypt
                                     </Button>
                                 </div>
                             </CardFooter>
+                            </form>
                         </Card>
                     )}
                 </Collapse>

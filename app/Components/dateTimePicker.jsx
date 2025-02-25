@@ -77,7 +77,7 @@ const DateTimePicker = ({ selectedDate, onChange }) => {
         <PopoverHandler>
           <Input
           variant="standard"
-            label="Select Date and Time"
+            label="Select date and time that the will be decryptable"
             onChange={() => null}
             value={formatDateTime()}
             onClick={() => setIsOpen(true)}

@@ -119,20 +119,34 @@ export function handleScripts() {
 
   const handleDecrypt = async () => {
     try {
-      await handleTimeLockDecryption();
-      await handleAsymmetricDecryption();
+      await handleTimeLockDecryption(); // Ensure this completes first
+  
+      // Use the updated state after decryption
+      setData((prevData) => {
+        handleAsymmetricDecryption(privateKey, prevData); // Pass updated data
+        return prevData; // Return unchanged to avoid extra re-render
+      });
     } catch (error) {
       console.error("Error during decryption:", error);
     }
   };
 
-  const handleAsymmetricDecryption = async () => {
-    const message = await decryptWithPrivateKey(data.privateKey, data.displayMessage);
-    setData((prevData) => ({
-      ...prevData,
-      displayMessage: message,
-      ciphertext: message,
-    }));
+  const handleAsymmetricDecryption = async (privateKey, updatedData) => {
+    try {
+      const message = await decryptWithPrivateKey(
+        privateKey, 
+        updatedData.message
+      );
+        // Display the decrypted message without storing it in state
+        // alert(`Decrypted Message: ${message}`);
+      setData((prevData) => ({
+        ...prevData,
+        displayMessage: message,
+        // ciphertext: message,
+      }));
+    } catch (error) {
+      console.error("Error in asymmetric decryption:", error);
+    }
   };
 
   const handleTimeLockDecryption = async () => { 
@@ -142,25 +156,33 @@ export function handleScripts() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || "Decryption failed");
-      } else {
-        const decrypted = JSON.stringify(await response.json());
-        const decryptedMessageString = JSON.parse(decrypted);
-        setData((prevState) => ({
-          ...prevState,
-          message: decryptedMessageString.decrypted,
-          displayMessage: decryptedMessageString.decrypted,
-          tlEncrypted: "false",
-        }));
-      }
+      } 
+  
+      const decryptedMessageString = await response.json();
+      
+      // Wait for state update before proceeding to next step
+      await new Promise((resolve) => {
+        setData((prevState) => {
+          const newState = {
+            ...prevState,
+            message: decryptedMessageString.decrypted,
+            // displayMessage: decryptedMessageString.decrypted,
+            tlEncrypted: "false",
+          };
+          resolve(newState);
+          return newState;
+        });
+      });
+  
     } catch (error) {
       console.error("Error during decryption:", error);
-      const errorLog = error;
       setData((prevState) => ({
         ...prevState,
-        displayMessage: errorLog,
+        displayMessage: error.toString(),
       }));
     }
   };
