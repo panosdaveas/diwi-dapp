@@ -35,14 +35,11 @@ import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
-import { NewWillPopOver } from "./NewWillPopOver";
 import { DialogDefault } from "./openDialog";
 
 export function SignersTable() {
     const { walletInfo } = useWallet();
     const [isMobile, setIsMobile] = useState(false);
-    const [targetSubmitPK, setTargetSubmitPK] = useState("");
-    const [willMessage, setWillMessage] = useState("");
     const [dateTime, setDateTime] = useState(new Date());
     const [value, copy] = useCopyToClipboard();
     const [copied, setCopied] = useState(false);
@@ -53,17 +50,14 @@ export function SignersTable() {
     const {
         loading,
         error,
-        submitPublicKey,
         getWillsBySigner,
         getMessageByUniqueId,
     } = useContractInteraction();
 
     const {
-        handleEncrypt,
         handleInputChange,
         handleDateTimeChange,
         handleEncryptWill,
-        handleNewWill,
     } = handleScripts();
 
     const [tableData, setTableData] = useState([]);
@@ -82,31 +76,31 @@ export function SignersTable() {
         return `${str.slice(0, partLength)}...${str.slice(-partLength)}`;
     };
 
-     // Use a state variable just for controlling the UI, not for storing the actual value
-  const [inputValue, setInputValue] = useState('');
-  
-  // Use a ref to store the actual sensitive data
-  const actualWillMessage = useRef('');
-  
-  const handleChange = useCallback((e) => {
-    // Update the UI state
-    setInputValue(e.target.value);
-    // Also update the secure value
-    actualWillMessage.current = e.target.value;
-  }, []);
+    // Use a state variable just for controlling the UI, not for storing the actual value
+    const [inputValue, setInputValue] = useState('');
+
+    // Use a ref to store the actual sensitive data
+    const actualWillMessage = useRef('');
+
+    const handleChange = useCallback((e) => {
+        // Update the UI state
+        setInputValue(e.target.value);
+        // Also update the secure value
+        actualWillMessage.current = e.target.value;
+    }, []);
 
     const handleSubmitWill = () => async () => {
         try {
-      await handleEncryptWill(
-        selectedRow.uniqueId,
-        selectedRow.publicKey,
-        actualWillMessage.current
-      );
-    } finally {
-      // Clear both the UI state and the secure value
-      setInputValue('');
-      actualWillMessage.current = '';
-    }
+            await handleEncryptWill(
+                selectedRow.uniqueId,
+                selectedRow.publicKey,
+                actualWillMessage.current
+            );
+        } finally {
+            // Clear both the UI state and the secure value
+            setInputValue('');
+            actualWillMessage.current = '';
+        }
     };
 
     const handlePollPublicKeyRequests = async () => {
@@ -129,21 +123,6 @@ export function SignersTable() {
         setSelectedRow(row);
         toggleOpen();
     };
-
-    // Create a closure to hold the sensitive data without exposing it to React state
-const createSecureInput = () => {
-    let secureValue = '';
-    
-    return {
-      setValue: (value) => { secureValue = value; },
-      getValue: () => secureValue,
-      clear: () => { secureValue = ''; }
-    };
-  };
-
-  const secureWillMessage = useRef(createSecureInput());
-
-
 
     const TABLE_HEAD = ["Id", "To", "Status", "Public Key", "Block Number", "msgHash", ""];
 
@@ -266,15 +245,11 @@ const createSecureInput = () => {
                                     <DateTimePicker
                                         selectedDate={new Date()}
                                         onChange={handleDateTimeChange}
-                                        // onChange={(e) => setDateTime(e.target.value)}
+                                    // onChange={(e) => setDateTime(e.target.value)}
                                     />
                                     <TextareaCustom
                                         label="Will Message"
                                         name="displayMessage"
-                                        // value={willMessage}
-                                        // onChange={(e) => setWillMessage(e.target.value)}
-                                        // value={secureWillMessage.current.getValue()}
-                                        // onChange={(e) => secureWillMessage.current.setValue(e.target.value)}
                                         value={inputValue}
                                         onChange={handleChange}
                                         rows={7}
@@ -295,11 +270,11 @@ const createSecureInput = () => {
             </CardBody>
             <CardFooter className="flex w-full justify-between">
                 <div className="flex gap-8">
-                <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>
-                    <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
-                        Requests
-                    </Button>
-                </Badge>
+                    <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>
+                        <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
+                            Requests
+                        </Button>
+                    </Badge>
                     <DialogDefault />
                     {/* <Button variant="gradient" onClick={handleNewWill}>
                         New Will
