@@ -1,7 +1,6 @@
-export const td = "p-4 border-b border-borderColor text-content bg-bkg",
-  tdLast = "p-4 bg-bkg",
+export const td = "p-4 border-b border-borderColor text-content",
+  tdLast = "p-4 pb-8 bg-bkg border-b border-borderColor",
   tdHead = "p-4 bg-bkg border-b border-borderColor text-content",
-  // tr = "hover:bg-gray-50",
   tr = "hover:bg-accent1",
   card =
     "h-full w-full text-content bg-bkg shadow-none overflow-hidden border border-borderColor",

@@ -24,8 +24,10 @@ import { useState, useEffect } from "react";
 import { ConnectWalletButton } from "./walletButton";
 import { useContractInteraction } from "@/app/scripts/interact";
 import { useWallet } from "@/app/Context/WalletContext";
+import { SignersTable } from "./SignersTable";
+import { RecipientTable } from "./RecipientTable";
 
-export function SidebarContent() {
+const SidebarContent = ({ setActiveComponent }) => {
     const [openAccordion, setOpenAccordion] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
     const { walletInfo } = useWallet();
@@ -48,6 +50,14 @@ export function SidebarContent() {
     const handleLogContractData = async () => {
         const dataUrl = await getAllWills();
     };
+
+    const handleOpenSignerDashboard = () => {
+        setActiveComponent(<SignersTable />); // Update Dashboard state
+    };
+
+    const handleOpenRecipientDashboard = () => {
+        setActiveComponent(<RecipientTable />); // Update Dashboard state
+    }
 
     return (
         <div className="h-full bg-bkg transition-colors duration-200">
@@ -142,7 +152,7 @@ export function SidebarContent() {
                         />
                     </ListItemSuffix>
                 </ListItem> */}
-                <ListItem>
+                <ListItem onClick={handleOpenSignerDashboard}>
                     <ListItemPrefix>
                         {/* <UserCircleIcon className="h-5 w-5" /> */}
                     <div className="max-w-full animate-pulse">
@@ -151,12 +161,18 @@ export function SidebarContent() {
                         </div>
                         </div>
                     </ListItemPrefix>
+                    Signer Dashboard
+                </ListItem>
+                <ListItem onClick={handleOpenRecipientDashboard}>
+                    <ListItemPrefix >
+                        {/* <UserCircleIcon className="h-5 w-5" /> */}
                     <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-content">
+                        <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-content">
                             &nbsp;
                         </div>
                         </div>
-                    {/* Profile */}
+                    </ListItemPrefix>
+                    Recipient Dashboard
                 </ListItem>
                 <ListItem>
                     <ListItemPrefix>
@@ -223,3 +239,5 @@ export function SidebarContent() {
         </div>
     );
 };
+
+export { SidebarContent };

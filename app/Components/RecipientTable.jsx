@@ -136,7 +136,7 @@ export function RecipientTable() {
     const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Tx", "Block Number", ""];
 
     return (
-
+        <div className="col-span-full p-4" >
         <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
             <CardHeader className={cardHeader}>
                 <div>
@@ -334,5 +334,6 @@ export function RecipientTable() {
                 </Badge>
             </CardFooter>
         </Card>
+        </div>
     );
 }

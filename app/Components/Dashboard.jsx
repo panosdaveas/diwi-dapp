@@ -27,6 +27,8 @@ const DashboardLayout = ({ children }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const [activeComponent, setActiveComponent] = useState(null);
+
     return (
         <div className="min-h-screen bg-bkg text-content transition-colors duration-200">
             <Navbar className="sticky top-0 z-10 h-max max-w-full rounded-none px-6 py-2 lg:px-6 bg-bkg border-t-0 border-r-0 border-l-0 border-b-1 border-borderColor shadow-none transition-colors duration-200">
@@ -74,29 +76,18 @@ const DashboardLayout = ({ children }) => {
                 {/* Sidebar - Hidden on mobile */}
                 {!isMobile && (
                     <aside className="w-64 flex-shrink-0 border-r border-borderColor transition-colors duration-200">
-                        <SidebarContent />
+                        <SidebarContent setActiveComponent={setActiveComponent}/>
                     </aside>
                 )}
 
                 {/* Main Content */}
                 <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200">
-                    <div className="container mx-auto">
+                    <div className="container mx-auto" id="dashboard-main">
                         {children}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {/* <div className="col-span-full" >
-                                <div className="p-4">
-                                    <SignerTable />
-                                </div>
-                            </div> */}
-                            {/* <div className="col-span-full px-6">
-                                <StepperWithContent />
-                            </div> */}
-                            <div className="col-span-full p-4" >
                                 <SignersTable />
-                                </div>
-                            <div className="col-span-full p-4" >
                                 <RecipientTable />
-                                </div>
+                                {activeComponent}
                         </div>
                     </div>
                 </main>

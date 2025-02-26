@@ -36,6 +36,7 @@ import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
 import { DialogDefault } from "./openDialog";
+import { NetworkToggle } from "./networkToggle";
 
 export function SignersTable() {
     const { walletInfo } = useWallet();
@@ -127,7 +128,7 @@ export function SignersTable() {
     const TABLE_HEAD = ["Id", "To", "Status", "Public Key", "Block Number", "msgHash", ""];
 
     return (
-
+        <div className="col-span-full p-4" >
         <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
             {/* <Card className={card}> */}
             <CardHeader className={cardHeader}>
@@ -144,10 +145,10 @@ export function SignersTable() {
                 <table className={table}>
                     <thead>
                         <tr>
-                            {TABLE_HEAD.map((head) => (
+                            {TABLE_HEAD.map((head, index) => (
                                 <th key={head} className={tdHead}>
                                     <Typography variant="small" className="font-bold leading-none opacity-100">
-                                        {head}
+                                    {head}
                                     </Typography>
                                 </th>
                             ))}
@@ -276,11 +277,9 @@ export function SignersTable() {
                         </Button>
                     </Badge>
                     <DialogDefault />
-                    {/* <Button variant="gradient" onClick={handleNewWill}>
-                        New Will
-                    </Button> */}
                 </div>
             </CardFooter>
         </Card>
+        </div>
     );
 }
