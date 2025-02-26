@@ -30,7 +30,7 @@ import { EnvelopeIcon, EnvelopeOpenIcon } from "@heroicons/react/24/solid";
 import { useCopyToClipboard } from "usehooks-ts";
 import { DateTimePicker } from "./dateTimePicker";
 import { TextareaCustom } from "./textarea";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef, useCallback } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
@@ -82,8 +82,31 @@ export function SignersTable() {
         return `${str.slice(0, partLength)}...${str.slice(-partLength)}`;
     };
 
+     // Use a state variable just for controlling the UI, not for storing the actual value
+  const [inputValue, setInputValue] = useState('');
+  
+  // Use a ref to store the actual sensitive data
+  const actualWillMessage = useRef('');
+  
+  const handleChange = useCallback((e) => {
+    // Update the UI state
+    setInputValue(e.target.value);
+    // Also update the secure value
+    actualWillMessage.current = e.target.value;
+  }, []);
+
     const handleSubmitWill = () => async () => {
-        await handleEncryptWill(selectedRow.uniqueId, selectedRow.publicKey, willMessage);
+        try {
+      await handleEncryptWill(
+        selectedRow.uniqueId,
+        selectedRow.publicKey,
+        actualWillMessage.current
+      );
+    } finally {
+      // Clear both the UI state and the secure value
+      setInputValue('');
+      actualWillMessage.current = '';
+    }
     };
 
     const handlePollPublicKeyRequests = async () => {
@@ -106,6 +129,21 @@ export function SignersTable() {
         setSelectedRow(row);
         toggleOpen();
     };
+
+    // Create a closure to hold the sensitive data without exposing it to React state
+const createSecureInput = () => {
+    let secureValue = '';
+    
+    return {
+      setValue: (value) => { secureValue = value; },
+      getValue: () => secureValue,
+      clear: () => { secureValue = ''; }
+    };
+  };
+
+  const secureWillMessage = useRef(createSecureInput());
+
+
 
     const TABLE_HEAD = ["Id", "To", "Status", "Public Key", "Block Number", "msgHash", ""];
 
@@ -233,8 +271,12 @@ export function SignersTable() {
                                     <TextareaCustom
                                         label="Will Message"
                                         name="displayMessage"
-                                        value={willMessage}
-                                        onChange={(e) => setWillMessage(e.target.value)}
+                                        // value={willMessage}
+                                        // onChange={(e) => setWillMessage(e.target.value)}
+                                        // value={secureWillMessage.current.getValue()}
+                                        // onChange={(e) => secureWillMessage.current.setValue(e.target.value)}
+                                        value={inputValue}
+                                        onChange={handleChange}
                                         rows={7}
                                     />
                                 </div>

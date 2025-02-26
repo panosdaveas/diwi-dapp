@@ -348,6 +348,7 @@ export function useContractInteraction() {
 
       // Format the wills data
       const formattedWills = wills.map((will) => ({
+        uniqueId: will.uniqueId,
         blockNumber: will.blockNumber.toString(), // Convert BigNumber to string
         signer: will.signer,
         recipient: will.recipient,
@@ -408,5 +409,6 @@ export function useContractInteraction() {
     verifyMessage,
     getMessageByTxHash,
     getMessageByUniqueId,
+    storeTxHash,
   };
 }

@@ -53,9 +53,7 @@ export function RecipientTable() {
     } = useContractInteraction();
 
     const {
-        // handleDecrypt,
-        handleAsymmetricDecryption,
-        handleTimeLockDecryption,
+        handleDecrypt,
     } = handleScripts();
 
     useEffect(() => {
@@ -135,25 +133,7 @@ export function RecipientTable() {
         await handleGetWillMessage(row);
     };
 
-    const handleDecrypt = async (event) => {
-        event.preventDefault();
-        
-        const formData = new FormData(event.target);
-        const privateKey = formData.get("privateKey");
-        
-        await handleTimeLockDecryption(); // Ensure this completes first
-
-        try {
-          setData((prevData) => {
-            handleAsymmetricDecryption(privateKey, prevData); // Pass updated data
-            return prevData; // Return unchanged to avoid extra re-render
-          });
-        } catch (error) {
-          console.error("Decryption failed:", error);
-        }
-      };
-
-    const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Block Number", ""];
+    const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Tx", "Block Number", ""];
 
     return (
 
@@ -228,8 +208,8 @@ export function RecipientTable() {
                                         <Button
                                             variant="gradient"
                                             size="sm"
-                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey}
-                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey ? "cursor-not-allowed" : ""}`}
+                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey || !row.txHash}
+                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey || !row.txHash ? "cursor-not-allowed" : ""}`}
                                             onClick={() => handleSubmitPublicKey(row.uniqueId)}
                                         >
                                             {loading ? <Spinner className="h-4 w-4" /> : "Submit"}
@@ -291,8 +271,10 @@ export function RecipientTable() {
                                     </td>
                                     <td className={tdClass}>
                                         <Tooltip content="Open Will">
-                                            <IconButton variant="text"
+                                            <IconButton 
+                                                variant="text"
                                                 onClick={() => handleIconButtonClick(row)}
+                                                disabled={!row.txHash}
                                             >
                                                 {selectedRow === row && open ? <LockOpenIcon className="h-4 w-4" /> : <LockClosedIcon className="h-4 w-4" />}
                                             </IconButton>

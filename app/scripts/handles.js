@@ -117,17 +117,35 @@ export function handleScripts() {
     }
   };
 
-  const handleDecrypt = async () => {
-    try {
-      await handleTimeLockDecryption(); // Ensure this completes first
+  // const handleDecrypt = async () => {
+  //   try {
+  //     await handleTimeLockDecryption(); // Ensure this completes first
   
-      // Use the updated state after decryption
+  //     // Use the updated state after decryption
+  //     setData((prevData) => {
+  //       handleAsymmetricDecryption(privateKey, prevData); // Pass updated data
+  //       return prevData; // Return unchanged to avoid extra re-render
+  //     });
+  //   } catch (error) {
+  //     console.error("Error during decryption:", error);
+  //   }
+  // };
+
+  const handleDecrypt = async (event) => {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const privateKey = formData.get("privateKey");
+    
+    await handleTimeLockDecryption(); // Ensure this completes first
+
+    try {
       setData((prevData) => {
         handleAsymmetricDecryption(privateKey, prevData); // Pass updated data
         return prevData; // Return unchanged to avoid extra re-render
       });
     } catch (error) {
-      console.error("Error during decryption:", error);
+      console.error("Decryption failed:", error);
     }
   };
 
