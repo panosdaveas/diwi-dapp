@@ -78,29 +78,6 @@ export function handleScripts() {
     }
   };
 
-  const handleEncrypt = async () => {
-    const encrypted = await encryptWithPublicKey(
-      data.publicKey,
-      data.plaintext
-    );
-    try {
-      const result = await timeLockEncryption(data.dateTime, encrypted);
-      setData((prevData) => ({
-        ...prevData,
-        message: result.ciphertext,
-        displayMessage: result.ciphertext,
-        tlEncrypted: "true",
-      }));
-      const emitMessage = await sendMessageToRecipient(
-        data.addressRecipient,
-        result.ciphertext
-      );
-    } catch (error) {
-      console.error("Error during encryption:", error);
-    }
-    
-  };
-
   const handleEncryptWill = async (uniqueId, publicKey, message) => {
     const encrypted = await EncryptWithPublicKey(publicKey, message);
     try {
@@ -116,20 +93,6 @@ export function handleScripts() {
       console.error("Error during encryption:", error);
     }
   };
-
-  // const handleDecrypt = async () => {
-  //   try {
-  //     await handleTimeLockDecryption(); // Ensure this completes first
-  
-  //     // Use the updated state after decryption
-  //     setData((prevData) => {
-  //       handleAsymmetricDecryption(privateKey, prevData); // Pass updated data
-  //       return prevData; // Return unchanged to avoid extra re-render
-  //     });
-  //   } catch (error) {
-  //     console.error("Error during decryption:", error);
-  //   }
-  // };
 
   const handleDecrypt = async (event) => {
     event.preventDefault();
@@ -230,7 +193,6 @@ const handleNewWill = async() => {
     handleTimeLockEncrypt,
     handleDateTimeChange,
     handleInputChange,
-    handleEncrypt,
     handleDecrypt,
     handleClearInputSigner,
     handlePollMessages,
