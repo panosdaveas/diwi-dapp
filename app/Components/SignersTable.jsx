@@ -36,12 +36,10 @@ import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
 import { DialogDefault } from "./openDialog";
-import { NetworkToggle } from "./networkToggle";
 
 export function SignersTable() {
     const { walletInfo } = useWallet();
     const [isMobile, setIsMobile] = useState(false);
-    const [dateTime, setDateTime] = useState(new Date());
     const [value, copy] = useCopyToClipboard();
     const [copied, setCopied] = useState(false);
     const [open, setOpen] = useState(false);
@@ -52,11 +50,9 @@ export function SignersTable() {
         loading,
         error,
         getWillsBySigner,
-        getMessageByUniqueId,
     } = useContractInteraction();
 
     const {
-        handleInputChange,
         handleDateTimeChange,
         handleEncryptWill,
     } = handleScripts();

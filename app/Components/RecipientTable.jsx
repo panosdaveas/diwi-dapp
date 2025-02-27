@@ -63,14 +63,6 @@ export function RecipientTable() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-
     const handlePublicKeyChange = (uniqueId, value) => {
         setTableData(prevData =>
             prevData.map(row =>
@@ -152,8 +144,8 @@ export function RecipientTable() {
                 <table className={table}>
                     <thead>
                         <tr>
-                            {TABLE_HEAD.map((head) => (
-                                <th key={head} className={tdHead}>
+                            {TABLE_HEAD.map((head, index) => (
+                                <th key={index} className={tdHead}>
                                     <Typography variant="small" className="font-bold leading-none opacity-100">
                                         {head}
                                     </Typography>
@@ -297,8 +289,6 @@ export function RecipientTable() {
                                         name="privateKey"
                                         type="password"
                                         required
-                                        // value={data.privateKey}
-                                        // onChange={handleInputChange}
                                         className="text-content overflow-hidden overflow-ellipsis"
                                         labelProps={{ className: "peer-placeholder-shown:text-content" }}
                                     />
