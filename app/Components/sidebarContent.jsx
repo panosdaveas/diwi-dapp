@@ -26,6 +26,7 @@ import { useContractInteraction } from "@/app/scripts/interact";
 import { useWallet } from "@/app/Context/WalletContext";
 import { SignersTable } from "./SignersTable";
 import { RecipientTable } from "./RecipientTable";
+import { MarkdownComponent } from "./MarkdownComponent";
 
 const SidebarContent = ({ setActiveComponent }) => {
     const [openAccordion, setOpenAccordion] = useState(0);
@@ -59,6 +60,10 @@ const SidebarContent = ({ setActiveComponent }) => {
         setActiveComponent(<RecipientTable />); // Update Dashboard state
     }
 
+    const handleOpenDocumentation = () => {
+        setActiveComponent(<MarkdownComponent />); // Update Dashboard state
+    }
+
     return (
         <div className="h-full bg-bkg transition-colors duration-200">
             <List className="p-4 text-content" >
@@ -87,7 +92,7 @@ const SidebarContent = ({ setActiveComponent }) => {
                     </ListItem>
                     <AccordionBody className="py-1 text-content">
                         <List className="p-0 text-content">
-                <ListItem>
+                <ListItem onClick={handleOpenDocumentation}>
                     <ListItemPrefix>
                     <div className="max-w-full animate-pulse">
                         <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
@@ -95,11 +100,7 @@ const SidebarContent = ({ setActiveComponent }) => {
                         </div>
                         </div>
                     </ListItemPrefix>
-                    <div className="max-w-full animate-pulse">
-                        <div className="block w-28 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">
-                            &nbsp;
-                        </div>
-                        </div>
+                    Notes
                 </ListItem>
                 <ListItem>
                     <ListItemPrefix>

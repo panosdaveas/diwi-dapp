@@ -15,6 +15,7 @@ import { ConnectWalletButton } from "./walletButton";
 import { ThemeToggle } from "./themeToggle";
 import { DynamicLogo } from "./dynamicLogo";
 import { RecipientTable } from "./RecipientTable";
+import { MarkdownComponent } from "./MarkdownComponent";
 
 const DashboardLayout = ({ children }) => {
     const [isMobile, setIsMobile] = useState(false);
@@ -76,7 +77,7 @@ const DashboardLayout = ({ children }) => {
                 {/* Sidebar - Hidden on mobile */}
                 {!isMobile && (
                     <aside className="w-64 flex-shrink-0 border-r border-borderColor transition-colors duration-200">
-                        <SidebarContent setActiveComponent={setActiveComponent}/>
+                        <SidebarContent setActiveComponent={setActiveComponent} />
                     </aside>
                 )}
 
@@ -84,11 +85,12 @@ const DashboardLayout = ({ children }) => {
                 <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200">
                     <div className="container mx-auto" id="dashboard-main">
                         {children}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <SignersTable />
-                                <RecipientTable />
-                                {activeComponent}
-                        </div>
+                        {/* <MarkdownComponent /> */}
+                        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> */}
+                        <SignersTable />
+                        <RecipientTable />
+                        {activeComponent}
+                        {/* </div> */}
                     </div>
                 </main>
             </div>

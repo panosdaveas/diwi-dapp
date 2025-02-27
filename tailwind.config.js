@@ -18,7 +18,6 @@ module.exports = withMT({
       // },
       colors: {
         accent1: "var(--color-accent1)",
-        // bkg: "hsl(var(--color-bkg) / <alpha-value»)",
         bkg: "var(--color-bkg)",
         content: "var(--color-content)",
         borderColor: "var(--color-borderColor)",
@@ -34,5 +33,5 @@ module.exports = withMT({
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 });

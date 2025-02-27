@@ -1,17 +1,3 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-Check out our [Diwi-dapp deployment](https://diwi-dapp.vercel.app) for the live version.
-
 ## Notes
 
 The drand network offers timelock encryption services without direct monetary costs to users. Here's how it works:
@@ -32,7 +18,7 @@ The drand network offers timelock encryption services without direct monetary co
 - **Storage Responsibility**: It's important to note that while drand facilitates the encryption process, it doesn't store the encrypted messages. Users are responsible for storing and managing their ciphertexts securely until the designated decryption time.
 ___
 
-**Implementation example of the Hybrid Encryption:**
+### Implementation example of the Hybrid Encryption
 
 ```javascript
 const crypto = require('crypto');
@@ -86,7 +72,7 @@ async function hybridEncrypt(message, rsaPublicKey, unlockTime) {
 
 ```
 
-**Implementation example of the Hybrid Decryption:**
+### Implementation example of the Hybrid Decryption
 ```javascript
 const { timelockDecrypt } = require('tlock-js');
 

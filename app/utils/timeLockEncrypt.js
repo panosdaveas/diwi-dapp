@@ -3,7 +3,6 @@ const { timelockEncrypt, roundAt } = require("tlock-js");
 const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
 const timeLockEncryption = async (dateTime, message) => {
-  // console.log("cipher", data.ciphertext, "date", data.dateTime);
   const plaintext = message;
   const decryptionTime = dateTime.getTime();
   let client;

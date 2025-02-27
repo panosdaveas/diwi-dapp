@@ -45,6 +45,7 @@ export function SignersTable() {
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
     const toggleOpen = () => setOpen((cur) => !cur);
+    const [log, setLog] = useState("")
 
     const {
         loading,
@@ -89,10 +90,13 @@ export function SignersTable() {
     const handleSubmitWill = () => async () => {
         try {
             await handleEncryptWill(
-                selectedRow.uniqueId,
-                selectedRow.publicKey,
-                actualWillMessage.current
+            selectedRow.uniqueId,
+            selectedRow.publicKey,
+            actualWillMessage.current
             );
+        } catch (error) {
+            console.error("Error encrypting will:", error);
+            setLog(error)
         } finally {
             // Clear both the UI state and the secure value
             setInputValue('');
@@ -274,6 +278,7 @@ export function SignersTable() {
                     </Badge>
                     <DialogDefault />
                 </div>
+                <span color="red">{ log }</span>
             </CardFooter>
         </Card>
         </div>
