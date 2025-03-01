@@ -1,5 +1,5 @@
-export const td = "p-4 border-b border-borderColor text-content",
-  tdLast = "p-4 pb-8 bg-bkg border-b border-borderColor",
+export const td = "p-4 border-b border-borderColor text-content cursor-default",
+  tdLast = "p-4 pb-8 bg-bkg border-b border-borderColor cursor-default",
   tdHead = "p-4 bg-bkg border-b border-borderColor text-content",
   tr = "hover:bg-accent1",
   card =

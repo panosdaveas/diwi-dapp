@@ -1,9 +1,10 @@
 "use client";
 
 import { List, ThemeProvider } from "@material-tailwind/react";
+import { useMemo } from "react";
 
 export function CustomThemeProvider({ children }) {
-  const customTheme = {
+  const customTheme = useMemo(() => ({
     list: {
       defaultProps: {
         ripple: true,
@@ -67,7 +68,7 @@ export function CustomThemeProvider({ children }) {
         },
       },
     },
-  };
+  }), []);
 
   return <ThemeProvider value={customTheme}>{children}</ThemeProvider>;
 }
