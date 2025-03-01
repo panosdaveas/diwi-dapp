@@ -25,6 +25,7 @@ const DashboardLayout = ({ children }) => {
         const handleResize = () => setIsMobile(window.innerWidth < 768);
         handleResize();
         window.addEventListener("resize", handleResize);
+        setActiveComponent(<MarkdownComponent />); // Init Dashboard State
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
@@ -87,8 +88,8 @@ const DashboardLayout = ({ children }) => {
                         {children}
                         {/* <MarkdownComponent /> */}
                         {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> */}
-                        <SignersTable />
-                        <RecipientTable />
+                        {/* <SignersTable /> */}
+                        {/* <RecipientTable /> */}
                         {activeComponent}
                         {/* </div> */}
                     </div>

@@ -88,7 +88,10 @@ export function handleScripts() {
         displayMessage: result.ciphertext,
         tlEncrypted: "true",
       }));
-      const emitMessage = await sendWillToRecipient(uniqueId, result.ciphertext);
+      const emitMessage = await sendWillToRecipient(
+        uniqueId,
+        result.ciphertext
+      );
     } catch (error) {
       console.error("Error during encryption:", error);
     }
