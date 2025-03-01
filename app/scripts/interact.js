@@ -171,7 +171,7 @@ export function useContractInteraction() {
       const tx = await contract.sendWillToRecipient(uniqueId, message);
       const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
       setLastTxHash(tx.hash);
-
+      alert(`Please wait to verify transaction and get receipt for event data`);
       // Wait for transaction and get receipt for event data
       const receipt = await tx.wait();
       await contract.storeTxHash(uniqueId, tx.hash);
@@ -187,7 +187,6 @@ export function useContractInteraction() {
         .find((event) => event && event.name === "MessageSent");
 
       const messageHash = event ? event.args.messageHash : null;
-
       return {
         success: true,
         txHash: tx.hash,
@@ -218,7 +217,7 @@ export function useContractInteraction() {
       // Decode the input data to get the message
       const decodedData = contract.interface.decodeFunctionData("sendWillToRecipient", inputData);
       const message = decodedData.message;
-
+      
       return {
         success: true,
         message: message,
@@ -242,6 +241,10 @@ export function useContractInteraction() {
       const will = await contract.getWillByUniqueId(uniqueId);
       const result = await getMessageByTxHash(will.txHash);
       const message = result.message;
+      const isValid = await verifyMessage(message, will.messageHash);
+      if (!isValid) {
+        throw new Error("Message verification failed");
+      }
       return {
         success: true,
         message: message,

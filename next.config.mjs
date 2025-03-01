@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-
-// const nextConfig = {};
-
 // Path: next.config.js
 const nextConfig = {
   webpack: config => {

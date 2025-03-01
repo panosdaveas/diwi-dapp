@@ -86,11 +86,10 @@ const DashboardLayout = ({ children }) => {
                 <main className="flex-1 overflow-auto bg-bkg transition-colors duration-200">
                     <div className="container mx-auto" id="dashboard-main">
                         {children}
-                        {/* <MarkdownComponent /> */}
+                        {activeComponent}
                         {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"> */}
                         {/* <SignersTable /> */}
                         {/* <RecipientTable /> */}
-                        {activeComponent}
                         {/* </div> */}
                     </div>
                 </main>
@@ -102,7 +101,7 @@ const DashboardLayout = ({ children }) => {
                     className="bg-bkg">
                     <div className="mb-2 flex items-center justify-between p-4 ">
                         {/* <Typography variant="h5" color="blue-gray">
-              Material Tailwind
+              Digital Will
             </Typography> */}
                         <IconButton
                             variant="text"

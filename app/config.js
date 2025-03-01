@@ -6,7 +6,6 @@ export function Configuration() {
     "c9aadf17ad429b64f83546c751e59e22400038a2d0ec341901fbe7ab446a8615";
   return {
     contractAddress,
-    privateKey,
   };
 }
 

@@ -31,17 +31,6 @@ export async function decryptWithPrivateKey(privateKey, encrypted) {
   }
 }
 
-// Generate key pair
-export function generateKeyPair() {
-  const identity = EthCrypto.createIdentity();
-  console.log("publicKey:", identity.publicKey);
-  console.log("privateKey:", identity.privateKey);
-  return {
-    publicKey: identity.publicKey,
-    privateKey: identity.privateKey,
-  };
-}
-
 // Strip the prefix "0x" from the public key if present
 const stripHexPrefix = (publicKey) => {
   return publicKey.startsWith("0x") ? publicKey.slice(2) : publicKey;

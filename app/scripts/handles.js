@@ -8,7 +8,6 @@ import { useContractInteraction } from "@/app/scripts/interact";
 export function handleScripts() {
   const { data, setData } = useContext(CustomContext);
   const {
-    sendMessageToRecipient,
     sendWillToRecipient,
   } = useContractInteraction();
 
@@ -20,62 +19,11 @@ export function handleScripts() {
     }));
   };
 
-  const handleClearInputSigner = () => {
-    setData((prevData) => ({
-      ...prevData,
-      message: "",
-      publicKey: "",
-      plaintext: "",
-      dateTime: new Date(),
-      displayMessage: "",
-    }));
-  };
-
   const handleDateTimeChange = (dateTime) => {
     setData((prevData) => ({
       ...prevData,
       dateTime: dateTime,
     }));
-  };
-
-  const handleTimeLockEncrypt = async () => {
-    try {
-      const result = await timeLockEncryption(data.dateTime, data.message);
-      setData((prevData) => ({
-        ...prevData,
-        message: result.ciphertext,
-        client: result.client,
-        decryptionTime: result.decryptionTime,
-        displayMessageEncrypted: result.ciphertext,
-        tlEncrypted: "true",
-      }));
-    } catch (error) {
-      console.error("Error during encryption:", error);
-    }
-  };
-
-  const handleAsymmetricEncryption = async () => {
-    const encrypted = await EncryptWithPublicKey(
-      data.publicKey,
-      data.plaintext
-    );
-    setData((prevData) => ({
-      ...prevData,
-      message: encrypted,
-      displayMessage: encrypted,
-      displayMessageEncrypted: encrypted,
-    }));
-  };
-
-  const handleSendMessage = async (message) => {
-    const recipientAddress = data.addressRecipient;
-
-    const result = await sendMessageToRecipient(recipientAddress, message);
-    if (result.success) {
-        console.log(result);
-    } else {
-      console.error("Failed to send message:", result.error);
-    }
   };
 
   const handleEncryptWill = async (uniqueId, publicKey, message) => {
@@ -154,7 +102,7 @@ export function handleScripts() {
           const newState = {
             ...prevState,
             message: decryptedMessageString.decrypted,
-            // displayMessage: decryptedMessageString.decrypted,
+            displayMessage: decryptedMessageString.decrypted,
             tlEncrypted: "false",
           };
           resolve(newState);
@@ -171,36 +119,10 @@ export function handleScripts() {
     }
   };
 
-  //handle poll for messages    
-  const handlePollMessages = async() => {
-    const pollResults= await pollForMessages();
-    setData((prevState) => ({
-      ...prevState,
-      displayMessage: pollResults[pollResults.length - 1].message,
-    }));
-};
-
-  //handle poll for public key requests
-  const handleRequests = async() => {
-    const requests= await getRecipientRequest();
-};
-
-const handleNewWill = async() => {
-  
-};
-
   return {
-    handleAsymmetricDecryption,
-    handleTimeLockDecryption,
-    handleAsymmetricEncryption,
-    handleTimeLockEncrypt,
     handleDateTimeChange,
     handleInputChange,
     handleDecrypt,
-    handleClearInputSigner,
-    handlePollMessages,
-    handleRequests,
     handleEncryptWill,
-    handleNewWill,
   };
 }

@@ -1,5 +1,4 @@
 import {
-    card,
     cardBody,
     cardHeader,
     table,

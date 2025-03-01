@@ -1,4 +1,3 @@
-
 const { timelockEncrypt, roundAt } = require("tlock-js");
 const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
