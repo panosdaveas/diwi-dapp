@@ -24,7 +24,7 @@ import {
     Collapse,
     Textarea,
 } from "@material-tailwind/react";
-import { LockClosedIcon, LockOpenIcon} from "@heroicons/react/24/solid";
+import { LockClosedIcon, LockOpenIcon } from "@heroicons/react/24/solid";
 import { ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
@@ -32,7 +32,6 @@ import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
-import { ro } from "date-fns/locale";
 
 export function RecipientTable() {
     const { walletInfo } = useWallet();
@@ -125,212 +124,212 @@ export function RecipientTable() {
         await handleGetWillMessage(row);
     };
 
-    const handleDecryptWill = async () => {
-        await handleGetWillMessage(selectedRow);
-        await handleDecrypt();
-    }
-
     const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Tx", ""];
 
     return (
         <div className="col-span-full p-4" >
-        <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
-            <CardHeader className={cardHeader}>
-                <div>
-                    <Typography variant="h5" className="mt-1 mb-4">
-                        Recipient Dashboard
-                    </Typography>
-                    <Typography>
-                        Manage public key requests and messages
-                    </Typography>
-                </div>
-            </CardHeader>
-            <CardBody className={cardBody}>
-                <table className={table}>
-                    <thead>
-                        <tr>
-                            {TABLE_HEAD.map((head, index) => (
-                                <th key={index} className={tdHead}>
-                                    <Typography variant="small" className="font-bold leading-none opacity-100">
-                                        {head}
-                                    </Typography>
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {tableData.map((row, index) => {
-                            const isLast = index === tableData.length - 1;
-                            const tdClass = isLast ? tdLast : td;
-                            return (
-                                <tr key={index} className={tr}>
-                                    <td className={tdClass}
-                                        onMouseLeave={() => setCopied(false)}
-                                        onClick={() => {
-                                            copy(row.uniqueId);
-                                            setCopied(true);
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="small">
-                                            {truncate(row.uniqueId, 8)}
+            <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+                <CardHeader className={cardHeader}>
+                    <div>
+                        <Typography variant="h5" className="mt-1 mb-4">
+                            Recipient Dashboard
+                        </Typography>
+                        <Typography>
+                            Manage public key requests and messages
+                        </Typography>
+                    </div>
+                </CardHeader>
+                <CardBody className={cardBody}>
+                    <table className={table}>
+                        <thead>
+                            <tr>
+                                {TABLE_HEAD.map((head, index) => (
+                                    <th key={index} className={tdHead}>
+                                        <Typography variant="small" className="font-bold leading-none opacity-100">
+                                            {head}
                                         </Typography>
-                                    </td>
-                                    <td className={tdClass}
-                                        onMouseLeave={() => setCopied(false)}
-                                        onClick={() => {
-                                            copy(row.signer);
-                                            setCopied(true);
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="small">
-                                            {truncate(row.signer, 8)}
-                                        </Typography>
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Tooltip content=
-                                            {<span>
-                                                {row.message}
-                                            </span>}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {tableData.map((row, index) => {
+                                const isLast = index === tableData.length - 1;
+                                const tdClass = isLast ? tdLast : td;
+                                return (
+                                    <tr key={index} className={tr}>
+                                        <td className={tdClass}
+                                            onMouseLeave={() => setCopied(false)}
+                                            onClick={() => {
+                                                copy(row.uniqueId);
+                                                setCopied(true);
+                                            }}
                                         >
-                                            {/* <IconButton variant="text" className="h-4 w-4"> */}
-                                                <ChatBubbleOvalLeftIcon className="h-4 w-4" />
-                                            {/* </IconButton> */}
-                                        </Tooltip>
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Chip variant="ghost" size="sm" value={row.fulfilled} color={row.fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
-                                        </Chip>
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Button
-                                            variant="gradient"
-                                            size="sm"
-                                            disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey || !row.txHash}
-                                            className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey || !row.txHash ? "cursor-not-allowed" : ""}`}
-                                            onClick={() => handleSubmitPublicKey(row.uniqueId)}
-                                        >
-                                            {loading ? <Spinner className="h-4 w-4" /> : "Submit"}
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={2}
-                                                stroke="currentColor"
-                                                className="h-5 w-5"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-                                                />
-                                            </svg>
-                                        </Button>
-                                    </td>
-                                    <td className={tdClass}
-
-                                    >
-                                        {row.fulfilled === "Fulfilled" ? (
                                             <Typography
-                                                variant="small"
-                                                onMouseLeave={() => setCopied(false)}
-                                                onClick={() => {
-                                                    copy(row.publicKey);
-                                                    setCopied(true);
-                                                }}
-                                            >
-                                                {truncate(row.publicKey, 8)}
+                                                variant="small">
+                                                {truncate(row.uniqueId, 8)}
                                             </Typography>
-                                        ) : (
-                                            <Input
-                                                variant="standard"
-                                                placeholder="Enter your public key"
-                                                label="Public Key"
-                                                value={tableData.find(item => item.uniqueId === row.uniqueId)?.publicKey || ''}
-                                                onChange={(e) => handlePublicKeyChange(row.uniqueId, e.target.value)}
-                                                className="text-content border-none"
-                                                labelProps={{
-                                                    className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
-                                                }}
-                                            />
-                                        )}
-                                    </td>
-                                    <td className={tdClass}
-                                        onMouseLeave={() => setCopied(false)}
-                                        onClick={() => {
-                                            copy(row.blockNumber);
-                                            setCopied(true);
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="small">
-                                            {truncate(row.blockNumber, 8)}
-                                        </Typography>
-                                    </td>
-                                    <td className={tdClass}>
-                                        <Tooltip content="Open Will">
-                                            <IconButton 
-                                                variant="text"
-                                                onClick={() => handleIconButtonClick(row)}
-                                                disabled={!row.txHash}
+                                        </td>
+                                        <td className={tdClass}
+                                            onMouseLeave={() => setCopied(false)}
+                                            onClick={() => {
+                                                copy(row.signer);
+                                                setCopied(true);
+                                            }}
+                                        >
+                                            <Typography
+                                                variant="small">
+                                                {truncate(row.signer, 8)}
+                                            </Typography>
+                                        </td>
+                                        <td className={tdClass}>
+                                            <Tooltip content=
+                                                {<span>
+                                                    {row.message}
+                                                </span>}
                                             >
-                                                {selectedRow === row && open ? <LockOpenIcon className="h-4 w-4" /> : <LockClosedIcon className="h-4 w-4" />}
-                                            </IconButton>
-                                        </Tooltip>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-                <Collapse open={open}>
-                    {selectedRow && (
-                        <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
-                             <form onSubmit={handleDecrypt}>
-                            <CardBody>
-                                <div className="grid gap-6">
-                                    
-                                    <Input
-                                        label="Private Key"
-                                        name="privateKey"
-                                        type="password"
-                                        required
-                                        className="text-content overflow-hidden overflow-ellipsis"
-                                        labelProps={{ className: "peer-placeholder-shown:text-content" }}
-                                    />
-                                    <Textarea
-                                        readOnly={true}
-                                        label="Encrypted message"
-                                        name="displayMessage"
-                                        // value={handleGetWillMessage()}
-                                        value={data.displayMessage}
-                                        rows={7}
-                                        className="text-content"
-                                    />
-                                </div>
-                            </CardBody>
-                            <CardFooter className="flex w-full justify-between">
-                                <ClipboardDefault content={data.displayMessage} />
-                                <div className="flex gap-2">
-                                    <Button type="submit" variant="gradient" color="gray">
-                                        Decrypt
-                                    </Button>
-                                </div>
-                            </CardFooter>
-                            </form>
-                        </Card>
-                    )}
-                </Collapse>
-            </CardBody>
-            <CardFooter className="flex w-full justify-between">
-                <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>
-                    <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
-                        Requests
-                    </Button>
-                </Badge>
-            </CardFooter>
-        </Card>
+                                                {/* <IconButton variant="text" className="h-4 w-4"> */}
+                                                <ChatBubbleOvalLeftIcon className="h-4 w-4" />
+                                                {/* </IconButton> */}
+                                            </Tooltip>
+                                        </td>
+                                        <td className={tdClass}>
+                                            <Chip variant="ghost" size="sm" value={row.fulfilled} color={row.fulfilled === "Fulfilled" ? "green" : "blue-gray"}>
+                                            </Chip>
+                                        </td>
+                                        <td className={tdClass}>
+                                            <Button
+                                                variant="gradient"
+                                                size="sm"
+                                                disabled={loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey || !row.txHash}
+                                                className={`flex items-center gap-2 ${loading || !row.publicKey || row.fulfilled === "Fulfilled" || !tableData.find(item => item.uniqueId === row.uniqueId).publicKey || !row.txHash ? "cursor-not-allowed" : ""}`}
+                                                onClick={() => handleSubmitPublicKey(row.uniqueId)}
+                                            >
+                                                {loading ? <Spinner className="h-4 w-4" /> : "Submit"}
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    strokeWidth={2}
+                                                    stroke="currentColor"
+                                                    className="h-5 w-5"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                                                    />
+                                                </svg>
+                                            </Button>
+                                        </td>
+                                        <td className={tdClass}
+
+                                        >
+                                            {row.fulfilled === "Fulfilled" ? (
+                                                <Typography
+                                                    variant="small"
+                                                    onMouseLeave={() => setCopied(false)}
+                                                    onClick={() => {
+                                                        copy(row.publicKey);
+                                                        setCopied(true);
+                                                    }}
+                                                >
+                                                    {truncate(row.publicKey, 8)}
+                                                </Typography>
+                                            ) : (
+                                                <Input
+                                                    variant="standard"
+                                                    placeholder="Enter your public key"
+                                                    label="Public Key"
+                                                    value={tableData.find(item => item.uniqueId === row.uniqueId)?.publicKey || ''}
+                                                    onChange={(e) => handlePublicKeyChange(row.uniqueId, e.target.value)}
+                                                    className="text-content border-none"
+                                                    labelProps={{
+                                                        className: "before:content-none after:content-none text-content peer-placeholder-shown:text-content"
+                                                    }}
+                                                />
+                                            )}
+                                        </td>
+                                        <td className={tdClass}
+                                            onMouseLeave={() => setCopied(false)}
+                                            onClick={() => {
+                                                copy(row.blockNumber);
+                                                setCopied(true);
+                                            }}
+                                        >
+                                            <Typography
+                                                variant="small">
+                                                {truncate(row.blockNumber, 8)}
+                                            </Typography>
+                                        </td>
+                                        <td className={tdClass}>
+                                            <Tooltip content="Open Will">
+                                                <IconButton
+                                                    variant="text"
+                                                    onClick={() => handleIconButtonClick(row)}
+                                                    disabled={!row.txHash}
+                                                >
+                                                    {selectedRow === row && open ? <LockOpenIcon className="h-4 w-4" /> : <LockClosedIcon className="h-4 w-4" />}
+                                                </IconButton>
+                                            </Tooltip>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    <Collapse open={open}>
+                        {selectedRow && (
+                            <Card className="w-full shadow-none border border-borderColor bg-bkg text-content">
+                                <form onSubmit={handleDecrypt}>
+                                    <CardBody>
+                                        <div className="grid gap-6">
+                                            <Input
+                                                label="Private Key"
+                                                name="privateKey"
+                                                type="password"
+                                                required
+                                                className="text-content overflow-hidden overflow-ellipsis"
+                                                labelProps={{ className: "peer-placeholder-shown:text-content" }}
+                                            />
+                                            <Textarea
+                                                readOnly={true}
+                                                label="Encrypted message"
+                                                name="displayMessage"
+                                                // value={handleGetWillMessage()}
+                                                value={data.displayMessage}
+                                                rows={7}
+                                                className="text-content"
+                                            />
+                                            <Input
+                                                type="hidden"
+                                                name="selectedRow"
+                                                // value={JSON.stringify(selectedRow)}
+                                                value={selectedRow.uniqueId}
+                                            />
+                                        </div>
+                                    </CardBody>
+                                    <CardFooter className="flex w-full justify-between">
+                                        <ClipboardDefault content={data.displayMessage} />
+                                        <div className="flex gap-2">
+                                            <Button type="submit" variant="gradient" color="gray">
+                                                Decrypt
+                                            </Button>
+                                        </div>
+                                    </CardFooter>
+                                </form>
+                            </Card>
+                        )}
+                    </Collapse>
+                </CardBody>
+                <CardFooter className="flex w-full justify-between">
+                    <Badge content={tableData.length} className={tableData.length === 0 ? "invisible" : ""}>
+                        <Button variant="gradient" onClick={handlePollPublicKeyRequests}>
+                            Requests
+                        </Button>
+                    </Badge>
+                </CardFooter>
+            </Card>
         </div>
     );
 }

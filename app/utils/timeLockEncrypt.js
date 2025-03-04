@@ -2,7 +2,7 @@ const { timelockEncrypt, roundAt } = require("tlock-js");
 const { quicknetClient, testnetQuicknetClient } = require("drand-client");
 
 const timeLockEncryption = async (dateTime, message) => {
-  const plaintext = message;
+  // const plaintext = message;
   const decryptionTime = dateTime.getTime();
   let client;
   try {
@@ -15,11 +15,11 @@ const timeLockEncryption = async (dateTime, message) => {
 
   const ciphertext = await timelockEncrypt(
     roundNumber,
-    Buffer.from(plaintext),
+    Buffer.from(message),
     client
   );
   return {
-    plaintext,
+    // plaintext,
     decryptionTime,
     ciphertext,
     client,
