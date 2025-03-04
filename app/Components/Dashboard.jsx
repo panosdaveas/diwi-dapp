@@ -123,7 +123,7 @@ const DashboardLayout = ({ children }) => {
                             </svg>
                         </IconButton>
                     </div>
-                    <SidebarContent />
+                    <SidebarContent setActiveComponent={setActiveComponent} />
                 </Drawer>
             )}
         </div>
