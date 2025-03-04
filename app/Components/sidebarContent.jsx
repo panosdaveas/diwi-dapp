@@ -66,8 +66,9 @@ const SidebarContent = ({ setActiveComponent }) => {
 
     return (
         <div className="h-full bg-bkg transition-colors duration-200">
-            <List className="p-4 text-content" >
+            <List className="p-4 text-content text-sm" >
                 <Accordion
+                className="text-sm"
                     open={openAccordion === 1}
                     icon={
                         <ChevronDownIcon
@@ -77,22 +78,22 @@ const SidebarContent = ({ setActiveComponent }) => {
                         />
                     }
                 >
-                    <ListItem className="p-0 " selected={openAccordion === 1}>
+                    <ListItem className="p-0 text-sm" selected={openAccordion === 1}>
                         <AccordionHeader
                             onClick={() => handleAccordionOpen(1)}
-                            className="border-b-0 border-borderColor p-3 text-content"
+                            className="border-b-0 border-borderColor p-3 text-content text-sm mr-auto font-normal"
                         >
                             <ListItemPrefix>
                                 <DocumentIcon className="h-5 w-5" />
                             </ListItemPrefix>
-                            <Typography className="mr-auto font-normal ">
+                            {/* <Typography className="mr-auto font-normal text-sm"> */}
                                 Documentation
-                            </Typography>
+                            {/* </Typography> */}
                         </AccordionHeader>
                     </ListItem>
                     <AccordionBody className="py-1 text-content">
                         <List className="p-0 text-content">
-                <ListItem onClick={handleOpenDocumentation}>
+                <ListItem onClick={handleOpenDocumentation} className="text-sm">
                     <ListItemPrefix>
                     <div className="max-w-full animate-pulse">
                         <div className="block w-3 h-3 font-sans text-5xl antialiased font-semibold leading-tight tracking-normal bg-content rounded-full text-inherit">

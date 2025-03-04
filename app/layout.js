@@ -12,7 +12,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <CustomThemeProvider>
+      {/* <CustomThemeProvider> */}
         <body>
           <AppProvider>
             <Providers>
@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
               </Providers>
           </AppProvider>
         </body>
-      </CustomThemeProvider>
+      {/* </CustomThemeProvider> */}
     </html>
   );
 }

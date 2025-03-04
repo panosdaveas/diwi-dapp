@@ -1,6 +1,6 @@
 "use client";
 
-import { List, ThemeProvider } from "@material-tailwind/react";
+import { ThemeProvider } from "@material-tailwind/react";
 import { useMemo } from "react";
 
 export function CustomThemeProvider({ children }) {

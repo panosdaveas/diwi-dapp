@@ -24,13 +24,15 @@ import {
     Collapse,
     Textarea,
 } from "@material-tailwind/react";
-import { LockClosedIcon, LockOpenIcon, ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/solid";
+import { LockClosedIcon, LockOpenIcon} from "@heroicons/react/24/solid";
+import { ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline";
 import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
 import { handleScripts } from "../scripts/handles";
 import { CustomContext } from "@/app/Context/context";
+import { ro } from "date-fns/locale";
 
 export function RecipientTable() {
     const { walletInfo } = useWallet();
@@ -78,7 +80,6 @@ export function RecipientTable() {
 
     const handleSubmitPublicKey = async (uniqueId) => {
         const publicKey = tableData.find(row => row.uniqueId === uniqueId).publicKey;
-        console.log(publicKey);
         const result = await submitPublicKey(uniqueId, publicKey);
         setTableData(prev =>
             prev.map(row =>
@@ -124,7 +125,12 @@ export function RecipientTable() {
         await handleGetWillMessage(row);
     };
 
-    const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Tx", "Block Number", ""];
+    const handleDecryptWill = async () => {
+        await handleGetWillMessage(selectedRow);
+        await handleDecrypt();
+    }
+
+    const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Tx", ""];
 
     return (
         <div className="col-span-full p-4" >
@@ -188,7 +194,9 @@ export function RecipientTable() {
                                                 {row.message}
                                             </span>}
                                         >
-                                            <ChatBubbleLeftEllipsisIcon />
+                                            {/* <IconButton variant="text" className="h-4 w-4"> */}
+                                                <ChatBubbleOvalLeftIcon className="h-4 w-4" />
+                                            {/* </IconButton> */}
                                         </Tooltip>
                                     </td>
                                     <td className={tdClass}>
