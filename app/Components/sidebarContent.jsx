@@ -18,7 +18,9 @@ import {
     ListItem,
     ListItemPrefix,
     ListItemSuffix,
+    Tooltip,
     Typography,
+    IconButton,
 } from "@material-tailwind/react";
 import { useState, useEffect } from "react";
 import { ConnectWalletButton } from "./walletButton";
@@ -227,7 +229,14 @@ const SidebarContent = ({ setActiveComponent }) => {
                 </ListItem>
             </List>
             <div className="absolute bottom-4 left-4 text-content">
-                <a
+                <a href="#buttons-with-link">
+                    <Tooltip size="sm" content="buy us a coffee" placement="top-start" >
+                    <IconButton variant="outlined">
+                        <i className="fas fa-heart" />
+                    </IconButton>
+                    </Tooltip>
+                </a>
+                {/* <a
                     href="https://github.com/panosdaveas/DiWi-DApp.git"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -236,7 +245,7 @@ const SidebarContent = ({ setActiveComponent }) => {
                     <Typography className="absolute bottom-4 left-4 text-xs border border-borderColor rounded-md px-2 py-1">
                         v0.1.9
                     </Typography>
-                </a>
+                </a> */}
             </div>
         </div>
     );

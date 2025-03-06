@@ -26,22 +26,6 @@ const ganacheChain = {
   },
 };
 
-// const avalancheChain = {
-//   ...avalanche,
-//   id: 43113, // Default Ganache chain ID
-//   name: "Avalanche",
-//   network: "fuji",
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: "Avalanche",
-//     symbol: "AVAX",
-//   },
-//   rpcUrls: {
-//     default: { http: ["https://api.avax-test.network/ext/bc/C/rpc"] },
-//     public: { http: ["https://api.avax-test.network/ext/bc/C/rpc"] },
-//   },
-// };
-
 // const avalanche = {
 //   id: 43114,
 //   name: 'Avalanche',

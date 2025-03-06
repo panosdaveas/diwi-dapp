@@ -8,13 +8,11 @@ import {
 } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 
-import { SignersTable } from "./SignersTable";
 import { StepperWithContent } from "./horizontalTimeline";
 import { SidebarContent } from "./sidebarContent";
 import { ConnectWalletButton } from "./walletButton";
 import { ThemeToggle } from "./themeToggle";
 import { DynamicLogo } from "./dynamicLogo";
-import { RecipientTable } from "./RecipientTable";
 import { MarkdownComponent } from "./MarkdownComponent";
 
 const DashboardLayout = ({ children }) => {
