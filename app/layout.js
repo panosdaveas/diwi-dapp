@@ -12,15 +12,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* <CustomThemeProvider> */}
-        <body>
+      <body>
+        <CustomThemeProvider>
           <AppProvider>
-            <Providers>
-               {children}
-              </Providers>
+            <Providers>{children}</Providers>
           </AppProvider>
-        </body>
-      {/* </CustomThemeProvider> */}
+        </CustomThemeProvider>
+      </body>
     </html>
   );
 }

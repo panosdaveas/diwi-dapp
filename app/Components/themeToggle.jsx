@@ -4,22 +4,34 @@ import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from 'react';
 
 const ThemeToggle = () => {
-    const [isDarkMode, setIsDarkMode] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('darkMode') === 'true';
-        }
-        return false;
-    });
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
+    // Initialize on mount
     useEffect(() => {
-        const themeSelector = isDarkMode ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", themeSelector);
-        localStorage.setItem('darkMode', isDarkMode);
+        // Check localStorage and system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            setIsDarkMode(true);
+        }
+    }, []);
+
+    // Apply theme changes
+    useEffect(() => {
+        if (isDarkMode) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
     }, [isDarkMode]);
 
     const toggleDarkMode = () => {
         setIsDarkMode(prevMode => !prevMode);
-        localStorage.setItem('darkMode', isDarkMode);
     };
 
     return (
@@ -27,6 +39,7 @@ const ThemeToggle = () => {
             <button
                 onClick={toggleDarkMode}
                 className="p-2 focus:outline-none text-content"
+                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
                 {isDarkMode ? (
                     <SunIcon className="w-6 h-6 text-content" />
