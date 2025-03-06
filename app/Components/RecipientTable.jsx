@@ -400,7 +400,7 @@ export function RecipientTable() {
                                         <ClipboardDefault content={data.displayMessage || ''} />
                                         <div className="flex gap-2">
                                             <Button type="submit" variant="gradient" color="gray" disabled={isDecrypting}>
-                                                {isDecrypting ? <Spinner className="h-4 w-4 mr-2" /> : null}
+                                                {/* {isDecrypting ? <Spinner className="h-4 w-4 mr-2" /> : null} */}
                                                 Decrypt
                                             </Button>
                                         </div>
@@ -417,7 +417,7 @@ export function RecipientTable() {
                             onClick={handlePollPublicKeyRequests}
                             disabled={loading}
                         >
-                            {loading ? <Spinner className="h-4 w-4 mr-2" /> : null}
+                            {/* {loading ? <Spinner className="h-4 w-4 mr-2" /> : null} */}
                             Requests
                         </Button>
                     </Badge>
