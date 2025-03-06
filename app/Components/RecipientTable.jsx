@@ -30,7 +30,7 @@ import { useCopyToClipboard } from "usehooks-ts";
 import { useContext, useEffect, useState } from "react";
 import { useWallet } from "@/app/Context/WalletContext";
 import { ClipboardDefault } from "./clipboard";
-import { handleScripts } from "../scripts/handles";
+import { handleScripts } from "../scripts/encryptDecrypt";
 import { CustomContext } from "@/app/Context/context";
 
 export function RecipientTable() {
@@ -99,6 +99,7 @@ export function RecipientTable() {
         const result = await getMessageByUniqueId(row.uniqueId);
         const message = result.success ? result.message : "Failed to retrieve message";
         setData({ ...data, displayMessage: message });
+        return result;
     };
 
     const handlePollPublicKeyRequests = async () => {
@@ -120,8 +121,18 @@ export function RecipientTable() {
 
     const handleIconButtonClick = async (row) => {
         setSelectedRow(row);
-        toggleOpen();
-        await handleGetWillMessage(row);
+        const result = await handleGetWillMessage(row);
+        if (!result.success) {
+            setTableData(prev =>
+                prev.map(item =>
+                    item.uniqueId === row.uniqueId
+                        ? { ...item, disable: true }
+                        : item
+                )
+            );
+        } else {
+            toggleOpen();
+        }
     };
 
     const TABLE_HEAD = ["Id", "From", "Msg", "Status", "", "Public Key", "Tx", ""];
@@ -267,7 +278,7 @@ export function RecipientTable() {
                                                 <IconButton
                                                     variant="text"
                                                     onClick={() => handleIconButtonClick(row)}
-                                                    disabled={!row.txHash}
+                                                    // disabled={row.txHash == "-"}
                                                 >
                                                     {selectedRow === row && open ? <LockOpenIcon className="h-4 w-4" /> : <LockClosedIcon className="h-4 w-4" />}
                                                 </IconButton>
