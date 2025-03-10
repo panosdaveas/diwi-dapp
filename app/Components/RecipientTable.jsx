@@ -284,7 +284,7 @@ export function RecipientTable() {
                                                 </td>
                                                 <td className={tdClass}>
                                                     <Button
-                                                        variant="gradient"
+                                                        variant="text"
                                                         size="sm"
                                                         disabled={!canSubmitKey}
                                                         className={`flex items-center gap-2 ${!canSubmitKey ? "opacity-50 cursor-not-allowed" : ""}`}
