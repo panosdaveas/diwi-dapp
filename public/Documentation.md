@@ -1,11 +1,9 @@
 ## Notes
 A decentralized platform where users can store personal messages, assets, or memories that are unlocked at a predetermined future date.
 
-The drand network offers timelock encryption services without direct monetary costs to users. Here's how it works:
-
 ### Cost-Free Timelock Encryption:
 
-- **Public Service**: The drand network, operated by the League of Entropy—a consortium of organizations including Cloudflare, Protocol Labs, and others—provides a distributed, verifiable randomness beacon as a public good. This service is freely accessible, allowing users to perform timelock encryption without incurring fees.
+- **Public Service**: The drand network, operated by the League of Entropy—a consortium of organizations including Cloudflare, Protocol Labs, and others—provides a distributed, verifiable randomness beacon as a public good. This service is freely accessible, allowing users to perform timelock encryption without incurring fees. The drand network offers timelock encryption services without direct monetary costs to users.
 - **Operational Costs**: While users don't pay for access, the organizations running drand nodes bear operational expenses. These entities contribute resources to maintain the network, ensuring its reliability and availability.
 
 ### Message Size and Storage Considerations:
