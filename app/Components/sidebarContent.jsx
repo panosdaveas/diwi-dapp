@@ -229,23 +229,23 @@ const SidebarContent = ({ setActiveComponent }) => {
                 </ListItem>
             </List>
             <div className="absolute bottom-4 left-4 text-content">
-                <a href="#buttons-with-link">
+                {/* <a href="#buttons-with-link">
                     <Tooltip size="sm" content="buy us a coffee" placement="top-start" >
                     <IconButton variant="outlined">
-                        <i className="fas fa-heart" />
+                        <i className="fas fa-heart color-black" />
                     </IconButton>
                     </Tooltip>
-                </a>
-                {/* <a
+                </a> */}
+                <a
                     href="https://github.com/panosdaveas/DiWi-DApp.git"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="cursor-pointer"
                 >
                     <Typography className="absolute bottom-4 left-4 text-xs border border-borderColor rounded-md px-2 py-1">
-                        v0.1.9
+                        Beta
                     </Typography>
-                </a> */}
+                </a>
             </div>
         </div>
     );
