@@ -15,7 +15,9 @@ The drand network offers timelock encryption services without direct monetary co
 - **Decryption Process**:
     1. **Timelock Decryption**: After the specified time has passed, decrypt the timelock-encrypted message using tlock-js.
     2. **Asymmetric Decryption**: Decrypt the message using your RSA private key.
-- **Storage Responsibility**: It's important to note that while drand facilitates the encryption process, it doesn't store the encrypted messages. Users are responsible for storing and managing their ciphertexts securely until the designated decryption time.
+- **Decentralized Storage**: While drand facilitates the encryption process, it doesn't store the encrypted messages. The blockchain serves as the decentralized storage layer, with the encrypted data being accessible through event logs rather than contract state.
+    - **Blockchain Event Emission**: In the current implementation, the encrypted message (which can be of arbitrary size) is emitted as an event on the blockchain rather than being stored directly in the smart contract's storage. This approach is used to optimize gas costs, as storing data in contract storage is typically more expensive than emitting events.
+    - **Retrieval Mechanism**: The encrypted message can be retrieved later by storing and referencing its transaction hash. This allows for efficient lookup while keeping gas costs manageable.
 ___
 
 ### Implementation example of the Hybrid Encryption
