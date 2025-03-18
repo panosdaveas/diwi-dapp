@@ -1,4 +1,5 @@
 ## Notes
+A decentralized platform where users can store personal messages, assets, or memories that are unlocked at a predetermined future date.
 
 The drand network offers timelock encryption services without direct monetary costs to users. Here's how it works:
 
