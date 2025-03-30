@@ -1,0 +1,2 @@
+## Automatically notify recipient
+Individuals could set up smart contracts that automatically unlock encrypted data or assets only after a certain period, which could be used for posthumous distribution of digital assets or personal messages.
