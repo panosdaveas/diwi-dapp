@@ -164,44 +164,45 @@ export function useContractInteraction() {
   };
 
   const sendWillToRecipient = async (uniqueId, message) => {
-    if (!contract) return;
-    setLoading(true);
-    setError(null);
-    try {
-      const tx = await contract.sendWillToRecipient(uniqueId, message);
-      const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
-      setLastTxHash(tx.hash);
-      alert(`Please wait to verify transaction and get receipt for event data`);
-      // Wait for transaction and get receipt for event data
-      const receipt = await tx.wait();
-      await contract.storeTxHash(uniqueId, tx.hash);
-      // Find MessageSent event in the receipt
-      const event = receipt.logs
-        .map((log) => {
-          try {
-            return contract.interface.parseLog(log);
-          } catch (e) {
-            return null;
-          }
-        })
-        .find((event) => event && event.name === "MessageSent");
+  if (!contract) return;
+  setLoading(true);
+  setError(null);
+  try {
+    const tx = await contract.sendWillToRecipient(uniqueId, message);
+    const explorerUrl = getBlockExplorerUrl(chainId, tx.hash);
+    setLastTxHash(tx.hash);
+    // alert(`Please wait to verify transaction and get receipt for event data`);
+    
+    // Wait for transaction and get receipt for event data
+    const receipt = await tx.wait();
+    
+    // Find MessageSent event in the receipt
+    const event = receipt.logs
+      .map((log) => {
+        try {
+          return contract.interface.parseLog(log);
+        } catch (e) {
+          return null;
+        }
+      })
+      .find((event) => event && event.name === "MessageSent");
 
-      const messageHash = event ? event.args.messageHash : null;
-      return {
-        success: true,
-        txHash: tx.hash,
-        blockExplorerUrl: explorerUrl,
-        messageHash: messageHash,
-      };
-    } catch (err) {
-      setError("Error sending message: " + err.message);
-      return {
-        success: false,
-        error: err.message,
-      };
-    } finally {
-      setLoading(false);
-    }
+    const messageHash = event ? event.args.messageHash : null;
+    return {
+      success: true,
+      txHash: tx.hash,
+      blockExplorerUrl: explorerUrl,
+      messageHash: messageHash,
+    };
+  } catch (err) {
+    setError("Error sending message: " + err.message);
+    return {
+      success: false,
+      error: err.message,
+    };
+  } finally {
+    setLoading(false);
+  }
   };
 
   // Get message by transaction hash  (new function)
@@ -258,6 +259,85 @@ export function useContractInteraction() {
     } finally {
       setLoading(false);
     } 
+  };
+
+  // New function to get message by block number and verify it
+  const getMessageByBlockNumber = async (uniqueId) => {
+    if (!contract) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // Get the will by uniqueId to retrieve the block number and message hash
+      const will = await contract.getWillByUniqueId(uniqueId);
+      const blockNumber = will.blockNumber;
+      const messageHash = will.messageHash;
+      const signer = will.signer;
+
+      // Get the block with transactions
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const block = await provider.getBlock(blockNumber, true);
+
+      // Get all transactions in the block
+      const txPromises = block.transactions.map((txHash) =>
+        provider.getTransaction(txHash)
+      );
+      const transactions = await Promise.all(txPromises);
+
+      // Find all transactions from this signer to our contract
+      const relevantTxs = transactions.filter(
+        (tx) =>
+          tx.from.toLowerCase() === signer.toLowerCase() &&
+          tx.to.toLowerCase() === contractAddress.toLowerCase()
+      );
+
+      if (relevantTxs.length === 0) {
+        throw new Error("No matching transactions found in block");
+      }
+
+      // Try to decode each transaction and verify the message
+      for (const tx of relevantTxs) {
+        try {
+          // Check if this transaction is a sendWillToRecipient call
+          const decodedFunction = contract.interface.parseTransaction({
+            data: tx.data,
+          });
+
+          if (decodedFunction.name === "sendWillToRecipient") {
+            const decodedData = decodedFunction.args;
+            // Check if this is for our uniqueId
+            if (decodedData[0] === uniqueId) {
+              const message = decodedData[1]; // Get the message
+
+              // Verify the message matches the stored hash
+              const isValid = await verifyMessage(message, messageHash);
+              if (isValid) {
+                return {
+                  success: true,
+                  message: message,
+                };
+              }
+            }
+          }
+        } catch (e) {
+          // This transaction might not be a valid sendWillToRecipient call, continue to next one
+          console.log(
+            "Skipping transaction - not a matching sendWillToRecipient call:",
+            e.message
+          );
+          continue;
+        }
+      }
+
+      throw new Error("No transactions with valid message found");
+    } catch (err) {
+      setError("Error getting message by block number: " + err.message);
+      return {
+        success: false,
+        error: err.message,
+      };
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Modified to include message hash in return data
@@ -413,5 +493,6 @@ export function useContractInteraction() {
     getMessageByTxHash,
     getMessageByUniqueId,
     storeTxHash,
+    getMessageByBlockNumber,
   };
 }
