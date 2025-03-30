@@ -7,7 +7,7 @@ const { quicknetClient } = require("drand-client");
 
 export function handleScripts() {
   const { data, setData } = useContext(CustomContext);
-  const { sendWillToRecipient, getMessageByUniqueId } =
+  const { sendWillToRecipient, getMessageByUniqueId, getMessageByBlockNumber, } =
     useContractInteraction();
 
   const handleInputChange = (e) => {
@@ -136,7 +136,7 @@ export function handleScripts() {
       const uniqueId = formData.get("selectedRow");
 
       // Step 1: Retrieve message from blockchain
-      const result = await getMessageByUniqueId(uniqueId);
+      const result = await getMessageByBlockNumber(uniqueId);
       if (!result.success) {
         throw new Error("Failed to retrieve message");
       }

@@ -50,6 +50,7 @@ export function RecipientTable() {
         submitPublicKey,
         getWillsByRecipient,
         getMessageByUniqueId,
+        getMessageByBlockNumber,
     } = useContractInteraction();
 
     const { handleDecrypt } = handleScripts();
@@ -130,7 +131,7 @@ export function RecipientTable() {
     // Get will message by ID
     const handleGetWillMessage = useCallback(async (row) => {
         try {
-            const result = await getMessageByUniqueId(row.uniqueId);
+            const result = await getMessageByBlockNumber(row.uniqueId);
             const message = result.success ? result.message : "Failed to retrieve message";
             setData(prev => ({ ...prev, displayMessage: message }));
             return result;
@@ -139,7 +140,7 @@ export function RecipientTable() {
             setData(prev => ({ ...prev, displayMessage: `Error: ${error.message}` }));
             return { success: false, message: error.message };
         }
-    }, [getMessageByUniqueId, setData]);
+    }, [getMessageByBlockNumber, setData]);
 
     // Poll for public key requests
     const handlePollPublicKeyRequests = useCallback(async () => {
