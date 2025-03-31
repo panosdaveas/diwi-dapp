@@ -2,7 +2,8 @@ import EthCrypto from "eth-crypto";
 import { CustomContext } from "@/app/Context/context";
 import { useContext } from "react";
 import { useContractInteraction } from "@/app/scripts/interact";
-const { timelockEncrypt, roundAt } = require("tlock-js");
+const { decryptAge, encryptAge } = require("tlock-js/age/age-encrypt-decrypt")
+const { timelockEncrypt, roundAt, roundTime } = require("tlock-js");
 const { quicknetClient } = require("drand-client");
 
 export function handleScripts() {
@@ -101,6 +102,11 @@ export function handleScripts() {
       const result = await response.json();
       return result.decrypted;
     } catch (error) {
+      
+      // const ciphertext = await encryptAge(Buffer.from(tlMessage));
+      // const result = await decryptAge(ciphertext);
+      // console.log("decryptAge:", result);
+      // console.log("Dtime:", result.toString("utf8"));
       console.error("Time-lock decryption error:", error);
       throw error;
     }
