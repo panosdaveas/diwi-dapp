@@ -2,13 +2,12 @@ import EthCrypto from "eth-crypto";
 import { CustomContext } from "@/app/Context/context";
 import { useContext } from "react";
 import { useContractInteraction } from "@/app/scripts/interact";
-const { decryptAge, encryptAge } = require("tlock-js/age/age-encrypt-decrypt")
-const { timelockEncrypt, roundAt, roundTime } = require("tlock-js");
+const { timelockEncrypt, roundAt } = require("tlock-js");
 const { quicknetClient } = require("drand-client");
 
 export function handleScripts() {
   const { data, setData } = useContext(CustomContext);
-  const { sendWillToRecipient, getMessageByUniqueId, getMessageByBlockNumber, } =
+  const { sendWillToRecipient, getMessageByBlockNumber, } =
     useContractInteraction();
 
   const handleInputChange = (e) => {

@@ -1,4 +1,7 @@
 {
   "cSpell.words": ["drand", "quicknet", "timelock", "tlock"],
-  "solidity.compileUsingRemoteVersion": "latest"
+  "solidity.compileUsingRemoteVersion": "latest",
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.preferredDarkColorTheme": "GitHub Dark Default",
+  "workbench.preferredHighContrastColorTheme": "GitHub Dark Default"
 }
