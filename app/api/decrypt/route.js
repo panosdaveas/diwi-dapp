@@ -1,4 +1,4 @@
-import { timelockDecrypt, roundAt, roundTime } from "tlock-js";
+import { timelockDecrypt, roundTime } from "tlock-js";
 import { quicknetClient } from "drand-client";
 import { NextResponse } from "next/server";
 import { MAINNET_CHAIN_INFO } from "tlock-js/drand/defaults";
@@ -13,7 +13,6 @@ export function errorMessage(err) {
 
   return "Unknown error";
 }
-
 
 export function localisedDecryptionMessageOrDefault(err) {
   const message = errorMessage(err);
