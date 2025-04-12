@@ -14,7 +14,6 @@ export function errorMessage(err) {
   return "Unknown error";
 }
 
-
 export function localisedDecryptionMessageOrDefault(err) {
   const message = errorMessage(err);
   const tooEarlyToDecryptErrorMessage =

@@ -69,7 +69,6 @@ async function hybridEncrypt(message, rsaPublicKey, unlockTime) {
   const encryptedPayload = await hybridEncrypt(message, rsaPublicKey, unlockTime);
   console.log('Encrypted Payload:', encryptedPayload);
 })();
-
 ```
 
 ### Implementation example of the Hybrid Decryption
@@ -106,7 +105,6 @@ async function hybridDecrypt(timelockEncryptedMessage, rsaPrivateKey) {
   const decryptedMessage = await hybridDecrypt(timelockEncryptedMessage, rsaPrivateKey);
   console.log('Decrypted Message:', decryptedMessage);
 })();
-
 ```
 ___
 ### Important Considerations:

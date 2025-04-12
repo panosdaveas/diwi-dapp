@@ -11,7 +11,7 @@ const MarkdownComponent = () => {
     }, []);
 
     return (
-        <div className="prose max-w-none p-4 pt-7">
+        <div className="prose dark:prose-invert max-w-none p-4 pt-7">
             <ReactMarkdown>{markdown}</ReactMarkdown>
         </div>
     );
